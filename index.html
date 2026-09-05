@@ -93,6 +93,7 @@
       box-shadow: var(--shadow); backdrop-filter: blur(18px);
     }
     .onboarding-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .onboarding-actions { display: flex; align-items: center; gap: 8px; }
     .onboarding-heading { max-width: 680px; margin: 64px 0 28px; }
     .onboarding-heading h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 4.25rem); line-height: .98; letter-spacing: -.065em; }
     .onboarding-heading > p:last-child { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
@@ -155,6 +156,8 @@
     .finance-mini small { color: var(--muted); font-size: .6rem; }
     .finance-mini strong { font-size: .76rem; margin-top: 4px; }
     .finance-mini .safe strong { color: var(--blue); }
+    .finance-mini .goal { max-width: 132px; }
+    .finance-mini .goal strong { overflow: hidden; text-overflow: ellipsis; }
     .location-btn { width: 38px; height: 38px; border: 0; border-radius: 999px; display: grid; place-items: center; color: #fff; background: var(--blue); cursor: pointer; }
 
     .mega-menu { position: absolute; inset: 68px 0 auto; background: rgba(255,255,255,.98); border-bottom: 1px solid var(--line); box-shadow: 0 22px 45px rgba(17,24,39,.12); }
@@ -651,6 +654,8 @@
       box-shadow: 0 9999px 0 9999px rgba(11,11,11,.38);
     }
     .mega-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 54px; padding-block: 38px 42px; }
+    .mega-grid.single { grid-template-columns: minmax(0, 520px); }
+    .mega-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .mega-col { gap: 0; }
     .mega-col small { margin-bottom: 10px; color: var(--muted); }
     .mega-col button {
@@ -992,7 +997,10 @@
           <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
           <span class="brand-copy"><strong>卡搜 KASO</strong><small>個人省錢模式</small></span>
         </div>
-        <button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button>
+        <div class="onboarding-actions">
+          <button id="backToPersona" class="secondary-btn" type="button">返回身分組</button>
+          <button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button>
+        </div>
       </div>
 
       <div class="onboarding-heading">
@@ -1068,8 +1076,8 @@
           <button class="nav-btn" type="button" data-view="ledger" data-mega="life">生活規劃</button>
         </nav>
         <div class="header-actions">
-          <button id="resetProfile" class="persona-chip" type="button" title="重新設定"><svg><use href="#i-wallet"/></svg><span>月光族</span></button>
-          <div class="finance-mini"><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
+          <button id="resetProfile" class="persona-chip" type="button" title="返回身分選擇"><svg><use href="#i-wallet"/></svg><span>返回身分選擇</span></button>
+          <div class="finance-mini"><span id="headGoal" class="goal" hidden><small>目標</small><strong id="headGoalName">存款計畫</strong></span><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
           <button id="profileOpen" class="profile-btn" type="button" title="個人資料與登入" aria-label="開啟個人資料與登入"><svg><use href="#i-user"/></svg></button>
         </div>
       </div>
@@ -1184,12 +1192,9 @@
 
     const megaContent = {
       search: [
-        ["商品", ["探索所有商品", "手機、平板、電腦", "家電、遊戲、收藏卡"]],
-        ["餐飲與日常", ["餐廳與咖啡", "超市與生鮮", "藥妝與日用品"]],
-        ["其他比價", ["音樂與影音月費", "機票與飯店", "AI 同品項檢查"]]
+        ["商品比價", ["搜尋商品"]]
       ],
       nearby: [
-        ["探索附近", ["1,000 公尺內優惠", "餐廳與咖啡", "超市與藥妝"]],
         ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
         ["為你換算", ["只用我的持有卡", "折扣＋卡片回饋", "開啟大按鈕導航"]]
       ],
@@ -1267,6 +1272,9 @@
 
     function syncHeader() {
       const f = getFinance();
+      const isGoal = state.profile?.mode === "goal";
+      $("#headGoal").hidden = !isGoal;
+      $("#headGoalName").textContent = isGoal ? `存 ${money(f.target)}` : "存款計畫";
       $("#headReserve").textContent = money(f.reserve);
       $("#headSafe").textContent = money(f.safe);
       $$(".nav-btn").forEach((btn) => {
@@ -1566,7 +1574,9 @@
 
     function showMega(key) {
       const menu = $("#megaMenu");
-      menu.innerHTML = `<div class="shell mega-grid">${megaContent[key].map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
+      const columns = megaContent[key];
+      const gridClass = columns.length === 1 ? " single" : columns.length === 2 ? " two" : "";
+      menu.innerHTML = `<div class="shell mega-grid${gridClass}">${columns.map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
       menu.hidden = false;
       $$('[data-mega-action]', menu).forEach((btn) => btn.addEventListener("click", () => handleMegaAction(btn.dataset.megaAction)));
     }
@@ -1666,6 +1676,11 @@
     }));
     $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
+    $("#backToPersona").addEventListener("click", () => {
+      $(".mode-grid").scrollIntoView({ behavior: "smooth", block: "center" });
+      $(".mode-card.selected")?.focus();
+      showToast("已返回身分組，可重新選擇模式");
+    });
     $("#resetProfile").addEventListener("click", resetProfile);
     $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
     $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
