@@ -123,12 +123,15 @@ function render() {
                 <span><small>每日可安排</small><strong id="previewFlexible">填完後計算</strong></span>
                 <span><small>完成月份</small><strong id="previewDate">${formatMonthValue(defaultDeadline)}</strong></span>
               </div>
-              <div id="deadlineAdvice" class="deadline-advice" role="status" hidden>
+              <div id="deadlineAdvice" class="deadline-advice" role="alert" aria-live="assertive" hidden>
                 <div>
                   <strong>每日可安排低於 NT$1,000</strong>
-                  <p id="deadlineAdviceText">建議延長完成月份，降低每月需要先存的金額。</p>
+                  <p id="deadlineAdviceText">你可以延長完成月份，或調低存錢目標後再確認。</p>
                 </div>
-                <button id="extendDeadline" class="secondary-btn" type="button">延長 1 個月</button>
+                <div class="deadline-advice-actions" aria-label="調整預算方式">
+                  <button id="extendDeadline" class="secondary-btn" type="button">延長 1 個月</button>
+                  <button id="adjustSavingTarget" class="secondary-btn" type="button">調整存錢目標</button>
+                </div>
               </div>
               <p id="setupError" class="setup-error" role="alert" hidden></p>
               <div class="stage-actions budget-actions">
@@ -235,14 +238,13 @@ function mount({ navigate, showToast }) {
       : "—";
 
     const shouldSuggestExtension = (
-      state.mode === "goal"
-      && hasFinanceInputs
+      hasFinanceInputs
       && dailyAvailable < 1000
     );
     $("#deadlineAdvice").hidden = !shouldSuggestExtension;
     if (shouldSuggestExtension) {
       $("#deadlineAdviceText").textContent = (
-        `目前每日可安排 ${money(dailyAvailable)}，建議把完成月份往後延，降低每月存款壓力。`
+        `目前每日可安排 ${money(dailyAvailable)}。你可以延長完成月份，或調低存錢目標後再確認。`
       );
     }
 
@@ -436,6 +438,17 @@ function mount({ navigate, showToast }) {
         1,
       );
       updatePreview();
+      showToast("已延長 1 個月，並重新計算每日可安排金額");
+    },
+    listenerOptions,
+  );
+  $("#adjustSavingTarget").addEventListener(
+    "click",
+    () => {
+      const targetInput = $("#savingTarget");
+      targetInput.focus();
+      targetInput.select();
+      showToast("請輸入較低的存錢目標，系統會立即重新計算");
     },
     listenerOptions,
   );

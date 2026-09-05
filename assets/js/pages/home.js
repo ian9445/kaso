@@ -1,15 +1,11 @@
 import { getDailyBudget, getFinance } from "../services/finance.js";
 import { personaModeLabel } from "../services/persona.js";
-import { saveProfile, state } from "../store.js";
+import { state } from "../store.js";
 import {
   $,
   $$,
-  formatMonthValue,
   icon,
   money,
-  monthsUntil,
-  monthValueFromOffset,
-  shiftMonthValue,
 } from "../utils.js";
 
 function budgetPill(id, label, value) {
@@ -153,10 +149,6 @@ function render() {
     ? "今天有一點彈性"
     : "今天需要注意";
   const displayBalance = finance.currentBalance + settledCarryover;
-  const needsExtension = (
-    state.profile?.mode === "goal"
-    && daily.allowance < 1000
-  );
   const savingProgress = finance.target > 0
     ? Math.min(100, Math.round((finance.monthlySave / finance.target) * 100))
     : 0;
@@ -226,15 +218,6 @@ function render() {
           </aside>
         </div>
 
-        ${needsExtension ? `
-          <div class="zero-balance-card">
-            <p>
-              <strong>每日可安排 ${money(daily.allowance)}，建議延後完成月份</strong>
-              <small>目前低於 NT$1,000；延長一個月可降低每月需要先存的金額。</small>
-            </p>
-            <button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button>
-          </div>
-        ` : ""}
       </section>
 
       <section class="view qa-section" aria-labelledby="qaTitle">
@@ -248,16 +231,45 @@ function render() {
             <div class="qa-answer"><p>系統會先保留固定支出與存款，再把安心可花依本月剩餘天數換算成今日額度，扣除今天的記帳後得到「今日未用」。</p><a href="#/ledger" data-route="/ledger">查看自動記帳</a></div>
           </details>
           <details>
-            <summary>餘額不夠時怎麼處理？</summary>
-            <div class="qa-answer"><p>當可花餘額歸零或不足，會先建議延後目標期限，讓每月需要保留的金額下降。</p><a href="#/ledger" data-route="/ledger">查看支出與調整方案</a></div>
+            <summary>「安心可花」和「今日未用」有什麼不同？</summary>
+            <div class="qa-answer"><p>「安心可花」是目前整月還能安排的總額；「今日未用」是今天額度扣掉今天已記帳支出後剩下的金額。</p>
+            </div>
+          </details>
+          <details>
+            <summary>為什麼「安心可花」會顯示 0 元？</summary>
+            <div class="qa-answer"><p>目前餘額、固定支出或每月先存金額可能已用完可安排空間。請從「重新設定」調整收入、固定支出、存錢目標或完成月份。</p></div>
+          </details>
+          <details>
+            <summary>記帳後，首頁數字會馬上更新嗎？</summary>
+            <div class="qa-answer"><p>會。新增支出後，本月已花、安心可花、今日已花與今日未用都會立即重新計算。</p><a href="#/ledger" data-route="/ledger">前往自動記帳</a></div>
+          </details>
+          <details>
+            <summary>固定收入或固定支出改變時怎麼辦？</summary>
+            <div class="qa-answer"><p>使用頁面上方的「重新設定」，重新填寫最新收入與固定支出，首頁預算就會依新資料計算。</p></div>
+          </details>
+          <details>
+            <summary>存錢目標和完成月份之後還能修改嗎？</summary>
+            <div class="qa-answer"><p>可以。進入「重新設定」後即可調整。若設定頁的每日可安排低於 NT$1,000，也會直接提供延長月份或調整存錢目標的選項。</p></div>
+          </details>
+          <details>
+            <summary>「今日結算」會做什麼？</summary>
+            <div class="qa-answer"><p>結算後，今天尚未使用的額度會加回目前餘額，並將今日未用歸零，避免同一筆金額重複計算。</p></div>
           </details>
           <details>
             <summary>商品比價如何確認是同一項商品？</summary>
             <div class="qa-answer"><p>比價前會核對完整型號、容量、版本與商品狀況，資料不足時先追問。</p><a href="#/search" data-route="/search">前往商品比價</a></div>
           </details>
           <details>
-            <summary>完成月份太近時怎麼調整？</summary>
-            <div class="qa-answer"><p>目標計畫族若每日可安排低於 NT$1,000，系統會提醒延後完成月份，讓每月存款壓力下降。也可以使用頁面上方的「重新設定」調整。</p></div>
+            <summary>為什麼比價金額可能和賣場不同？</summary>
+            <div class="qa-answer"><p>價格、折扣、運費與庫存可能隨時變動，購買前仍要以來源賣場的最新資訊為準。</p><a href="#/search" data-route="/search">重新查看比價結果</a></div>
+          </details>
+          <details>
+            <summary>設定和記帳資料會同步到其他裝置嗎？</summary>
+            <div class="qa-answer"><p>目前資料保存在這台裝置的瀏覽器中，不會自動同步到其他手機或電腦；更換裝置時需要重新設定。</p></div>
+          </details>
+          <details>
+            <summary>AI 助手可以幫我做什麼？</summary>
+            <div class="qa-answer"><p>可以協助解讀今日預算、整理支出習慣，以及在商品比價時說明購買後對預算的影響。</p></div>
           </details>
         </div>
       </section>
@@ -322,20 +334,6 @@ function mount({ rerender, showToast }) {
       showToast("今日未用預算已加回目前餘額");
     };
     animationFrame = window.requestAnimationFrame(tick);
-  }, options);
-
-  $("#delayGoal")?.addEventListener("click", () => {
-    if (!state.profile) return;
-    const currentDeadline = state.profile.deadline
-      || monthValueFromOffset(Math.max(1, Number(state.profile.months) || 1));
-    const deadline = shiftMonthValue(currentDeadline, 1);
-    saveProfile({
-      ...state.profile,
-      deadline,
-      months: monthsUntil(deadline),
-    });
-    rerender({ scroll: false });
-    showToast(`已將完成月份延後至 ${formatMonthValue(deadline)}`);
   }, options);
 
   return () => {
