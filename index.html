@@ -1,0 +1,1188 @@
+<!doctype html>
+<!--
+  KASO HTML review baseline, created from the public v17 experience.
+  Workflow: apply and review future interface changes in this file before updating the production Site.
+-->
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="卡搜 KASO 月光族目標存錢、商品比價與生活決策 HTML 互動稿">
+  <title>卡搜 KASO｜HTML 互動稿</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #667085;
+      --line: #e6e9ef;
+      --soft: #f5f7fa;
+      --panel: #ffffff;
+      --violet: #6d4aff;
+      --violet-soft: #f0edff;
+      --blue: #0878df;
+      --blue-deep: #0560b4;
+      --lime: #b8ff3d;
+      --lime-deep: #78b800;
+      --danger: #d92d20;
+      --warning: #f79009;
+      --green: #087a55;
+      --shadow: 0 18px 55px rgba(17, 24, 39, .08);
+      --radius: 24px;
+      --radius-xl: 36px;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --apple-ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    [hidden] { display: none !important; }
+    svg { width: 1.1rem; height: 1.1rem; stroke-width: 2; flex: 0 0 auto; }
+    .shell { width: min(1180px, calc(100% - 36px)); margin-inline: auto; }
+    .eyebrow {
+      display: flex; align-items: center; gap: 7px; margin: 0 0 9px;
+      color: var(--violet); font-size: .78rem; font-weight: 850; letter-spacing: .04em;
+    }
+    .muted { color: var(--muted); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    .brand { display: inline-flex; align-items: center; gap: 10px; border: 0; background: transparent; padding: 0; cursor: pointer; }
+    .brand-mark {
+      width: 39px; height: 39px; border-radius: 12px; display: grid; place-items: center;
+      background: var(--ink); color: #fff;
+    }
+    .brand-copy { display: grid; text-align: left; line-height: 1.08; }
+    .brand-copy strong { font-size: .98rem; letter-spacing: -.02em; }
+    .brand-copy small { color: var(--muted); font-size: .7rem; margin-top: 4px; }
+
+    .primary-btn, .secondary-btn, .text-btn, .icon-btn {
+      border: 0; border-radius: 999px; cursor: pointer; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .primary-btn { min-height: 46px; padding: 0 19px; background: var(--ink); color: #fff; }
+    .primary-btn:hover { transform: translateY(-1px); background: #000; }
+    .primary-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .secondary-btn { min-height: 43px; padding: 0 17px; background: #fff; border: 1px solid var(--line); }
+    .secondary-btn:hover { border-color: #b9c0cb; }
+    .text-btn { padding: 8px 3px; background: transparent; color: var(--violet); }
+    .icon-btn { width: 42px; height: 42px; background: #fff; border: 1px solid var(--line); }
+
+    /* Onboarding */
+    .onboarding {
+      min-height: 100vh; padding: 28px 0 60px;
+      background:
+        radial-gradient(circle at 7% 1%, rgba(184,255,61,.24), transparent 28%),
+        radial-gradient(circle at 98% 4%, rgba(109,74,255,.14), transparent 24%),
+        #f6f7fb;
+    }
+    .onboarding-card {
+      width: min(1100px, calc(100% - 32px)); margin: auto; padding: 28px;
+      border: 1px solid rgba(255,255,255,.85); border-radius: 32px; background: rgba(255,255,255,.93);
+      box-shadow: var(--shadow); backdrop-filter: blur(18px);
+    }
+    .onboarding-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .onboarding-heading { max-width: 680px; margin: 64px 0 28px; }
+    .onboarding-heading h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 4.25rem); line-height: .98; letter-spacing: -.065em; }
+    .onboarding-heading > p:last-child { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
+    .mode-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; }
+    .mode-card {
+      min-height: 155px; padding: 20px; border: 1px solid var(--line); border-radius: 22px; background: #fff;
+      text-align: left; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 13px;
+    }
+    .mode-card:hover, .mode-card.selected { border-color: var(--violet); box-shadow: 0 12px 30px rgba(109,74,255,.1); }
+    .mode-card.featured { background: linear-gradient(145deg, #fbfff3, #fff); }
+    .mode-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; background: var(--soft); }
+    .mode-card.selected .mode-icon { background: var(--violet); color: #fff; }
+    .mode-card span:nth-child(2) { display: grid; gap: 4px; }
+    .mode-card b { font-size: 1.1rem; }
+    .mode-card small { color: var(--muted); font-size: .8rem; }
+    .mode-card .mode-check { color: var(--violet); }
+
+    .setup-card { margin-top: 18px; padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: #fbfcfe; }
+    .setup-heading { display: flex; gap: 13px; align-items: center; }
+    .setup-heading > span { width: 42px; height: 42px; display: grid; place-items: center; background: var(--violet-soft); color: var(--violet); border-radius: 14px; }
+    .setup-heading h2 { margin: 0; font-size: 1.35rem; }
+    .setup-heading p { margin: 2px 0 0; color: var(--muted); font-size: .82rem; }
+    .finance-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 18px; }
+    .field { display: grid; gap: 7px; color: #344054; font-size: .78rem; font-weight: 750; }
+    .field input, .field select, .field textarea {
+      width: 100%; min-height: 44px; border: 1px solid #d9dee7; border-radius: 12px; background: #fff; padding: 10px 12px; color: var(--ink); outline: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(109,74,255,.11); }
+    .finance-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 16px; overflow: hidden; background: var(--line); border: 1px solid var(--line); border-radius: 16px; }
+    .finance-preview > span { padding: 14px; display: grid; gap: 2px; background: #fff; }
+    .finance-preview small { color: var(--muted); font-size: .72rem; }
+    .finance-preview strong { font-size: 1.08rem; }
+    .quality-card { margin-top: 18px; padding: 22px; border-radius: 24px; background: var(--ink); color: #fff; }
+    .quality-head { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
+    .quality-head h2 { margin: 0; font-size: 1.3rem; }
+    .quality-head p { margin: 5px 0 0; color: #aeb7c6; font-size: .83rem; }
+    .quality-total { padding: 7px 11px; border-radius: 999px; background: rgba(255,255,255,.09); font-size: .75rem; white-space: nowrap; }
+    .quality-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-top: 18px; }
+    .quality-item { padding: 14px; border: 1px solid #344054; border-radius: 16px; background: #182230; }
+    .quality-item label { display: flex; justify-content: space-between; gap: 8px; font-size: .8rem; font-weight: 800; }
+    .quality-item small { display: block; min-height: 38px; color: #98a2b3; font-size: .72rem; margin-top: 4px; }
+    .quality-item input { width: 100%; accent-color: var(--lime); margin-top: 9px; }
+    .quality-item output { color: var(--lime); }
+    .onboarding-note { margin: 16px 0 0; color: var(--muted); font-size: .76rem; }
+
+    /* Main shell */
+    .site-header {
+      position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.88); border-bottom: 1px solid rgba(220,224,232,.85);
+      backdrop-filter: blur(18px);
+    }
+    .header-row { min-height: 68px; display: grid; grid-template-columns: 230px 1fr auto; align-items: center; gap: 18px; }
+    .main-nav { display: flex; justify-content: center; gap: 3px; }
+    .nav-btn { min-height: 40px; padding: 0 14px; border: 0; background: transparent; border-radius: 999px; cursor: pointer; font-size: .86rem; font-weight: 750; }
+    .nav-btn:hover, .nav-btn.active { background: var(--soft); }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .persona-chip { min-height: 38px; padding: 0 12px; display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer; font-size: .77rem; font-weight: 800; }
+    .finance-mini { display: flex; border: 1px solid var(--line); border-radius: 13px; overflow: hidden; background: #fff; }
+    .finance-mini span { display: grid; padding: 6px 10px; line-height: 1.05; }
+    .finance-mini span + span { border-left: 1px solid var(--line); }
+    .finance-mini small { color: var(--muted); font-size: .6rem; }
+    .finance-mini strong { font-size: .76rem; margin-top: 4px; }
+    .finance-mini .safe strong { color: var(--blue); }
+    .location-btn { width: 38px; height: 38px; border: 0; border-radius: 999px; display: grid; place-items: center; color: #fff; background: var(--blue); cursor: pointer; }
+
+    .mega-menu { position: absolute; inset: 68px 0 auto; background: rgba(255,255,255,.98); border-bottom: 1px solid var(--line); box-shadow: 0 22px 45px rgba(17,24,39,.12); }
+    .mega-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 46px; padding-block: 30px 34px; }
+    .mega-col { display: grid; align-content: start; gap: 8px; }
+    .mega-col small { color: #98a2b3; font-size: .7rem; margin-bottom: 4px; }
+    .mega-col button { width: fit-content; border: 0; background: transparent; padding: 2px 0; text-align: left; cursor: pointer; font-weight: 720; }
+    .mega-col.primary button { font-size: 1.28rem; letter-spacing: -.025em; }
+    .mega-col p { margin: 4px 0 0; color: var(--muted); font-size: .76rem; max-width: 260px; }
+
+    .main-content { padding: 26px 0 90px; }
+    .view { animation: view-in .22s ease; }
+    @keyframes view-in { from { opacity: .2; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    .page-title { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 20px; }
+    .page-title h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.02; letter-spacing: -.055em; }
+    .page-title p { max-width: 650px; margin: 10px 0 0; color: var(--muted); }
+    .demo-pill { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 11px; color: var(--muted); font-size: .72rem; white-space: nowrap; }
+
+    :is(.onboarding-card, .setup-card, .quality-card, .money-overview, .service-panel, .service-card, .toolbar, .feature-card, .result-panel, .product-card, .merchant-card, .assistant-panel, dialog) {
+      corner-shape: squircle;
+    }
+
+    :is(.service-card, .product-card, .merchant-card, .feature-card, .result-panel, .toolbar) {
+      transition: transform .28s var(--apple-ease), box-shadow .28s var(--apple-ease), border-color .28s var(--apple-ease);
+    }
+
+    :is(.service-card, .product-card, .merchant-card):hover {
+      transform: translateY(-3px);
+      border-color: #d0d5dd;
+      box-shadow: 0 18px 40px rgba(17, 24, 39, .08);
+    }
+
+    /* Dashboard */
+    .money-overview {
+      border-radius: var(--radius-xl); background: #fff; border: 1px solid rgba(222,226,234,.9); box-shadow: 0 24px 70px rgba(17,24,39,.07);
+    }
+    .money-copy h1 { margin: 9px 0 0; font-size: clamp(2.2rem, 4.8vw, 4.1rem); line-height: 1; letter-spacing: -.065em; }
+    .money-copy h2 { margin: 12px 0 0; font-size: 1.22rem; }
+    .money-copy > p:last-of-type { color: var(--muted); margin: 7px 0 17px; max-width: 470px; font-size: .88rem; }
+    .status-pill { display: inline-flex; padding: 6px 9px; border-radius: 999px; background: #ecfdf3; color: var(--green); font-size: .72rem; font-weight: 850; }
+    .money-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .money-actions button { min-height: 40px; border: 0; border-radius: 999px; padding: 0 14px; background: var(--soft); font-weight: 800; cursor: pointer; }
+    .donut-area { display: grid; place-items: center; align-content: center; gap: 13px; }
+    .donut { width: 184px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; position: relative; }
+    .donut::after { content: ""; position: absolute; width: 61%; aspect-ratio: 1; border-radius: 50%; background: #fff; }
+    .donut span { z-index: 1; display: grid; text-align: center; line-height: 1.1; }
+    .donut small { color: var(--muted); font-size: .67rem; }
+    .donut strong { font-size: 1.23rem; margin-top: 5px; }
+    .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 12px; font-size: .67rem; color: var(--muted); }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .legend i { width: 8px; height: 8px; border-radius: 50%; }
+    .goal-card { display: grid; gap: 1px; overflow: hidden; border-radius: 20px; background: var(--line); }
+    .goal-card > span { display: grid; gap: 3px; padding: 13px 15px; background: #fbfcfd; }
+    .goal-card small { color: var(--muted); font-size: .69rem; }
+    .goal-card strong { font-size: .93rem; }
+    .goal-card button { min-height: 44px; border: 0; background: var(--ink); color: #fff; cursor: pointer; font-weight: 800; }
+
+    .dashboard-stage { padding: 0; overflow: hidden; }
+    .balance-stage-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 24px 26px 18px; }
+    .balance-stage-head h1 { margin: 2px 0 0; font-size: clamp(1.45rem, 3vw, 2.25rem); letter-spacing: -.045em; }
+    .balance-stage-head .money-actions { justify-content: flex-end; }
+    .balance-stage-grid { display: grid; grid-template-columns: 190px minmax(0, 1fr) 280px; gap: 16px; padding: 0 20px 20px; min-height: 360px; }
+
+    .spend-rail { padding: 14px; border-radius: var(--radius-lg); background: #f5f5f7; display: flex; flex-direction: column; gap: 9px; }
+    .spend-rail > small { margin: 2px 4px 5px; color: var(--muted); font-size: .72rem; font-weight: 800; }
+    .spend-pill {
+      width: 100%; min-height: 53px; padding: 8px 10px; border: 1px solid #d5eaff; border-radius: 17px; background: #eef7ff; color: #075fae;
+      display: grid; grid-template-columns: 29px 1fr; gap: 9px; align-items: center; text-align: left; cursor: pointer;
+      transition: transform .25s var(--apple-ease), background .25s ease, color .25s ease, box-shadow .25s ease;
+    }
+    .spend-pill:hover { transform: scale(1.025); background: #e2f2ff; }
+    .spend-pill.active { background: #0878df; border-color: #0878df; color: #fff; box-shadow: 0 12px 24px rgba(8,120,223,.24); }
+    .spend-pill .plus { width: 28px; height: 28px; border-radius: 50%; border: 1px solid currentColor; display: grid; place-items: center; font-size: 1rem; line-height: 1; }
+    .spend-pill span:last-child { display: grid; gap: 1px; }
+    .spend-pill strong { font-size: .8rem; }
+    .spend-pill small { opacity: .76; font-size: .65rem; }
+
+    .spend-detail {
+      position: relative; overflow: hidden; min-height: 100%; padding: 28px; border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, #0f1728, #182437); color: #fff;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .spend-detail::after { content: ""; position: absolute; width: 260px; height: 260px; right: -105px; top: -105px; border-radius: 50%; background: var(--detail-glow, rgba(109,74,255,.34)); filter: blur(2px); }
+    .spend-detail-content { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100%; }
+    .spend-detail-content.is-changing { animation: detail-pop .36s var(--apple-ease); }
+    @keyframes detail-pop { 0% { opacity: .25; transform: scale(.965) translateY(7px); } 100% { opacity: 1; transform: none; } }
+    .detail-kicker { display: flex; align-items: center; gap: 7px; color: #c9d2df; font-size: .72rem; font-weight: 800; }
+    .detail-amount { margin-top: 13px; font-size: clamp(2.5rem, 5vw, 4.55rem); line-height: .95; letter-spacing: -.065em; font-weight: 900; }
+    .detail-title { margin: 12px 0 0; font-size: 1.05rem; }
+    .detail-copy { max-width: 520px; margin: 6px 0 20px; color: #b9c3d2; font-size: .78rem; }
+    .detail-lines { margin-top: auto; display: grid; gap: 9px; }
+    .detail-line { display: grid; grid-template-columns: 90px 1fr auto; gap: 10px; align-items: center; }
+    .detail-line span, .detail-line strong { font-size: .7rem; }
+    .detail-line i { height: 6px; border-radius: 999px; background: rgba(255,255,255,.13); overflow: hidden; }
+    .detail-line i::after { content: ""; display: block; width: var(--line-width); height: 100%; border-radius: inherit; background: var(--line-color, #7cbcff); }
+
+    .donut-side { padding: 22px 18px; border-radius: var(--radius-lg); background: #f5f5f7; display: grid; place-items: center; align-content: center; gap: 13px; text-align: center; }
+    .donut-side > small { color: var(--muted); font-size: .72rem; font-weight: 800; }
+    .donut.large { width: min(220px, 100%); }
+    .donut.large::after { width: 64%; background: #f5f5f7; }
+    .donut.large small { font-size: .72rem; }
+    .donut.large strong { font-size: 1.35rem; }
+    .donut-side .legend { max-width: 220px; }
+    .donut-side .status-pill { margin-top: 2px; }
+
+    .settlement-tray {
+      position: relative; display: grid; grid-template-columns: minmax(180px,.68fr) 1fr 1fr; gap: 14px; align-items: stretch;
+      margin: 0 20px 20px; padding: 14px; border-radius: var(--radius-lg); background: #f5f5f7; overflow: hidden;
+    }
+    .settlement-guide { padding: 8px 7px; display: flex; flex-direction: column; justify-content: center; }
+    .settlement-guide small { color: var(--blue); font-size: .68rem; font-weight: 900; }
+    .settlement-guide strong { margin-top: 4px; font-size: .82rem; }
+    .settlement-guide span { margin-top: 4px; color: var(--muted); font-size: .66rem; }
+    .settlement-pocket { position: relative; z-index: 1; min-height: 84px; padding: 15px 17px; border-radius: 21px; background: #fff; display: flex; justify-content: space-between; align-items: center; gap: 14px; box-shadow: 0 8px 24px rgba(17,24,39,.045); }
+    .settlement-pocket > span { display: grid; gap: 3px; }
+    .settlement-pocket small { color: var(--muted); font-size: .68rem; }
+    .settlement-pocket strong { font-size: 1.05rem; }
+    .settlement-pocket button { min-height: 37px; border: 0; border-radius: 999px; padding: 0 12px; background: var(--ink); color: #fff; cursor: pointer; font-size: .7rem; font-weight: 850; }
+    .settlement-pocket button:disabled { opacity: .48; cursor: default; }
+    .daily-pocket { border: 1px solid #b2ddff; background: linear-gradient(145deg,#fff,#f3f9ff); }
+    .settlement-tray.is-moving .daily-pocket { opacity: .28; transform: scale(.98); transition: 220ms ease; }
+    .settlement-fly-card { position: fixed; z-index: 120; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 2px solid #0878df; border-radius: 21px; background: #fff; padding: 15px 17px; color: var(--ink); box-shadow: 0 28px 65px rgba(8,120,223,.3); pointer-events: none; }
+    .settlement-fly-card small, .settlement-fly-card strong { display: block; }
+    .settlement-fly-card small { color: var(--muted); font-size: .68rem; }
+    .settlement-fly-card strong { font-size: 1.05rem; }
+    .donut-side.is-receiving .donut { animation: balance-absorb 1.22s var(--apple-ease); }
+    @keyframes balance-absorb { 0%,62% { transform: scale(1); filter: none; } 78% { transform: scale(1.09); filter: drop-shadow(0 0 18px rgba(8,120,223,.36)); } 100% { transform: scale(1); filter: none; } }
+
+    .zero-balance-card { margin: 0 20px 20px; padding: 17px 18px; border-radius: 23px; background: #fff4f1; border: 1px solid #ffd5cc; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .zero-balance-card p { margin: 0; display: grid; gap: 3px; }
+    .zero-balance-card strong { color: #912018; }
+    .zero-balance-card small { color: #a04438; font-size: .72rem; }
+
+    .qa-section { margin-top: 22px; padding: 30px 30px 10px; border-radius: var(--radius-xl); background: #fff; border: 1px solid rgba(222,226,234,.9); }
+    .qa-title { margin-bottom: 24px; }
+    .qa-title h2 { margin: 0; font-size: clamp(2rem, 4.5vw, 3.8rem); letter-spacing: -.06em; line-height: 1; }
+    .qa-list { border-top: 1px solid var(--line); }
+    .qa-list details { border-bottom: 1px solid var(--line); }
+    .qa-list summary { list-style: none; min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 18px; cursor: pointer; font-weight: 800; }
+    .qa-list summary::-webkit-details-marker { display: none; }
+    .qa-list summary::after { content: "+"; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #667085; background: #f5f5f7; font-size: 1.18rem; font-weight: 500; transition: transform .28s var(--apple-ease), background .28s ease; }
+    .qa-list details[open] summary::after { transform: rotate(45deg); background: #eaf4ff; color: var(--blue); }
+    .qa-answer { max-width: 820px; padding: 0 54px 22px 0; color: var(--muted); font-size: .82rem; animation: qa-open .28s var(--apple-ease); }
+    @keyframes qa-open { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+    .qa-answer p { margin: 0; }
+    .qa-answer a { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; color: var(--blue); font-weight: 800; }
+    .qa-answer a::after { content: "›"; font-size: 1.05rem; }
+
+    .service-panel { margin-top: 22px; padding: 26px; border: 1px solid rgba(222,226,234,.9); border-radius: var(--radius-xl); background: #fff; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 16px; }
+    .section-head h2 { margin: 0; font-size: 1.4rem; letter-spacing: -.025em; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: .8rem; }
+    .section-head > span { color: var(--muted); font-size: .74rem; }
+    .service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .service-card { min-height: 276px; padding: 19px; border: 1px solid var(--line); border-radius: 25px; background: #fff; display: flex; flex-direction: column; }
+    .service-card.primary { background: linear-gradient(145deg, #f8fff0, #fff 55%); border-color: #d9f5aa; }
+    .service-title { display: flex; gap: 11px; }
+    .service-title > span { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--soft); }
+    .service-title small { color: var(--muted); font-size: .68rem; }
+    .service-title h3 { margin: 2px 0 0; font-size: 1.12rem; }
+    .service-title p { margin: 5px 0 0; color: var(--muted); font-size: .76rem; }
+    .service-main { width: 100%; min-height: 42px; margin-top: 18px; border: 0; border-radius: 15px; background: var(--ink); color: #fff; cursor: pointer; font-weight: 800; }
+    .service-children { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .service-children button { min-height: 34px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0 10px; cursor: pointer; font-size: .7rem; font-weight: 750; }
+    .metric { margin-top: auto; padding-top: 16px; color: var(--muted); font-size: .7rem; }
+
+    /* Shared pages */
+    .toolbar, .feature-card, .result-panel, .notice-card { border: 1px solid var(--line); background: #fff; border-radius: var(--radius-lg); }
+    .toolbar { padding: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .toolbar input, .toolbar select { min-height: 44px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 12px; background: #fff; }
+    .toolbar input { flex: 1 1 300px; }
+    .toolbar .primary-btn { min-height: 44px; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .chip { min-height: 36px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0 12px; cursor: pointer; font-size: .75rem; font-weight: 750; }
+    .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .product-card { display: grid; grid-template-rows: 146px auto; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: #fff; }
+    .product-image { display: grid; place-items: center; background: linear-gradient(145deg, #f1f3f7, #fff); color: #98a2b3; }
+    .product-image svg { width: 52px; height: 52px; }
+    .product-body { padding: 16px; }
+    .product-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .platform { padding: 5px 8px; border-radius: 999px; background: #fff2ed; color: #c4320a; font-size: .65rem; font-weight: 850; }
+    .match { color: var(--green); font-size: .68rem; font-weight: 800; }
+    .product-card h3 { min-height: 47px; margin: 12px 0 6px; font-size: .94rem; line-height: 1.45; }
+    .product-price { font-size: 1.45rem; font-weight: 900; letter-spacing: -.03em; }
+    .after-buy { margin: 7px 0 0; color: var(--muted); font-size: .72rem; }
+    .after-buy.insufficient { color: #b42318; font-weight: 750; }
+    .product-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 13px; }
+    .product-actions button, .product-actions a { min-height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: .72rem; font-weight: 800; }
+    .product-actions button { border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .product-actions a { background: var(--ink); color: #fff; }
+
+    .summary-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 16px 0; border: 1px solid var(--line); background: var(--line); border-radius: 18px; overflow: hidden; }
+    .summary-strip > div { padding: 14px; background: #fff; }
+    .summary-strip small { display: block; color: var(--muted); font-size: .68rem; }
+    .summary-strip strong { display: block; margin-top: 4px; font-size: 1.05rem; }
+
+    .merchant-list { display: grid; gap: 12px; }
+    .merchant-card { display: grid; grid-template-columns: 48px 1fr 220px; gap: 15px; align-items: center; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: #fff; }
+    .merchant-icon { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; background: var(--violet-soft); color: var(--violet); }
+    .merchant-card h3 { margin: 5px 0 3px; font-size: 1rem; }
+    .merchant-card p { margin: 2px 0; color: var(--muted); font-size: .74rem; }
+    .merchant-result { text-align: right; }
+    .merchant-result strong { display: block; font-size: 1.2rem; }
+    .merchant-result small { color: var(--muted); font-size: .7rem; }
+    .directions { min-height: 42px; margin-top: 9px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 7px; background: var(--blue); color: #fff; font-size: .78rem; font-weight: 850; }
+    .directions:hover { background: var(--blue-deep); }
+
+    .two-col { display: grid; grid-template-columns: .82fr 1.18fr; gap: 18px; align-items: start; }
+    .feature-card, .result-panel { padding: 21px; }
+    .feature-card h2, .result-panel h2 { margin: 0; font-size: 1.3rem; }
+    .feature-card > p, .result-panel > p { color: var(--muted); font-size: .8rem; }
+    .profile-rule { margin-top: 15px; padding: 13px; border-radius: 15px; background: var(--violet-soft); color: #40318a; font-size: .78rem; font-weight: 750; }
+    .card-winner { margin-top: 16px; padding: 20px; border: 2px solid var(--violet); border-radius: 18px; background: #fff; }
+    .card-winner small { color: var(--violet); font-weight: 850; }
+    .card-winner h3 { margin: 5px 0; font-size: 1.45rem; }
+    .card-winner p { margin: 8px 0 0; color: var(--muted); font-size: .78rem; }
+    .rank-list { display: grid; gap: 9px; margin-top: 15px; }
+    .rank { display: grid; grid-template-columns: 25px 1fr auto; gap: 9px; align-items: center; }
+    .rank > span:first-child { width: 25px; height: 25px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: .67rem; font-weight: 850; }
+    .rank strong { font-size: .8rem; }
+    .rank b { font-size: .76rem; color: var(--violet); }
+    .warning { margin-top: 15px; padding: 12px; border-radius: 13px; background: #fffaeb; color: #7a2e0e; font-size: .72rem; }
+
+    .ledger-form { display: grid; grid-template-columns: 1.5fr .7fr .8fr auto; gap: 9px; margin-top: 15px; }
+    .ledger-form input, .ledger-form select { min-height: 43px; border: 1px solid #d8dde6; border-radius: 11px; padding: 0 10px; background: #fff; }
+    .transaction-list { display: grid; gap: 1px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--line); }
+    .transaction { display: grid; grid-template-columns: 42px 1fr auto; gap: 11px; align-items: center; padding: 13px; background: #fff; }
+    .transaction > span { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--soft); color: var(--violet); }
+    .transaction p { margin: 0; display: grid; }
+    .transaction small { color: var(--muted); font-size: .68rem; }
+    .transaction strong:last-child { color: var(--danger); }
+    .recovery { margin: 14px 0; padding: 16px; border-radius: 18px; background: #fff3f0; border: 1px solid #ffd5cc; }
+    .recovery h3 { margin: 0; font-size: 1rem; }
+    .recovery p { margin: 5px 0 12px; color: #8b3a2c; font-size: .77rem; }
+    .recovery-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .tab-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 15px; }
+    .tab-row button { min-height: 37px; padding: 0 12px; border: 1px solid var(--line); background: #fff; border-radius: 999px; cursor: pointer; font-size: .74rem; font-weight: 800; }
+    .tab-row button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .allocation-bars { display: grid; gap: 13px; margin-top: 17px; }
+    .allocation-line { display: grid; grid-template-columns: 100px 1fr 90px; gap: 11px; align-items: center; }
+    .allocation-line span { font-size: .75rem; font-weight: 750; }
+    .bar { height: 9px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+    .bar i { display: block; height: 100%; border-radius: inherit; background: var(--violet); }
+    .allocation-line strong { text-align: right; font-size: .78rem; }
+    .policy-grid, .subscription-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .policy, .subscription { padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+    .policy small, .subscription small { color: var(--muted); font-size: .68rem; }
+    .policy h3, .subscription h3 { margin: 5px 0; font-size: 1rem; }
+    .policy p, .subscription p { margin: 7px 0; color: var(--muted); font-size: .74rem; }
+    .policy ul { padding-left: 18px; margin: 9px 0 0; font-size: .74rem; }
+    .claim-box { display: grid; gap: 12px; }
+    .claim-box textarea { min-height: 120px; resize: vertical; }
+    .claim-result { padding: 15px; border-radius: 15px; background: #eff8ff; border: 1px solid #b2ddff; }
+    .claim-result h3 { margin: 0 0 6px; font-size: .95rem; }
+    .claim-result p { margin: 0; color: #1849a9; font-size: .76rem; }
+
+    /* AI and feedback */
+    .assistant-fab { position: fixed; z-index: 50; right: 22px; bottom: 22px; min-height: 50px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--violet); color: #fff; box-shadow: 0 16px 36px rgba(109,74,255,.32); cursor: pointer; font-weight: 850; display: flex; align-items: center; gap: 8px; }
+    .assistant-panel { position: fixed; z-index: 60; right: 20px; bottom: 20px; width: min(390px, calc(100% - 28px)); height: min(610px, calc(100vh - 38px)); display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: #fff; box-shadow: 0 24px 80px rgba(17,24,39,.22); }
+    .assistant-head { padding: 15px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--ink); color: #fff; }
+    .assistant-head > span { display: flex; align-items: center; gap: 9px; }
+    .assistant-head strong { display: block; font-size: .86rem; }
+    .assistant-head small { display: block; color: #aeb7c6; font-size: .63rem; margin-top: 2px; }
+    .assistant-head button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; cursor: pointer; }
+    .chat-log { padding: 15px; overflow: auto; display: flex; flex-direction: column; gap: 10px; background: #f8f9fb; }
+    .bubble { max-width: 88%; padding: 11px 12px; border-radius: 15px; font-size: .78rem; white-space: pre-line; }
+    .bubble.ai { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+    .bubble.user { align-self: flex-end; background: var(--violet); color: #fff; border-bottom-right-radius: 5px; }
+    .assistant-form { padding: 11px; display: grid; grid-template-columns: 1fr auto; gap: 8px; border-top: 1px solid var(--line); }
+    .assistant-form input { min-height: 43px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 11px; outline: none; }
+    .assistant-form button { width: 43px; border: 0; border-radius: 12px; background: var(--violet); color: #fff; cursor: pointer; }
+    .feedback-btn { position: fixed; z-index: 30; left: 18px; bottom: 18px; border: 1px solid var(--line); border-radius: 999px; background: #fff; min-height: 39px; padding: 0 12px; cursor: pointer; color: var(--muted); font-size: .72rem; font-weight: 750; }
+    dialog { width: min(500px, calc(100% - 28px)); border: 0; border-radius: 24px; padding: 0; box-shadow: 0 30px 90px rgba(17,24,39,.28); }
+    dialog::backdrop { background: rgba(17,24,39,.48); backdrop-filter: blur(4px); }
+    .dialog-body { padding: 22px; }
+    .dialog-head { display: flex; justify-content: space-between; gap: 10px; }
+    .dialog-head h2 { margin: 0; font-size: 1.35rem; }
+    .dialog-close { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: #fff; cursor: pointer; }
+    .dialog-body textarea { width: 100%; min-height: 130px; margin-top: 14px; border: 1px solid #d8dde6; border-radius: 14px; padding: 12px; resize: vertical; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+    .toast { position: fixed; z-index: 80; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 11px 15px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .76rem; transition: .22s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 980px) {
+      .header-row { grid-template-columns: 170px 1fr auto; }
+      .brand-copy small, .finance-mini, .persona-chip span { display: none; }
+      .main-nav { justify-content: flex-start; overflow-x: auto; }
+      .mode-grid, .finance-grid, .quality-grid, .service-grid, .policy-grid, .subscription-grid { grid-template-columns: repeat(2, 1fr); }
+      .money-overview { grid-template-columns: 1.1fr .9fr; }
+      .goal-card { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
+      .goal-card button { min-height: auto; }
+      .result-grid { grid-template-columns: repeat(2, 1fr); }
+      .balance-stage-grid { grid-template-columns: 170px minmax(0, 1fr); }
+      .donut-side { grid-column: 1 / -1; grid-template-columns: auto 210px 1fr auto; text-align: left; }
+      .donut.large { width: 180px; }
+    }
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 24px, 1180px); }
+      .onboarding { padding: 12px 0 36px; }
+      .onboarding-card { width: calc(100% - 18px); padding: 18px; border-radius: 24px; }
+      .onboarding-top .primary-btn { min-height: 42px; padding: 0 14px; }
+      .onboarding-heading { margin: 42px 0 22px; }
+      .onboarding-heading h1 { font-size: 2.55rem; }
+      .mode-grid, .finance-grid, .quality-grid, .service-grid, .result-grid, .policy-grid, .subscription-grid { grid-template-columns: 1fr; }
+      .mode-card { min-height: 112px; }
+      .finance-preview { grid-template-columns: 1fr; }
+      .header-row { min-height: 62px; grid-template-columns: auto 1fr auto; }
+      .header-row .brand-copy, .header-actions .persona-chip { display: none; }
+      .brand-mark { width: 36px; height: 36px; }
+      .main-nav { justify-content: flex-start; }
+      .nav-btn { padding: 0 10px; font-size: .78rem; white-space: nowrap; }
+      .header-actions { gap: 5px; }
+      .location-btn { width: 36px; height: 36px; }
+      .mega-menu { inset: 62px 0 auto; max-height: calc(100vh - 62px); overflow: auto; }
+      .mega-grid { grid-template-columns: 1fr; gap: 21px; padding-block: 22px; }
+      .money-overview, .two-col { grid-template-columns: 1fr; }
+      .money-overview { padding: 0; }
+      .balance-stage-head { align-items: flex-start; padding: 20px 17px 15px; }
+      .balance-stage-head .money-actions { display: none; }
+      .balance-stage-grid { grid-template-columns: 1fr; padding: 0 12px 12px; }
+      .spend-rail { display: grid; grid-template-columns: 1fr 1fr; padding: 10px; }
+      .spend-rail > small { grid-column: 1 / -1; }
+      .spend-pill { min-height: 50px; }
+      .spend-detail { min-height: 330px; padding: 22px; }
+      .donut-side { grid-column: auto; grid-template-columns: 1fr; text-align: center; }
+      .donut { width: 170px; }
+      .settlement-tray { grid-template-columns: 1fr; margin: 0 12px 12px; }
+      .zero-balance-card { margin: 0 12px 12px; align-items: stretch; flex-direction: column; }
+      .qa-section { padding: 24px 18px 8px; border-radius: 28px; }
+      .qa-answer { padding-right: 0; }
+      .goal-card { grid-column: auto; grid-template-columns: 1fr; }
+      .service-panel { padding: 17px; }
+      .service-card { min-height: 230px; }
+      .page-title { align-items: start; flex-direction: column; }
+      .summary-strip { grid-template-columns: repeat(2, 1fr); }
+      .merchant-card { grid-template-columns: 42px 1fr; }
+      .merchant-result { grid-column: 1 / -1; text-align: left; padding-left: 57px; }
+      .directions { width: 100%; }
+      .ledger-form { grid-template-columns: 1fr 1fr; }
+      .ledger-form input:first-child { grid-column: 1 / -1; }
+      .allocation-line { grid-template-columns: 86px 1fr; }
+      .allocation-line strong { grid-column: 2; }
+      .assistant-fab { right: 14px; bottom: 14px; }
+      .feedback-btn { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sr-only" aria-hidden="true" focusable="false">
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 0 1 2 2v9H3zM3 7V5a2 2 0 0 1 2-2h12M15 12h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/><path d="m15 9 5-5M17 4h3v3" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor"/><path d="M3 10h18M7 15h3" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor"/><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" fill="none" stroke="currentColor"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="3" fill="none" stroke="currentColor"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9.5 4.6-1.3 8-4.5 8-9.5V6z" fill="none" stroke="currentColor"/><path d="m8.5 12 2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="m21 16-8-4V5.5a1.5 1.5 0 0 0-3 0V12l-8 4v2l8-2v4l-2 1v1l3.5-.5L15 22v-1l-2-1v-4l8 2z" fill="none" stroke="currentColor" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3v7M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3v18M16 3c3 1 4 4 4 7h-4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2 11h10l3-8H6M9 20h.01M17 20h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor"/><path d="M8 21h8M12 17v4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2" fill="none" stroke="currentColor"/><path d="M10 18h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 8l11-2" fill="none" stroke="currentColor"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor"/></symbol>
+  </svg>
+
+  <section id="onboarding" class="onboarding">
+    <div class="onboarding-card">
+      <div class="onboarding-top">
+        <div class="brand" aria-label="卡搜 KASO">
+          <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
+          <span class="brand-copy"><strong>卡搜 KASO</strong><small>個人省錢模式</small></span>
+        </div>
+        <button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button>
+      </div>
+
+      <div class="onboarding-heading">
+        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 月光族設定</p>
+        <h1>先讓每一塊錢<br>有自己的位置。</h1>
+        <p>填入每月現金流，KASO 會先留住必要支出與存款，再告訴你今天能安心花多少。</p>
+      </div>
+
+      <div class="mode-grid" aria-label="身分模式">
+        <button class="mode-card featured selected" type="button" data-mode="moonlight">
+          <span class="mode-icon"><svg><use href="#i-wallet"/></svg></span>
+          <span><strong>主要模式</strong><b>月光族</b><small>守住月底、建立第一個存錢目標</small></span>
+          <span class="mode-check">✓</span>
+        </button>
+        <button class="mode-card" type="button" data-mode="goal">
+          <span class="mode-icon"><svg><use href="#i-target"/></svg></span>
+          <span><strong>目標模式</strong><b>有目標的省錢</b><small>旅行、大件商品或緊急預備金</small></span>
+          <span class="mode-check">→</span>
+        </button>
+        <button class="mode-card" type="button" data-mode="rewards">
+          <span class="mode-icon"><svg><use href="#i-card"/></svg></span>
+          <span><strong>回饋模式</strong><b>紅利最佳化</b><small>依消費習慣選卡與放大回饋</small></span>
+          <span class="mode-check">→</span>
+        </button>
+      </div>
+
+      <section class="setup-card" aria-labelledby="financeTitle">
+        <div class="setup-heading">
+          <span><svg><use href="#i-wallet"/></svg></span>
+          <div><h2 id="financeTitle">先填五個數字</h2><p>預設值可直接修改，所有計算會即時更新。</p></div>
+        </div>
+        <div class="finance-grid">
+          <label class="field">目前餘額<input id="currentBalance" type="number" min="0" step="100" value="6800"></label>
+          <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="1" step="1000" value="30000"></label>
+          <label class="field">每月固定支出<input id="fixedExpense" type="number" min="0" step="1000" value="24000"></label>
+          <label class="field">想存到多少<input id="savingTarget" type="number" min="1" step="1000" value="12000"></label>
+          <label class="field">希望幾個月完成<input id="savingMonths" type="number" min="1" max="36" value="6"></label>
+        </div>
+        <div class="finance-preview" aria-live="polite">
+          <span><small>每月先存</small><strong id="previewSave">NT$2,000</strong></span>
+          <span><small>每月可安排</small><strong id="previewFlexible">NT$4,000</strong></span>
+          <span><small>預計完成</small><strong id="previewDate">2027 年 3 月</strong></span>
+        </div>
+      </section>
+
+      <section class="quality-card" aria-labelledby="qualityTitle">
+        <div class="quality-head">
+          <div><h2 id="qualityTitle">生活品質比重</h2><p>月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。</p></div>
+          <span class="quality-total">目前比重 <b id="qualityTotal">4</b></span>
+        </div>
+        <div class="quality-grid">
+          <div class="quality-item"><label>節省時間 <output id="qTimeOut">1</output></label><small>交通、外送與距離便利</small><input id="qTime" type="range" min="1" max="5" value="1"></div>
+          <div class="quality-item"><label>飲食品質 <output id="qFoodOut">1</output></label><small>餐食健康、品質與體驗</small><input id="qFood" type="range" min="1" max="5" value="1"></div>
+          <div class="quality-item"><label>舒適便利 <output id="qComfortOut">1</output></label><small>居家、服務與耐用度</small><input id="qComfort" type="range" min="1" max="5" value="1"></div>
+          <div class="quality-item"><label>娛樂體驗 <output id="qFunOut">1</output></label><small>影音、活動與休閒</small><input id="qFun" type="range" min="1" max="5" value="1"></div>
+        </div>
+      </section>
+      <p class="onboarding-note"><svg><use href="#i-shield"/></svg> HTML 互動稿僅在這台裝置保存設定，不會連接銀行或上傳個人資料。</p>
+    </div>
+  </section>
+
+  <section id="mainApp" hidden>
+    <header id="siteHeader" class="site-header">
+      <div class="shell header-row">
+        <button class="brand" type="button" data-view="home" aria-label="回到首頁">
+          <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
+          <span class="brand-copy"><strong>卡搜 <b>KASO</b></strong><small>極致省錢決策工具</small></span>
+        </button>
+        <nav class="main-nav" aria-label="主要功能">
+          <button class="nav-btn" type="button" data-view="search" data-mega="search">商品比價</button>
+          <button class="nav-btn" type="button" data-view="nearby" data-mega="nearby">附近優惠</button>
+          <button class="nav-btn" type="button" data-view="cards" data-mega="cards">辦卡推薦</button>
+          <button class="nav-btn" type="button" data-view="ledger" data-mega="life">生活規劃</button>
+        </nav>
+        <div class="header-actions">
+          <button id="resetProfile" class="persona-chip" type="button" title="重新設定"><svg><use href="#i-wallet"/></svg><span>月光族</span></button>
+          <div class="finance-mini"><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
+          <button id="locateHeader" class="location-btn" type="button" title="定位找優惠" aria-label="定位找優惠"><svg><use href="#i-pin"/></svg></button>
+        </div>
+      </div>
+      <div id="megaMenu" class="mega-menu" hidden></div>
+    </header>
+
+    <main class="shell main-content">
+      <div id="viewRoot"></div>
+    </main>
+
+    <button id="assistantFab" class="assistant-fab" type="button"><svg><use href="#i-bot"/></svg> 問 KASO AI</button>
+    <aside id="assistantPanel" class="assistant-panel" hidden aria-label="KASO AI 助手">
+      <div class="assistant-head">
+        <span><svg><use href="#i-bot"/></svg><span><strong>KASO AI 助手</strong><small id="assistantContext">延續目前問題 · HTML 互動稿</small></span></span>
+        <button id="assistantClose" type="button" aria-label="關閉"><svg><use href="#i-x"/></svg></button>
+      </div>
+      <div id="chatLog" class="chat-log" aria-live="polite"></div>
+      <form id="assistantForm" class="assistant-form">
+        <input id="assistantInput" autocomplete="off" placeholder="問預算、商品、卡片或保險…" aria-label="輸入問題">
+        <button type="submit" aria-label="送出"><svg><use href="#i-send"/></svg></button>
+      </form>
+    </aside>
+
+    <button id="feedbackOpen" class="feedback-btn" type="button">回報問題</button>
+    <dialog id="feedbackDialog">
+      <form method="dialog" class="dialog-body" id="feedbackForm">
+        <div class="dialog-head"><div><p class="eyebrow">使用者回饋</p><h2>告訴我們哪裡需要調整</h2></div><button class="dialog-close" value="cancel" aria-label="關閉"><svg><use href="#i-x"/></svg></button></div>
+        <label class="field">回報類型<select id="feedbackType"><option>功能故障</option><option>資料錯誤</option><option>功能建議</option></select></label>
+        <textarea id="feedbackText" placeholder="請描述你遇到的狀況…"></textarea>
+        <div class="dialog-actions"><button class="secondary-btn" value="cancel">取消</button><button id="feedbackSend" class="primary-btn" value="default">送出回報</button></div>
+      </form>
+    </dialog>
+  </section>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    "use strict";
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const icon = (id) => `<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
+    const money = (value) => new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 }).format(Math.max(0, Number(value) || 0));
+    const safeNumber = (id, fallback = 0) => Math.max(0, Number($(id).value) || fallback);
+    const today = new Date();
+
+    const state = {
+      view: "home",
+      mode: "moonlight",
+      profile: null,
+      searchQuery: "Apple AirPods Pro 2 USB-C",
+      searchCategory: "商品",
+      transactions: [
+        { merchant: "北車慢慢咖啡", amount: 130, category: "餐飲", time: "今天 15:35" },
+        { merchant: "全聯 台北站前店", amount: 428, category: "日常", time: "昨天 19:12" }
+      ],
+      recovery: null,
+      insuranceTab: "travel",
+      travelPriority: "balanced",
+      budgetDetail: "safe",
+      settlementDone: false,
+      assistantTopic: null,
+      messages: [
+        { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、哪張卡適合，或貼商品連結讓我一起比較。" }
+      ]
+    };
+
+    const productResults = [
+      { platform: "PChome", title: "Apple AirPods Pro 2 USB-C 台灣公司貨", price: 6590, match: "同品項 98%", link: "https://24h.pchome.com.tw/search/?q=AirPods%20Pro%202%20USB-C" },
+      { platform: "momo", title: "Apple AirPods Pro（第 2 代）MagSafe USB-C", price: 6790, match: "同品項 96%", link: "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=AirPods%20Pro%202%20USB-C" },
+      { platform: "蝦皮", title: "AirPods Pro 2 USB-C 公司貨｜全新未拆", price: 6290, match: "同品項 92%", link: "https://shopee.tw/search?keyword=AirPods%20Pro%202%20USB-C" },
+      { platform: "Yahoo購物", title: "Apple AirPods Pro 2 USB-C 版", price: 6990, match: "同品項 95%", link: "https://tw.buy.yahoo.com/search/product?p=AirPods%20Pro%202%20USB-C" },
+      { platform: "樂天市場", title: "AirPods Pro 第二代 USB-C 原廠保固", price: 6488, match: "同品項 91%", link: "https://www.rakuten.com.tw/search/airpods%20pro%202/" },
+      { platform: "露天", title: "Apple AirPods Pro 2 USB-C 台灣版", price: 6180, match: "同品項 88%", link: "https://www.ruten.com.tw/find/?q=AirPods%20Pro%202%20USB-C" }
+    ];
+
+    const nearbyOffers = [
+      { name: "站前台味便當", type: "餐廳", note: "午餐折價＋持有卡回饋", address: "台北市中正區館前路 12 號", price: 130, distance: "240 公尺", lat: 25.0465, lon: 121.5154, icon: "food" },
+      { name: "北車慢慢咖啡", type: "咖啡", note: "平日下午折價，不用湊單", address: "台北市中正區許昌街 20 號", price: 126, distance: "310 公尺", lat: 25.0459, lon: 121.5168, icon: "food" },
+      { name: "全聯 台北站前店", type: "超市", note: "支付券＋日常採買回饋", address: "台北市中正區館前路 8 號", price: 431, distance: "420 公尺", lat: 25.0457, lon: 121.5145, icon: "cart" },
+      { name: "台北地下街創意市集", type: "免費活動", note: "不消費也能參加", address: "台北市中正區市民大道一段 100 號", price: 0, distance: "650 公尺", lat: 25.0492, lon: 121.5146, icon: "pin" }
+    ];
+
+    const cardMatches = [
+      { name: "台新 Richart 卡", score: 92, color: "#f04438", reason: "現金回饋規則較直覺，適合目前需要控制每月支出的設定。" },
+      { name: "國泰 CUBE 卡", score: 86, color: "#6d4aff", reason: "餐飲與日常情境彈性高，但要記得切換權益。" },
+      { name: "永豐 DAWHO 卡", score: 78, color: "#12b76a", reason: "一般消費與日常採買使用簡單。" }
+    ];
+
+    const megaContent = {
+      search: [
+        ["商品", ["探索所有商品", "手機、平板、電腦", "家電、遊戲、收藏卡"]],
+        ["餐飲與日常", ["餐廳與咖啡", "超市與生鮮", "藥妝與日用品"]],
+        ["其他比價", ["音樂與影音月費", "機票與飯店", "AI 同品項檢查"]]
+      ],
+      nearby: [
+        ["探索附近", ["1,000 公尺內優惠", "餐廳與咖啡", "超市與藥妝"]],
+        ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
+        ["為你換算", ["只用我的持有卡", "折扣＋卡片回饋", "開啟大按鈕導航"]]
+      ],
+      cards: [
+        ["辦卡推薦", ["依客製答案推薦", "完整 6 題微調", "指定銀行比較"]],
+        ["使用情境", ["每月現金流配卡", "日常消費配卡", "海外刷卡試算"]],
+        ["我的卡片", ["持有卡與回饋缺口", "年費與回饋上限", "申辦前注意事項"]]
+      ],
+      life: [
+        ["每月生活", ["自動記帳", "訂閱月費", "支出與目標進度"]],
+        ["旅遊", ["旅遊預算", "機票與飯店比價", "旅遊保險"]],
+        ["保障", ["一般保險", "AI 理賠判斷", "保單整理"]]
+      ]
+    };
+
+    function getFinance() {
+      const p = state.profile || {
+        currentBalance: 6800, income: 30000, fixed: 24000, target: 12000, months: 6,
+        quality: { time: 1, food: 1, comfort: 1, fun: 1 }
+      };
+      const monthlySave = Math.ceil(p.target / Math.max(1, p.months));
+      const flexible = Math.max(0, p.income - p.fixed - monthlySave);
+      const spent = state.transactions.reduce((sum, item) => sum + item.amount, 0);
+      const safe = Math.max(0, Math.min(p.currentBalance - monthlySave, flexible) - Math.max(0, spent - 558));
+      return { ...p, monthlySave, flexible, spent, safe, reserve: p.fixed + monthlySave };
+    }
+
+    function futureMonth(months) {
+      const d = new Date();
+      d.setMonth(d.getMonth() + Number(months || 0));
+      return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`;
+    }
+
+    function updateOnboardingPreview() {
+      const income = safeNumber("#monthlyIncome");
+      const fixed = safeNumber("#fixedExpense");
+      const target = safeNumber("#savingTarget");
+      const months = Math.max(1, safeNumber("#savingMonths", 1));
+      const save = Math.ceil(target / months);
+      $("#previewSave").textContent = money(save);
+      $("#previewFlexible").textContent = money(Math.max(0, income - fixed - save));
+      $("#previewDate").textContent = futureMonth(months);
+      const ranges = ["qTime", "qFood", "qComfort", "qFun"];
+      ranges.forEach((id) => $("#" + id + "Out").value = $("#" + id).value);
+      $("#qualityTotal").textContent = ranges.reduce((sum, id) => sum + Number($("#" + id).value), 0);
+      $("#completeSetup").disabled = !income || fixed >= income || !target || !months;
+    }
+
+    function saveProfileAndEnter() {
+      state.profile = {
+        mode: state.mode,
+        currentBalance: safeNumber("#currentBalance"),
+        income: safeNumber("#monthlyIncome"),
+        fixed: safeNumber("#fixedExpense"),
+        target: safeNumber("#savingTarget"),
+        months: Math.max(1, safeNumber("#savingMonths", 1)),
+        quality: {
+          time: Number($("#qTime").value), food: Number($("#qFood").value),
+          comfort: Number($("#qComfort").value), fun: Number($("#qFun").value)
+        }
+      };
+      localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      $("#onboarding").hidden = true;
+      $("#mainApp").hidden = false;
+      renderView("home");
+    }
+
+    function resetProfile() {
+      localStorage.removeItem("kaso-html-profile");
+      state.profile = null;
+      $("#mainApp").hidden = true;
+      $("#onboarding").hidden = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function syncHeader() {
+      const f = getFinance();
+      $("#headReserve").textContent = money(f.reserve);
+      $("#headSafe").textContent = money(f.safe);
+      $$(".nav-btn").forEach((btn) => {
+        const group = btn.dataset.view;
+        btn.classList.toggle("active", group === state.view || (group === "ledger" && ["travel", "insurance", "subscriptions"].includes(state.view)));
+      });
+      $("#assistantContext").textContent = `${viewLabel(state.view)} · 延續目前問題 · HTML 互動稿`;
+    }
+
+    function viewLabel(view) {
+      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", cards: "辦卡推薦", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
+    }
+
+    function renderView(view) {
+      state.view = view;
+      hideMega();
+      syncHeader();
+      const root = $("#viewRoot");
+      const renderer = ({
+        home: renderHome, search: renderSearch, nearby: renderNearby, cards: renderCards,
+        ledger: renderLedger, travel: renderTravel, insurance: renderInsurance,
+        subscriptions: renderSubscriptions, overseas: renderOverseas
+      })[view] || renderHome;
+      root.innerHTML = renderer();
+      bindViewEvents();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderHome() {
+      const f = getFinance();
+      const total = Math.max(f.reserve + f.spent + f.safe, 1);
+      const reserveStop = (f.fixed / total) * 100;
+      const saveStop = reserveStop + (f.monthlySave / total) * 100;
+      const spentStop = Math.min(100, saveStop + (f.spent / total) * 100);
+      const bg = `conic-gradient(#111827 0 ${reserveStop}%, #6d4aff ${reserveStop}% ${saveStop}%, #0878df ${saveStop}% ${spentStop}%, #b8ff3d ${spentStop}% 100%)`;
+      const status = f.safe > 3000 ? ["今天有一點彈性", "可以安排小額享受，但先確認不會動到存款。"] : ["今天需要注意", "先以必要支出和低價選項為主，避免月底壓力。"];
+      const carryover = Math.min(240, f.safe);
+      const displayBalance = f.currentBalance + (state.settlementDone ? carryover : 0);
+      const needsDelay = f.safe <= 0 || f.currentBalance < f.monthlySave;
+      return `
+        <section class="view money-overview dashboard-stage">
+          <div class="balance-stage-head">
+            <div><p class="eyebrow">${icon("wallet")} 月光族首頁</p><h1>${status[0]}</h1></div>
+            <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><button type="button" data-view="nearby">${icon("pin")} 找附近優惠</button></div>
+          </div>
+          <div class="balance-stage-grid">
+            <nav class="spend-rail" aria-label="花費分類明細">
+              <small>按下分類放大檢視</small>
+              ${budgetPill("fixed", "固定支出", money(f.fixed))}
+              ${budgetPill("saving", "存款目標", money(f.monthlySave))}
+              ${budgetPill("spent", "本月已花", money(f.spent))}
+              ${budgetPill("safe", "安心可花", money(f.safe))}
+            </nav>
+            <section id="spendDetail" class="spend-detail" style="--detail-glow:${budgetDetailData(f, state.budgetDetail).glow}" aria-live="polite">
+              <div id="spendDetailContent" class="spend-detail-content">${budgetDetailMarkup(f, state.budgetDetail)}</div>
+            </section>
+            <aside id="balanceDonut" class="donut-side">
+              <small>目前餘額</small>
+              <div class="donut large" style="background:${bg}"><span><small>目前餘額</small><strong>${money(displayBalance)}</strong></span></div>
+              <div class="legend"><span><i style="background:#111827"></i>固定</span><span><i style="background:#6d4aff"></i>存款</span><span><i style="background:#0878df"></i>已花</span><span><i style="background:#b8ff3d"></i>可花</span></div>
+              <span class="status-pill">${f.safe > 3000 ? "可以稍微放鬆" : "支出要收斂"}</span>
+            </aside>
+          </div>
+          <div id="settlementTray" class="settlement-tray${state.settlementDone ? " is-done" : ""}">
+            <div class="settlement-guide"><small>每日結算</small><strong>把今天沒用完的預算移回目前餘額</strong><span>按下後，金額卡片會往上移入圓餅圖。</span></div>
+            <div class="settlement-pocket goal-pocket"><span><small>本月已保留 · 存款目標 ${money(f.target)}</small><strong id="goalSavedAmount">${money(f.monthlySave)}</strong></span><span class="status-pill">預計 ${futureMonth(f.months)}</span></div>
+            <div id="dailyPocket" class="settlement-pocket daily-pocket"><span><small>今日未用預算</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已移回餘額" : "今日結算"}</button></div>
+          </div>
+          ${needsDelay ? `<div class="zero-balance-card"><p><strong>目前可花餘額不足，建議延後完成期限</strong><small>延長一個月能降低每月存款壓力，避免再用信用額度補生活費。</small></p><button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button></div>` : ""}
+        </section>
+        <section class="view service-panel">
+          <div class="section-head"><div><h2>所有功能</h2><p>四個入口，一次看懂。</p></div><span>4 個分類</span></div>
+          <div class="service-grid">
+            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["餐飲", "search"], ["日常採買", "search"]], "商品、餐飲、日常", true)}
+            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
+            ${serviceCard("card", "cards", "現金流＋習慣", "辦卡推薦", "客製答案直接帶入。", [["快速問答", "cards"], ["海外刷卡", "overseas"]], "3 張配對卡")}
+            ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
+          </div>
+        </section>
+        <section class="view qa-section" aria-labelledby="qaTitle">
+          <div class="qa-title"><p class="eyebrow">${icon("grid")} KASO 使用說明</p><h2 id="qaTitle">有問？有答。</h2></div>
+          <div class="qa-list">
+            <details open><summary>怎麼知道今天還能花多少？</summary><div class="qa-answer"><p>系統會先保留固定支出與存款，再從目前餘額扣除已記帳金額，計算安心可花。</p><a href="#ledger" data-view="ledger">查看自動記帳</a></div></details>
+            <details><summary>餘額不夠時怎麼處理？</summary><div class="qa-answer"><p>當可花餘額歸零或不足，會先建議延後目標期限，讓每月需要保留的金額下降。</p><a href="#ledger" data-view="ledger">查看支出與調整方案</a></div></details>
+            <details><summary>商品比價如何確認是同一項商品？</summary><div class="qa-answer"><p>比價前會核對完整型號、容量、版本與商品狀況，資料不足時先追問。</p><a href="#search" data-view="search">前往商品比價</a></div></details>
+            <details><summary>旅遊預算會包含保險嗎？</summary><div class="qa-answer"><p>旅遊頁會同時保留住宿、餐飲、交通、景點與保險入口，方便在同一個預算上限內安排。</p><a href="#insurance" data-view="insurance">查看保險保障</a></div></details>
+          </div>
+        </section>`;
+    }
+
+    function budgetPill(id, label, value) {
+      return `<button class="spend-pill${state.budgetDetail === id ? " active" : ""}" type="button" data-budget-detail="${id}"><span class="plus">+</span><span><strong>${label}</strong><small>${value}</small></span></button>`;
+    }
+
+    function budgetDetailData(f, id) {
+      const settledSaving = f.monthlySave;
+      const details = {
+        fixed: { kicker: "每月必要保留", amount: f.fixed, title: "固定支出", copy: "房租、帳單與必要支出先保留，不會出現在可花預算裡。", glow: "rgba(0,113,227,.30)", lines: [["固定帳單", 72, f.fixed * .72], ["交通通訊", 18, f.fixed * .18], ["其他必要", 10, f.fixed * .1]] },
+        saving: { kicker: "存款目標進度", amount: settledSaving, title: "本月先存", copy: `目前目標是 ${money(f.target)}，預計 ${futureMonth(f.months)} 完成。`, glow: "rgba(109,74,255,.42)", lines: [["固定存入", 100, f.monthlySave]] },
+        spent: { kicker: "交易自動分類", amount: f.spent, title: "本月已記帳", copy: "點開交易紀錄，可查看餐飲、日常與其他分類的每一筆明細。", glow: "rgba(8,120,223,.42)", lines: [["日常採買", 77, 428], ["餐飲咖啡", 23, 130]] },
+        safe: { kicker: "扣除保留後", amount: f.safe, title: "安心可花", copy: "這才是目前能使用的金額；商品與附近優惠都會以它為上限。", glow: "rgba(184,255,61,.28)", lines: [["今日可用", 64, f.safe], ["今日未用", 24, Math.min(240, f.safe)], ["彈性緩衝", 12, Math.max(0, f.safe - Math.min(240, f.safe))]] }
+      };
+      return details[id] || details.safe;
+    }
+
+    function budgetDetailMarkup(f, id) {
+      const detail = budgetDetailData(f, id);
+      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${Math.max(3, width)}%;--line-color:${id === "saving" ? "#a98bff" : id === "safe" ? "#b8ff3d" : "#70b7ff"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
+    }
+
+    function serviceCard(iconId, view, kicker, title, detail, children, metric, primary = false) {
+      return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3><p>${detail}</p></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div><small class="metric">${metric}</small></article>`;
+    }
+
+    function renderSearch() {
+      const f = getFinance();
+      return `<section class="view">
+        ${pageTitle("商品比價", "先確認完整型號，再比較同一個商品；未指定商品時，AI 會先追問。")}
+        <div class="chip-row">${["商品", "餐飲", "日常", "3C 家電"].map((c) => `<button class="chip${state.searchCategory === c ? " active" : ""}" type="button" data-category="${c}">${c}</button>`).join("")}</div>
+        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><select aria-label="排序"><option>價格由低到高</option><option>同品項信心</option><option>平台評價</option></select><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
+        <div class="summary-strip"><div><small>搜尋來源</small><strong>8 個平台</strong></div><div><small>找到候選</small><strong>48 筆</strong></div><div><small>確認同品項</small><strong>6 筆</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
+        <div class="result-grid">${productResults.map((p) => `<article class="product-card"><div class="product-image">${icon("phone")}</div><div class="product-body"><div class="product-meta"><span class="platform">${p.platform}</span><span class="match">${p.match}</span></div><h3>${escapeHtml(state.searchQuery || p.title)}</h3><div class="product-price">${money(p.price)}</div><p class="after-buy${p.price > f.safe ? " insufficient" : ""}">${p.price > f.safe ? `目前不足 ${money(p.price - f.safe)}，建議延後購買或完成期限` : `買下後安心可花還剩 <strong>${money(f.safe - p.price)}</strong>`}</p><div class="product-actions"><button type="button" data-ask-product="${escapeAttr(p.title)}｜${p.platform}｜${p.price}">問 AI</button><a href="${p.link}" target="_blank" rel="noreferrer">查看來源</a></div></div></article>`).join("")}</div>
+        <p class="onboarding-note">商品、價格及連結為 HTML 介面展示；正式站的即時搜尋仍需由後端來源供應。</p>
+      </section>`;
+    }
+
+    function renderNearby() {
+      const f = getFinance();
+      return `<section class="view">
+        ${pageTitle("附近優惠", `帳戶有 ${money(f.currentBalance)}，今天只放心花 ${money(f.safe)}。`)}
+        <div class="summary-strip"><div><small>目前位置</small><strong>台北車站</strong></div><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>符合預算</small><strong>${nearbyOffers.length} 個</strong></div></div>
+        <div class="merchant-list">${nearbyOffers.map((o) => `<article class="merchant-card"><span class="merchant-icon">${icon(o.icon)}</span><div><span class="platform">${o.type} · ${o.distance}</span><h3>${o.name}</h3><p>${o.address}</p><p>${o.note}</p></div><div class="merchant-result"><small>預估最低支出</small><strong>${o.price ? money(o.price) : "免費"}</strong><small>花完還剩 ${money(f.safe - o.price)}</small><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${o.lat},${o.lon}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div></article>`).join("")}</div>
+      </section>`;
+    }
+
+    function renderCards() {
+      const f = getFinance();
+      const topQuality = Object.entries(f.quality).sort((a, b) => b[1] - a[1])[0][0];
+      const labels = { time: "節省時間", food: "飲食品質", comfort: "舒適便利", fun: "娛樂體驗" };
+      return `<section class="view">
+        ${pageTitle("辦卡推薦", "第一步客製化答案已直接帶入；需要時再用快速問答微調。")}
+        <div class="two-col"><aside class="feature-card"><p class="eyebrow">${icon("bot")} 已帶入客製化</p><h2>用現金流，而不是信用額度選卡</h2><p>每月收入、固定支出、存款目標與生活品質比重會一起影響配對。</p><div class="profile-rule">每月先存 ${money(f.monthlySave)} · 安心可花 ${money(f.safe)} · ${labels[topQuality]}優先</div><div class="allocation-bars"><div class="allocation-line"><span>現金流安全</span><div class="bar"><i style="width:95%"></i></div><strong>95%</strong></div><div class="allocation-line"><span>日常回饋</span><div class="bar"><i style="width:88%"></i></div><strong>88%</strong></div><div class="allocation-line"><span>規則簡單</span><div class="bar"><i style="width:90%"></i></div><strong>90%</strong></div></div><button id="cardQuestions" class="secondary-btn" type="button" style="margin-top:18px">用 6 題再微調</button></aside>
+        <div class="result-panel"><p class="eyebrow">${icon("card")} 初始配對完成</p><h2>最符合目前設定</h2><div class="card-winner" style="border-color:${cardMatches[0].color}"><small>第一推薦 · ${cardMatches[0].score}%</small><h3>${cardMatches[0].name}</h3><p>${cardMatches[0].reason}</p></div><div class="rank-list">${cardMatches.map((c, i) => `<div class="rank"><span>${i + 1}</span><strong>${c.name}</strong><b>${c.score}%</b></div>`).join("")}</div><div class="warning">這是生活習慣配對，不是核卡保證。申辦前仍要確認年費、回饋上限與銀行最新條款。</div></div></div>
+      </section>`;
+    }
+
+    function renderLedger() {
+      const f = getFinance();
+      const recovery = state.recovery ? `<div class="recovery"><h3>${state.recovery === "extend" ? "目標日期已延後" : "7 天低價優先已啟用"}</h3><p>${state.recovery === "extend" ? "系統會把本次超支平均攤回新的期限。" : "商品比價與附近優惠會先顯示低實付選項。"}</p></div>` : "";
+      return `<section class="view">
+        ${pageTitle("自動記帳", "交易通知進來後，自動分類並更新今天還能花多少。")}
+        <div class="summary-strip"><div><small>目前餘額</small><strong>${money(f.currentBalance)}</strong></div><div><small>本月已記帳</small><strong>${money(f.spent)}</strong></div><div><small>每月先存</small><strong>${money(f.monthlySave)}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
+        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("bell")} 新增一筆</p><h2>手動輸入或模擬通知</h2><form id="ledgerForm" class="ledger-form"><input id="ledgerMerchant" placeholder="店家名稱" required><input id="ledgerAmount" type="number" min="1" placeholder="金額" required><select id="ledgerCategory"><option>餐飲</option><option>日常</option><option>交通</option><option>娛樂</option></select><button class="primary-btn" type="submit">新增</button></form><button id="simulateMeal" class="secondary-btn" type="button" style="margin-top:10px">模擬朋友臨時約吃飯 NT$1,200</button>${recovery}<div id="recoveryBox" class="recovery" hidden><h3>今天超過預算，要怎麼補回？</h3><p>由你選擇調整方式，系統不會偷偷挪動其他預算。</p><div class="recovery-actions"><button class="secondary-btn" type="button" data-recovery="extend">延長存錢期限</button><button class="primary-btn" type="button" data-recovery="low">之後優先推薦低價</button></div></div></section>
+        <section class="result-panel"><div class="section-head"><div><h2>交易紀錄</h2><p>最新交易會排在最上方。</p></div><span>${state.transactions.length} 筆</span></div><div class="transaction-list">${state.transactions.map((t) => `<div class="transaction"><span>${icon(t.category === "餐飲" ? "food" : "cart")}</span><p><strong>${escapeHtml(t.merchant)}</strong><small>${t.category} · ${t.time}</small></p><strong>−${money(t.amount)}</strong></div>`).join("")}</div></section></div>
+      </section>`;
+    }
+
+    function renderTravel() {
+      const priority = state.travelPriority;
+      const presets = { balanced: [28, 24, 22, 26], stay: [42, 20, 18, 20], food: [26, 38, 18, 18], sights: [22, 21, 20, 37] };
+      const values = presets[priority];
+      const budget = 35000;
+      const labels = ["住宿", "餐飲", "交通", "景點"];
+      return `<section class="view">
+        ${pageTitle("旅遊規劃", "在預算上限內，依你想住得更好、吃得更好或玩更多景點，自動重配下方比重。")}
+        <div class="tab-row">${[["balanced","平均分配"],["stay","住得更好"],["food","吃得更好"],["sights","玩更多景點"]].map(([v,l]) => `<button type="button" data-priority="${v}" class="${priority === v ? "active" : ""}">${l}</button>`).join("")}</div>
+        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("plane")} 日本 · 5 天</p><h2>整趟預算上限 ${money(budget)}</h2><p>選擇上方偏好後，下方預算線條會自動跟著改。</p><div class="allocation-bars">${labels.map((l,i) => `<div class="allocation-line"><span>${l}</span><div class="bar"><i style="width:${values[i]}%"></i></div><strong>${money(budget * values[i] / 100)}</strong></div>`).join("")}</div></section><section class="result-panel"><p class="eyebrow">${icon("shield")} 出發前提醒</p><h2>把旅遊保險一起算進去</h2><p>目前規劃 5 天日本自由行，建議先確認海外醫療、班機延誤與行李損失保障。</p><button class="primary-btn" type="button" data-view="insurance">查看旅遊保險建議 →</button><div class="card-winner"><small>存錢進度</small><h3>每月存 ${money(getFinance().monthlySave)}</h3><p>依目前設定，預計在 ${futureMonth(getFinance().months)} 完成目標。</p></div></section></div>
+      </section>`;
+    }
+
+    function renderInsurance() {
+      const tab = state.insuranceTab;
+      const policies = tab === "general" ? [
+        ["醫療保障", "住院、手術與意外醫療", "先確認實支實付額度與除外責任"],
+        ["意外保障", "意外身故、失能與醫療", "檢查職業類別與理賠文件"]
+      ] : [
+        ["旅遊平安險", "海外突發疾病＋意外", "依目的地與天數調整額度"],
+        ["旅遊不便險", "班機延誤＋行李損失", "注意延誤門檻與定額／實支方式"],
+        ["海外醫療", "急診、住院與緊急救援", "高醫療費地區應提高額度"]
+      ];
+      return `<section class="view">
+        ${pageTitle("保險保障", "整理已有保障、規劃旅遊保險，發生狀況時再用 AI 找可能申請的項目。")}
+        <div class="tab-row"><button type="button" data-insurance="travel" class="${tab === "travel" ? "active" : ""}">旅遊保險</button><button type="button" data-insurance="general" class="${tab === "general" ? "active" : ""}">一般保險</button><button type="button" data-insurance="claim" class="${tab === "claim" ? "active" : ""}">AI 理賠判斷</button></div>
+        ${tab === "claim" ? `<section class="feature-card claim-box"><h2>描述現在發生的狀況</h2><p>例如：班機延誤 8 小時、行李隔天才送達，或住院三天。</p><textarea id="claimText" placeholder="請描述事件、日期、損失與手上已有的單據…"></textarea><button id="claimCheck" class="primary-btn" type="button">找可能申請的理賠項目</button><div id="claimResult" class="claim-result" hidden><h3>可能可申請：班機延誤定額、必要住宿／餐食費用</h3><p>請先保留登機證、航空公司延誤證明與費用單據；實際是否理賠仍依你的保單條款與保險公司審核。</p></div></section>` : `<div class="policy-grid">${policies.map((p) => `<article class="policy"><small>${tab === "travel" ? "旅行保障" : "一般保障"}</small><h3>${p[0]}</h3><p>${p[1]}</p><ul><li>${p[2]}</li><li>正式投保前確認條款與額度</li></ul></article>`).join("")}</div>`}
+      </section>`;
+    }
+
+    function renderSubscriptions() {
+      return `<section class="view">${pageTitle("訂閱比較", "依使用人數與資格比較月費，不再只看表面價格。")}<div class="subscription-grid">${[["Apple Music","學生方案","NT$90／月"],["Spotify","學生方案","NT$79／月"],["YouTube Premium","個人方案","NT$199／月"]].map((p) => `<article class="subscription"><small>${p[1]}</small><h3>${p[0]}</h3><p>${p[2]}</p><button class="secondary-btn" type="button" data-ask-product="${p[0]} 訂閱比較">問 AI 比較</button></article>`).join("")}</div></section>`;
+    }
+
+    function renderOverseas() {
+      return `<section class="view">${pageTitle("海外刷卡試算", "換算匯率、海外手續費與持有卡回饋後的最終成本。")}
+        <div class="two-col"><section class="feature-card"><h2>輸入消費金額</h2><div class="ledger-form" style="grid-template-columns:1fr 1fr"><select id="currency"><option value="0.218">日圓 JPY</option><option value="32.4">美元 USD</option><option value="0.024">韓元 KRW</option></select><input id="foreignAmount" type="number" value="10000" min="1"></div><button id="calculateForeign" class="primary-btn" type="button" style="margin-top:12px">重新試算</button></section><section class="result-panel"><p class="eyebrow">${icon("card")} 成本最低</p><h2>台新 Richart 卡</h2><div class="summary-strip" style="grid-template-columns:repeat(3,1fr)"><div><small>換算台幣</small><strong id="foreignTwd">NT$2,180</strong></div><div><small>海外手續費</small><strong id="foreignFee">NT$33</strong></div><div><small>扣除回饋後</small><strong id="foreignFinal">NT$2,141</strong></div></div></section></div></section>`;
+    }
+
+    function pageTitle(title, detail) {
+      return `<div class="page-title"><div><p class="eyebrow">${icon("grid")} ${viewLabel(state.view)}</p><h1>${title}</h1><p>${detail}</p></div><span class="demo-pill">HTML 互動稿</span></div>`;
+    }
+
+    function bindViewEvents() {
+      $$('[data-view]', $("#viewRoot")).forEach((el) => el.addEventListener("click", (event) => { event.preventDefault(); renderView(el.dataset.view); }));
+      $$('[data-ask-product]', $("#viewRoot")).forEach((el) => el.addEventListener("click", () => askProduct(el.dataset.askProduct)));
+      $$('[data-budget-detail]', $("#viewRoot")).forEach((el) => el.addEventListener("click", () => updateBudgetDetail(el.dataset.budgetDetail)));
+      $$('[data-category]').forEach((el) => el.addEventListener("click", () => { state.searchCategory = el.dataset.category; renderView("search"); }));
+      const searchForm = $("#searchForm");
+      if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); state.searchQuery = $("#searchInput").value.trim(); if (!state.searchQuery) { openAssistant("我想比價"); return; } renderView("search"); showToast("已用完整品名重新整理結果"); });
+      const ledgerForm = $("#ledgerForm");
+      if (ledgerForm) ledgerForm.addEventListener("submit", (event) => { event.preventDefault(); const merchant = $("#ledgerMerchant").value.trim(); const amount = Number($("#ledgerAmount").value); if (!merchant || !amount) return; state.transactions.unshift({ merchant, amount, category: $("#ledgerCategory").value, time: "剛剛" }); renderView("ledger"); showToast("已新增交易並更新可花餘額"); });
+      const simulate = $("#simulateMeal");
+      if (simulate) simulate.addEventListener("click", () => { state.transactions.unshift({ merchant: "朋友臨時聚餐", amount: 1200, category: "餐飲", time: "剛剛" }); $("#recoveryBox").hidden = false; showToast("已收到交易通知：NT$1,200"); });
+      $$('[data-recovery]').forEach((el) => el.addEventListener("click", () => { state.recovery = el.dataset.recovery === "extend" ? "extend" : "low"; renderView("ledger"); showToast(state.recovery === "extend" ? "已延長目標期限" : "已啟用 7 天低價優先"); }));
+      $$('[data-priority]').forEach((el) => el.addEventListener("click", () => { state.travelPriority = el.dataset.priority; renderView("travel"); }));
+      $$('[data-insurance]').forEach((el) => el.addEventListener("click", () => { state.insuranceTab = el.dataset.insurance; renderView("insurance"); }));
+      const claimCheck = $("#claimCheck");
+      if (claimCheck) claimCheck.addEventListener("click", () => { if (!$("#claimText").value.trim()) { showToast("請先描述發生的狀況"); return; } $("#claimResult").hidden = false; });
+      const cardQuestions = $("#cardQuestions");
+      if (cardQuestions) cardQuestions.addEventListener("click", () => openAssistant("我想再回答問題微調信用卡推薦"));
+      const calculateForeign = $("#calculateForeign");
+      if (calculateForeign) calculateForeign.addEventListener("click", calculateForeignCost);
+      const settleDaily = $("#settleDaily");
+      if (settleDaily) settleDaily.addEventListener("click", settleDailyBudget);
+      const delayGoal = $("#delayGoal");
+      if (delayGoal) delayGoal.addEventListener("click", () => {
+        state.profile.months += 1;
+        localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+        renderView("home");
+        showToast("已將完成期限延後 1 個月");
+      });
+    }
+
+    function updateBudgetDetail(id) {
+      state.budgetDetail = id;
+      const f = getFinance();
+      const detail = budgetDetailData(f, id);
+      $$('[data-budget-detail]').forEach((button) => button.classList.toggle("active", button.dataset.budgetDetail === id));
+      const panel = $("#spendDetail");
+      const content = $("#spendDetailContent");
+      if (!panel || !content) return;
+      panel.style.setProperty("--detail-glow", detail.glow);
+      content.innerHTML = budgetDetailMarkup(f, id);
+      content.classList.remove("is-changing");
+      requestAnimationFrame(() => content.classList.add("is-changing"));
+    }
+
+    function settleDailyBudget() {
+      const tray = $("#settlementTray");
+      const button = $("#settleDaily");
+      const source = $("#dailyPocket");
+      const target = $("#balanceDonut");
+      if (!tray || !button || !source || !target || state.settlementDone) return;
+      button.disabled = true;
+      tray.classList.add("is-moving");
+      target.classList.add("is-receiving");
+      const sourceRect = source.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const flyingCard = document.createElement("div");
+      flyingCard.className = "settlement-fly-card";
+      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(Math.min(240, getFinance().safe))}</strong>`;
+      Object.assign(flyingCard.style, { left: sourceRect.left + "px", top: sourceRect.top + "px", width: sourceRect.width + "px", height: sourceRect.height + "px" });
+      document.body.appendChild(flyingCard);
+      const dx = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
+      const dy = targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
+      if (typeof flyingCard.animate === "function") {
+        flyingCard.animate([
+          { transform: "translate(0,0) scale(1)", opacity: 1 },
+          { transform: `translate(${dx * .22}px,${Math.min(-110, dy * .45)}px) scale(.96)`, opacity: 1, offset: .45 },
+          { transform: `translate(${dx}px,${dy}px) scale(.16)`, opacity: .12 }
+        ], { duration: 1180, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+      }
+      window.setTimeout(() => {
+        flyingCard.remove();
+        state.settlementDone = true;
+        renderView("home");
+        showToast("今日未用預算已移回目前餘額");
+      }, 1220);
+    }
+
+    function calculateForeignCost() {
+      const twd = Number($("#currency").value) * Number($("#foreignAmount").value || 0);
+      const fee = twd * .015;
+      const final = twd + fee - twd * .033;
+      $("#foreignTwd").textContent = money(twd);
+      $("#foreignFee").textContent = money(fee);
+      $("#foreignFinal").textContent = money(final);
+    }
+
+    function showMega(key) {
+      const menu = $("#megaMenu");
+      menu.innerHTML = `<div class="shell mega-grid">${megaContent[key].map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
+      menu.hidden = false;
+      $$('[data-mega-action]', menu).forEach((btn) => btn.addEventListener("click", () => handleMegaAction(btn.dataset.megaAction)));
+    }
+
+    function handleMegaAction(label) {
+      if (/機票|飯店|旅遊預算/.test(label)) return renderView("travel");
+      if (/保險|保障|理賠|保單/.test(label)) return renderView("insurance");
+      if (/訂閱|音樂|影音/.test(label)) return renderView("subscriptions");
+      if (/海外/.test(label)) return renderView("overseas");
+      if (/卡|年費|回饋/.test(label)) return renderView("cards");
+      if (/記帳|支出|目標/.test(label)) return renderView("ledger");
+      if (/附近|文化幣|免費活動|公尺|店家/.test(label)) return renderView("nearby");
+      renderView("search");
+    }
+
+    function hideMega() { $("#megaMenu").hidden = true; }
+
+    function askProduct(detail) {
+      openAssistant();
+      const parts = detail.split("｜");
+      state.assistantTopic = "product";
+      addMessage("user", `請幫我看這個商品：${parts[0]}`);
+      const price = Number(parts[2] || 0);
+      const f = getFinance();
+      addMessage("ai", `${parts[1] ? `這筆是 ${parts[1]} 的` : "這個"} ${parts[0]}，價格 ${price ? money(price) : "尚未提供"}。${price > f.safe ? `它比你目前安心可花的 ${money(f.safe)} 高，建議先加入目標，不要直接刷卡。` : `買下後約剩 ${money(f.safe - price)} 可花。`}\n你也可以貼商品連結，我會沿用這個商品繼續問。`);
+    }
+
+    function openAssistant(prefill) {
+      $("#assistantPanel").hidden = false;
+      $("#assistantFab").hidden = true;
+      renderMessages();
+      if (prefill) { $("#assistantInput").value = prefill; $("#assistantInput").focus(); }
+    }
+
+    function addMessage(role, text) {
+      state.messages.push({ role, text });
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const log = $("#chatLog");
+      log.innerHTML = state.messages.map((m) => `<div class="bubble ${m.role}">${escapeHtml(m.text)}</div>`).join("");
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function assistantReply(text) {
+      const q = text.toLowerCase();
+      const f = getFinance();
+      if (/spotify|apple music|訂閱|學生/.test(q) || (state.assistantTopic === "subscription" && /個人|家庭|一個人|兩個人/.test(q))) {
+        state.assistantTopic = "subscription";
+        if (/學生/.test(q)) return "你有學生資格的話，目前示範資料中 Spotify 學生方案月費較低；不過要一起看裝置、音質與常用歌單。你是自己使用，還是多人共用？";
+        if (/個人|一個人/.test(q)) return "延續剛才的訂閱比較：以個人使用來看，我會先比較學生／個人月費，再看你是否在意 Apple 裝置整合。你有學生資格嗎？";
+        return "你想比較哪兩個訂閱？也請告訴我幾個人使用、是否有學生資格，我會接著比較，不會把回答當成商品。";
+      }
+      if (/還能花|剩多少|預算|餘額/.test(q)) { state.assistantTopic = "budget"; return `目前餘額 ${money(f.currentBalance)}，已先保留固定支出與每月存款；今天安心可花約 ${money(f.safe)}。` }
+      if (/保險|延誤|行李|住院|理賠/.test(q)) { state.assistantTopic = "insurance"; return "我可以先找『可能申請』的項目。請補上事件日期、發生狀況、損失金額，以及你是否保留證明或單據；最終仍依保單條款與保險公司審核。"; }
+      if (/卡|回饋|信用卡/.test(q)) { state.assistantTopic = "card"; return `依你第一步的現金流與生活比重，目前先推薦 ${cardMatches[0].name}。重點是規則簡單，且不會用信用額度放大你的 ${money(f.safe)} 可花預算。`; }
+      if (/商品|買|比價|多少錢|連結|http/.test(q) || state.assistantTopic === "product") {
+        state.assistantTopic = "product";
+        const hasSpecific = /airpods|iphone|switch|macbook|http|https|型號|gb/i.test(q);
+        return hasSpecific ? `我會以你指定的商品繼續比較。請確認容量、顏色、新品／二手與公司貨版本；目前安心可花是 ${money(f.safe)}。` : "你想找哪一個商品？請貼商品名稱、完整型號或連結；資料不足時我會先追問，不會自己猜一個商品。";
+      }
+      if (/附近|餐廳|咖啡|超市/.test(q)) { state.assistantTopic = "nearby"; return `目前以台北車站 1,000 公尺為示範位置，共有 ${nearbyOffers.length} 個預算內選項；要我優先找餐飲、日常採買，還是免費活動？`; }
+      if (/旅遊|機票|飯店|日本/.test(q)) { state.assistantTopic = "travel"; return "可以。我會把住宿、餐飲、交通和景點放在同一個上限內。你想住得更好、吃得更好，還是玩更多景點？"; }
+      return state.assistantTopic ? "我會延續上一個主要問題。可以再補充你剛才回答的是哪個條件，或直接貼相關連結，我就接著整理。" : "我還不知道你要處理的是商品、預算、信用卡、旅遊或保險。請多給我一個關鍵資訊，我會先確認再回答。";
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+    }
+    function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
+
+    $$(".mode-card").forEach((card) => card.addEventListener("click", () => {
+      state.mode = card.dataset.mode;
+      $$(".mode-card").forEach((item) => { item.classList.toggle("selected", item === card); $(".mode-check", item).textContent = item === card ? "✓" : "→"; });
+      if (state.mode !== "moonlight") showToast("HTML 第一版仍以月光族主流程示範，其他模式保留入口");
+    }));
+    $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
+    $("#completeSetup").addEventListener("click", saveProfileAndEnter);
+    $("#resetProfile").addEventListener("click", resetProfile);
+    $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
+    $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
+    $("#siteHeader").addEventListener("mouseleave", hideMega);
+    $("#locateHeader").addEventListener("click", () => { showToast("已使用台北車站示範位置"); renderView("nearby"); });
+    $("#assistantFab").addEventListener("click", () => openAssistant());
+    $("#assistantClose").addEventListener("click", () => { $("#assistantPanel").hidden = true; $("#assistantFab").hidden = false; });
+    $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; addMessage("user", text); setTimeout(() => addMessage("ai", assistantReply(text)), 260); });
+    $("#feedbackOpen").addEventListener("click", () => $("#feedbackDialog").showModal());
+    $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
+
+    const saved = localStorage.getItem("kaso-html-profile");
+    if (saved) {
+      try { state.profile = JSON.parse(saved); $("#onboarding").hidden = true; $("#mainApp").hidden = false; renderView("home"); } catch (_) { localStorage.removeItem("kaso-html-profile"); }
+    }
+    updateOnboardingPreview();
+    renderMessages();
+  </script>
+</body>
+</html>
