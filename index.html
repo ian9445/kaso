@@ -335,6 +335,15 @@
     .toolbar input, .toolbar select { min-height: 44px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 12px; background: #fff; }
     .toolbar input { flex: 1 1 300px; }
     .toolbar .primary-btn { min-height: 44px; }
+    .filter-toggle {
+      width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center;
+      border: 1.5px solid var(--ink); border-radius: 50%; background: #fff; cursor: pointer;
+    }
+    .filter-toggle:hover, .filter-toggle.active { background: var(--lime); }
+    .filter-dropdown { width: 100%; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 14px; border: 1.5px solid var(--ink); border-radius: 8px; background: #fff; padding: 16px; animation: filter-open .28s var(--apple-ease); }
+    .filter-dropdown label { display: grid; gap: 6px; color: var(--muted); font-size: .72rem; }
+    .filter-dropdown select { width: 100%; min-height: 42px; border: 1px solid #d6d2c8; border-radius: 4px; background: #fff; padding-inline: 10px; }
+    @keyframes filter-open { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
     .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
     .chip { min-height: 36px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0 12px; cursor: pointer; font-size: .75rem; font-weight: 750; }
     .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
@@ -370,6 +379,15 @@
     .merchant-result small { color: var(--muted); font-size: .7rem; }
     .directions { min-height: 42px; margin-top: 9px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 7px; background: var(--blue); color: #fff; font-size: .78rem; font-weight: 850; }
     .directions:hover { background: var(--blue-deep); }
+    .nearby-map { margin: 18px 0; border: 1.5px solid var(--ink); border-radius: 18px; overflow: hidden; background: #e8eef1; }
+    .nearby-map-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1.5px solid var(--ink); background: #fff; padding: 13px 16px; }
+    .nearby-map-head h2 { margin: 0; font-size: 1rem; }
+    .nearby-map-head small { color: var(--muted); }
+    .nearby-map-canvas { position: relative; min-height: 300px; overflow: hidden; background-color: #dfe7e5; background-image: linear-gradient(28deg,transparent 46%,rgba(255,255,255,.9) 47% 52%,transparent 53%), linear-gradient(105deg,transparent 42%,rgba(255,255,255,.72) 43% 48%,transparent 49%), linear-gradient(rgba(47,95,208,.12) 1px,transparent 1px), linear-gradient(90deg,rgba(47,95,208,.12) 1px,transparent 1px); background-size: 100% 100%,100% 100%,44px 44px,44px 44px; }
+    .nearby-map-canvas::after { content: "目前位置"; position: absolute; left: 50%; top: 50%; z-index: 1; width: 14px; height: 14px; border: 4px solid #fff; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 2px var(--blue); color: var(--ink); font-size: .64rem; text-indent: 18px; white-space: nowrap; }
+    .map-marker { position: absolute; z-index: 2; width: 34px; height: 34px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50% 50% 50% 8px; background: var(--ink); color: #fff; font-size: .72rem; font-weight: 800; box-shadow: 0 6px 14px rgba(11,11,11,.24); transform: translate(-50%,-50%) rotate(-45deg); }
+    .map-marker span { transform: rotate(45deg); }
+    .map-marker:hover { background: var(--blue); }
 
     .two-col { display: grid; grid-template-columns: .82fr 1.18fr; gap: 18px; align-items: start; }
     .feature-card, .result-panel { padding: 21px; }
@@ -656,6 +674,10 @@
     .mega-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 54px; padding-block: 38px 42px; }
     .mega-grid.single { grid-template-columns: minmax(0, 520px); }
     .mega-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mega-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+    .search-mega-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; padding-block: 30px 34px; }
+    .search-mega-grid button { display: grid; min-height: 88px; align-content: center; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; padding: 16px; text-align: left; font-weight: 600; cursor: pointer; }
+    .search-mega-grid button:hover { background: var(--lime); box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px,-2px); }
     .mega-col { gap: 0; }
     .mega-col small { margin-bottom: 10px; color: var(--muted); }
     .mega-col button {
@@ -912,14 +934,14 @@
     .spend-pill:not(.active) small { color: var(--muted); }
 
     .product-flip-card { margin-bottom: 18px; outline: none; perspective: 1200px; }
-    .product-flip-inner { display: grid; transform-style: preserve-3d; transition: transform .58s var(--apple-ease); }
+    .product-flip-inner { display: grid; transform-origin: center; transform-style: preserve-3d; transition: transform .58s var(--apple-ease); }
     .product-flip-face {
       grid-area: 1 / 1; min-height: 238px; backface-visibility: hidden;
       border: 1.5px solid var(--ink); border-radius: 8px; background: var(--panel); overflow: hidden;
     }
     .product-flip-front { display: grid; grid-template-columns: 170px minmax(0,1fr); }
-    .product-flip-back { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(240px,.8fr); gap: 24px; align-items: center; padding: 26px; background: var(--lime); transform: rotateY(180deg); pointer-events: none; }
-    .product-flip-card:hover .product-flip-inner, .product-flip-card:focus .product-flip-inner, .product-flip-card:focus-within .product-flip-inner { transform: rotateY(180deg); }
+    .product-flip-back { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(240px,.8fr); gap: 24px; align-items: center; padding: 26px; background: var(--lime); transform: rotateX(-180deg); pointer-events: none; }
+    .product-flip-card:hover .product-flip-inner, .product-flip-card:focus .product-flip-inner, .product-flip-card:focus-within .product-flip-inner { transform: rotateX(-180deg); }
     .product-flip-card:hover .product-flip-front, .product-flip-card:focus .product-flip-front, .product-flip-card:focus-within .product-flip-front { pointer-events: none; }
     .product-flip-card:hover .product-flip-back, .product-flip-card:focus .product-flip-back, .product-flip-card:focus-within .product-flip-back { pointer-events: auto; }
     .flip-prompt { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; border-bottom: 3px solid var(--lime); font-size: .75rem; }
@@ -958,6 +980,9 @@
       .product-flip-front { grid-template-columns: 1fr; }
       .product-flip-front .product-image { min-height: 120px; border-right: 0; border-bottom: 1.5px solid var(--ink); }
       .product-flip-back { grid-template-columns: 1fr; min-height: 390px; padding: 20px; }
+      .filter-dropdown { grid-template-columns: 1fr; }
+      .nearby-map-canvas { min-height: 250px; }
+      .search-mega-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .assistant-fab, .assistant-panel { bottom: 88px; }
       .feedback-btn { bottom: 92px; }
     }
@@ -980,6 +1005,7 @@
     <symbol id="i-plane" viewBox="0 0 24 24"><path d="m21 16-8-4V5.5a1.5 1.5 0 0 0-3 0V12l-8 4v2l8-2v4l-2 1v1l3.5-.5L15 22v-1l-2-1v-4l8 2z" fill="none" stroke="currentColor" stroke-linejoin="round"/></symbol>
     <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3v7M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3v18M16 3c3 1 4 4 4 7h-4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2 11h10l3-8H6M9 20h.01M17 20h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor"/><path d="M8 21h8M12 17v4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
@@ -1162,6 +1188,7 @@
       travelPriority: "balanced",
       budgetDetail: "safe",
       settlementDone: false,
+      filterOpen: false,
       assistantTopic: null,
       messages: [
         { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、哪張卡適合，或貼商品連結讓我一起比較。" }
@@ -1192,7 +1219,7 @@
 
     const megaContent = {
       search: [
-        ["商品比價", ["搜尋商品"]]
+        ["比價分類", ["一般商品", "附近推薦", "日常採買", "3C 家電"]]
       ],
       nearby: [
         ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
@@ -1319,7 +1346,7 @@
         <section class="view money-overview dashboard-stage">
           <div class="balance-stage-head">
             <div><p class="eyebrow">${icon("wallet")} 月光族首頁</p><h1>${status[0]}</h1></div>
-            <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><button type="button" data-view="nearby">${icon("pin")} 找附近優惠</button><div id="dailyPocket" class="daily-compact${state.settlementDone ? " is-done" : ""}"><span><small>今日未用</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已結算" : "結算"}</button></div></div>
+            <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><div id="dailyPocket" class="daily-compact${state.settlementDone ? " is-done" : ""}"><span><small>今日未用</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已結算" : "結算"}</button></div></div>
           </div>
           <div class="balance-stage-grid">
             <nav class="spend-rail" aria-label="花費分類明細">
@@ -1344,7 +1371,7 @@
         <section class="view service-panel">
           <div class="section-head"><div><h2>所有功能</h2></div></div>
           <div class="service-grid">
-            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["餐飲", "search"], ["日常採買", "search"]], "商品、餐飲、日常", true)}
+            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["日常採買", "search"], ["3C 家電", "search"]], "商品、日常、3C", true)}
             ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
             ${serviceCard("card", "cards", "現金流＋習慣", "辦卡推薦", "客製答案直接帶入。", [["快速問答", "cards"], ["海外刷卡", "overseas"]], "3 張配對卡")}
             ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
@@ -1399,8 +1426,8 @@
       const shopping = shoppingBudgetFor(f);
       return `<section class="view">
         ${pageTitle("商品比價", "先確認完整型號，再比較同一個商品；未指定商品時，AI 會先追問。")}
-        <div class="chip-row">${["商品", "餐飲", "日常", "3C 家電"].map((c) => `<button class="chip${state.searchCategory === c ? " active" : ""}" type="button" data-category="${c}">${c}</button>`).join("")}</div>
-        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><select aria-label="排序"><option>價格由低到高</option><option>同品項信心</option><option>平台評價</option></select><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
+        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><button id="filterToggle" class="filter-toggle${state.filterOpen ? " active" : ""}" type="button" aria-label="展開篩選條件" aria-expanded="${state.filterOpen}">${icon("filter")}</button><button class="primary-btn" type="submit">${icon("search")} 開始比價</button></form>
+        ${state.filterOpen ? `<div class="filter-dropdown" aria-label="商品篩選條件"><label>電商平台<select><option>全部平台</option><option>蝦皮</option><option>momo</option><option>PChome</option></select></label><label>商品狀態<select><option>全新＋二手</option><option>只看全新</option><option>只看二手</option></select></label><label>排序方式<select><option>價格最低</option><option>同品項信心最高</option></select></label></div>` : ""}
         <div class="summary-strip"><div><small>搜尋來源</small><strong>8 個平台</strong></div><div><small>找到候選</small><strong>48 筆</strong></div><div><small>確認同品項</small><strong>6 筆</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
         <div class="result-grid">${productResults.map((p) => {
           const remaining = shopping.available - p.price;
@@ -1417,8 +1444,17 @@
       return `<section class="view">
         ${pageTitle("附近優惠", `帳戶有 ${money(f.currentBalance)}，今天只放心花 ${money(f.safe)}。`)}
         <div class="summary-strip"><div><small>目前位置</small><strong>台北車站</strong></div><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>符合預算</small><strong>${nearbyOffers.length} 個</strong></div></div>
+        ${nearbyMapMarkup(nearbyOffers)}
         <div class="merchant-list">${nearbyOffers.map((o) => `<article class="merchant-card"><span class="merchant-icon">${icon(o.icon)}</span><div><span class="platform">${o.type} · ${o.distance}</span><h3>${o.name}</h3><p>${o.address}</p><p>${o.note}</p></div><div class="merchant-result"><small>預估最低支出</small><strong>${o.price ? money(o.price) : "免費"}</strong><small>花完還剩 ${money(f.safe - o.price)}</small><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${o.lat},${o.lon}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div></article>`).join("")}</div>
       </section>`;
+    }
+
+    function nearbyMapMarkup(offers) {
+      const lats = offers.map((offer) => offer.lat);
+      const lons = offers.map((offer) => offer.lon);
+      const minLat = Math.min(...lats), maxLat = Math.max(...lats), minLon = Math.min(...lons), maxLon = Math.max(...lons);
+      const latSpan = Math.max(.001, maxLat - minLat), lonSpan = Math.max(.001, maxLon - minLon);
+      return `<section class="nearby-map" aria-label="附近推薦地圖"><div class="nearby-map-head"><h2>附近推薦地圖</h2><small>點標記直接開啟導航</small></div><div class="nearby-map-canvas">${offers.map((offer, index) => { const left = 12 + ((offer.lon - minLon) / lonSpan) * 76; const top = 14 + ((maxLat - offer.lat) / latSpan) * 70; return `<a class="map-marker" style="left:${left}%;top:${top}%" href="https://www.google.com/maps/search/?api=1&query=${offer.lat},${offer.lon}" target="_blank" rel="noreferrer" title="${escapeAttr(offer.name)}"><span>${index + 1}</span></a>`; }).join("")}</div></section>`;
     }
 
     function renderCards() {
@@ -1493,6 +1529,8 @@
       $$('[data-category]').forEach((el) => el.addEventListener("click", () => { state.searchCategory = el.dataset.category; renderView("search"); }));
       const searchForm = $("#searchForm");
       if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); state.searchQuery = $("#searchInput").value.trim(); if (!state.searchQuery) { openAssistant("我想比價"); return; } renderView("search"); showToast("已用完整品名重新整理結果"); });
+      const filterToggle = $("#filterToggle");
+      if (filterToggle) filterToggle.addEventListener("click", () => { state.filterOpen = !state.filterOpen; renderView("search"); });
       const ledgerForm = $("#ledgerForm");
       if (ledgerForm) ledgerForm.addEventListener("submit", (event) => { event.preventDefault(); const merchant = $("#ledgerMerchant").value.trim(); const amount = Number($("#ledgerAmount").value); if (!merchant || !amount) return; state.transactions.unshift({ merchant, amount, category: $("#ledgerCategory").value, time: "剛剛" }); renderView("ledger"); showToast("已新增交易並更新可花餘額"); });
       const simulate = $("#simulateMeal");
@@ -1574,14 +1612,24 @@
 
     function showMega(key) {
       const menu = $("#megaMenu");
+      if (key === "search") {
+        menu.innerHTML = `<div class="shell search-mega-grid">${megaContent.search[0][1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}</div>`;
+        menu.hidden = false;
+        $$('[data-mega-action]', menu).forEach((btn) => btn.addEventListener("click", () => handleMegaAction(btn.dataset.megaAction)));
+        return;
+      }
       const columns = megaContent[key];
-      const gridClass = columns.length === 1 ? " single" : columns.length === 2 ? " two" : "";
+      const gridClass = columns.length === 1 && columns[0][1].length === 4 ? " four" : columns.length === 1 ? " single" : columns.length === 2 ? " two" : "";
       menu.innerHTML = `<div class="shell mega-grid${gridClass}">${columns.map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
       menu.hidden = false;
       $$('[data-mega-action]', menu).forEach((btn) => btn.addEventListener("click", () => handleMegaAction(btn.dataset.megaAction)));
     }
 
     function handleMegaAction(label) {
+      if (label === "一般商品") { state.searchCategory = "商品"; return renderView("search"); }
+      if (label === "附近推薦") return renderView("nearby");
+      if (label === "日常採買") { state.searchCategory = "日常"; return renderView("search"); }
+      if (label === "3C 家電") { state.searchCategory = "3C 家電"; return renderView("search"); }
       if (/機票|飯店|旅遊預算/.test(label)) return renderView("travel");
       if (/保險|保障|理賠|保單/.test(label)) return renderView("insurance");
       if (/訂閱|音樂|影音/.test(label)) return renderView("subscriptions");
