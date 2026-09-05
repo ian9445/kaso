@@ -1,0 +1,29 @@
+# 環境變數 — 絕對不要推上去
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.json
+
+# 相依
+node_modules/
+__pycache__/
+.venv/
+venv/
+
+# 建置
+dist/
+build/
+.vercel/
+.wrangler/
+
+# 編輯器 / 系統
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 暫存
+*.log
+.cache/
