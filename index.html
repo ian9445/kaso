@@ -1501,7 +1501,30 @@
     const hasInput = (id) => $(id).value.trim() !== "" && Number.isFinite(Number($(id).value));
     const today = new Date();
     const PROFILE_STORAGE_KEY = "kaso-html-profile-v4";
+    const ANALYTICS_SESSION_KEY = "kaso-analytics-session-v1";
     const personaQuestionIds = ["shopping", "salary", "travel", "balance", "lottery"];
+
+    function getAnalyticsSessionId() {
+      try {
+        const stored = sessionStorage.getItem(ANALYTICS_SESSION_KEY);
+        if (stored && /^[A-Za-z0-9_-]{16,80}$/.test(stored)) return stored;
+        const created = crypto.randomUUID().replaceAll("-", "");
+        sessionStorage.setItem(ANALYTICS_SESSION_KEY, created);
+        return created;
+      } catch (_) {
+        return `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+      }
+    }
+
+    const analyticsSessionId = getAnalyticsSessionId();
+    function sendAnalytics(event = "heartbeat") {
+      fetch("/api/analytics/heartbeat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sessionId: analyticsSessionId, event, path: location.pathname }),
+        keepalive: true
+      }).catch(() => {});
+    }
 
     const state = {
       view: "home",
@@ -2192,7 +2215,29 @@
     $("#assistantClose").addEventListener("click", () => { $("#assistantPanel").hidden = true; $("#assistantFab").hidden = false; });
     $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; addMessage("user", text); setTimeout(() => addMessage("ai", assistantReply(text)), 260); });
     $("#feedbackOpen").addEventListener("click", () => $("#feedbackDialog").showModal());
-    $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
+    $("#feedbackForm").addEventListener("submit", async (event) => {
+      if (event.submitter?.value === "cancel") return;
+      event.preventDefault();
+      const text = $("#feedbackText").value.trim();
+      if (!text) { showToast("請先填寫回報內容"); return; }
+      const button = $("#feedbackSend");
+      button.disabled = true;
+      try {
+        const response = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ type: $("#feedbackType").value, text, view: state.view, sessionId: analyticsSessionId })
+        });
+        if (!response.ok) throw new Error("feedback_failed");
+        $("#feedbackText").value = "";
+        $("#feedbackDialog").close();
+        showToast("回報已送到 KASO 管理後台");
+      } catch (_) {
+        showToast("回報暫時無法送出，內容已保留，請稍後再試");
+      } finally {
+        button.disabled = false;
+      }
+    });
 
     const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
     let restoredProfile = false;
@@ -2219,6 +2264,9 @@
     updateOnboardingPreview();
     if (!restoredProfile) showOnboardingStage("quiz");
     renderMessages();
+    sendAnalytics("view");
+    window.setInterval(() => { if (document.visibilityState === "visible") sendAnalytics(); }, 45000);
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") sendAnalytics(); });
   </script>
 </body>
 </html>
