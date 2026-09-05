@@ -61,7 +61,7 @@ npm start
 
 - **比價資料**：真的打 BigGo 搜尋 API（`biggoProvider.js`）。回來的是「跨平台候選刊登」清單（例如同一個關鍵字會混到 momo、酷澎、樂天等平台的商品），不是「同一款商品在五個平台各自的價格」，所以沒有另外做同品項比對，直接依價格排序呈現，符合架構定案「不自己做同品項比對」的精神。
 - **附近優惠**：`offers.js` 的 `fetchNearbyStores()` 是打真的 Overpass（OpenStreetMap）API 抓 1,000 公尺內店家；離線或 API 擋掉時才會退回假資料，並在回傳的店家上標記 `mocked: true`。政府活動／文化幣優惠（`offerProvider.js`）目前是假資料，之後要接真實來源時只要換 `fetchOffers()`。
-- **KASO AI**：真的打 Claude API，會把使用者當下的身分／預算／各分類花費即時餵給 Claude 當 system prompt，回答會反映真實數字。
+- **KASO AI**：真的打 Claude API，會把使用者當下的身分／預算／各分類花費即時餵給 Claude 當 system prompt，回答會反映真實數字。回覆支援簡單 markdown（`**粗體**`、`` `code` ``），前端會轉成真的粗體/等寬字，不會顯示成字面上的星號。
 
 ## 沒有規則可循、屬於本次實作假設的部分
 

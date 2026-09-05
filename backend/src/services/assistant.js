@@ -5,6 +5,7 @@ const { CATEGORY_LABEL, CATEGORIES } = require("../store");
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-5";
 const MAX_HISTORY = 12;
+const MAX_TOKENS = 1024; // 之前設 500 太小，遇到「延後幾個月／砍幾%」這種條列式回答會被硬切斷
 
 function buildSystemPrompt() {
   const profile = getProfile();
@@ -37,7 +38,7 @@ function buildSystemPrompt() {
 使用者目前的即時財務狀況：
 ${context}
 
-請根據以上資料，用繁體中文回答，語氣像貼身理財助理，簡潔（通常 2-4 句），需要時才使用條列。不要幫使用者做投資或信用卡核卡承諾，也不要編造上面沒有提到的具體數字。`;
+請根據以上資料，用繁體中文回答，語氣像貼身理財助理。預設精簡（2-4 句），但如果使用者的情境需要列出多個要點或分項比較（例如「delay 幾個月」vs「砍幾% 支出」這種兩個方案的計算），要用條列式把每一項都講完整，不要中途省略或截斷。不要幫使用者做投資或信用卡核卡承諾，也不要編造上面沒有提到的具體數字。`;
 }
 
 async function chat(message, history = []) {
@@ -65,7 +66,7 @@ async function chat(message, history = []) {
     },
     body: JSON.stringify({
       model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
-      max_tokens: 500,
+      max_tokens: MAX_TOKENS,
       system: buildSystemPrompt(),
       messages,
     }),
