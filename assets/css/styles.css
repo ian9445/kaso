@@ -702,9 +702,9 @@
     .mega-grid.single { grid-template-columns: minmax(0, 520px); }
     .mega-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .mega-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
-    .search-mega-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding-block: 30px 34px; }
-    .search-mega-grid button { display: grid; min-height: 88px; align-content: center; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; padding: 16px; text-align: left; font-weight: 600; cursor: pointer; }
-    .search-mega-grid button:hover { background: var(--lime); box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px,-2px); }
+    .feature-mega-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding-block: 30px 34px; }
+    .feature-mega-grid button { display: grid; min-height: 88px; align-content: center; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; padding: 16px; text-align: left; font-weight: 600; cursor: pointer; }
+    .feature-mega-grid button:hover { background: var(--lime); box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px,-2px); }
     .mega-col { gap: 0; }
     .mega-col small { margin-bottom: 10px; color: var(--muted); }
     .mega-col button {
@@ -1020,7 +1020,7 @@
       .product-flip-back { grid-template-columns: 1fr; min-height: 390px; padding: 20px; }
       .filter-dropdown { grid-template-columns: 1fr; }
       .nearby-map-canvas { min-height: 250px; }
-      .search-mega-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .feature-mega-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .assistant-fab, .assistant-panel { bottom: 88px; }
       .feedback-btn { bottom: 92px; }
     }

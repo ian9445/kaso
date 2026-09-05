@@ -11,6 +11,7 @@ import {
   saveProfile,
   state,
 } from "../store.js";
+import { calculateBudgetPlan } from "../services/budget.js";
 import {
   $,
   $$,
@@ -19,7 +20,6 @@ import {
   money,
   monthsUntil,
   monthValueFromOffset,
-  remainingDaysInMonth,
   shiftMonthValue,
   valuesToPercentages,
 } from "../utils.js";
@@ -212,8 +212,6 @@ function mount({ navigate, showToast }) {
     const fixed = safeNumber("#fixedExpense");
     const target = safeNumber("#savingTarget");
     const deadline = $("#savingDeadline").value;
-    const months = monthsUntil(deadline);
-    const monthlySave = Math.ceil(target / months);
     const hasFinanceInputs = (
       hasInput("#currentBalance")
       && hasInput("#monthlyIncome")
@@ -221,16 +219,18 @@ function mount({ navigate, showToast }) {
       && hasInput("#savingTarget")
       && hasMonthInput("#savingDeadline")
     );
-    const monthlyFlexible = Math.max(0, income - fixed - monthlySave);
-    const safeToArrange = Math.min(balance, monthlyFlexible);
-    const dailyAvailable = Math.floor(
-      safeToArrange / remainingDaysInMonth(),
-    );
+    const budget = calculateBudgetPlan({
+      currentBalance: balance,
+      income,
+      fixed,
+      target,
+      deadline,
+    });
 
-    $("#previewSave").textContent = money(monthlySave);
+    $("#previewSave").textContent = money(budget.monthlySave);
     $("#previewFlexible").textContent = (
       hasFinanceInputs
-        ? money(dailyAvailable)
+        ? money(budget.dailyAvailable)
         : "填完後計算"
     );
     $("#previewDate").textContent = hasMonthInput("#savingDeadline")
@@ -239,12 +239,12 @@ function mount({ navigate, showToast }) {
 
     const shouldSuggestExtension = (
       hasFinanceInputs
-      && dailyAvailable < 1000
+      && budget.dailyAvailable < 1000
     );
     $("#deadlineAdvice").hidden = !shouldSuggestExtension;
     if (shouldSuggestExtension) {
       $("#deadlineAdviceText").textContent = (
-        `目前每日可安排 ${money(dailyAvailable)}。你可以延長完成月份，或調低存錢目標後再確認。`
+        `目前每日可安排 ${money(budget.dailyAvailable)}。你可以延長完成月份，或調低存錢目標後再確認。`
       );
     }
 

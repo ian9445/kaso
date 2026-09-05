@@ -79,33 +79,14 @@ function showMegaMenu(key) {
   const columns = MEGA_CONTENT[key];
   if (!menu || !columns) return;
 
-  if (key === "search") {
-    menu.innerHTML = `
-      <div class="shell search-mega-grid">
-        ${columns[0][1].map((label) => `
-          <button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>
-        `).join("")}
-      </div>
-    `;
-  } else {
-    const gridClass = columns.length === 1
-      ? " single"
-      : columns.length === 2
-        ? " two"
-        : "";
-    menu.innerHTML = `
-      <div class="shell mega-grid${gridClass}">
-        ${columns.map((column, index) => `
-          <div class="mega-col${index === 0 ? " primary" : ""}">
-            <small>${column[0]}</small>
-            ${column[1].map((label) => `
-              <button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>
-            `).join("")}
-          </div>
-        `).join("")}
-      </div>
-    `;
-  }
+  const actions = columns.flatMap((column) => column[1]);
+  menu.innerHTML = `
+    <div class="shell feature-mega-grid">
+      ${actions.map((label) => `
+        <button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>
+      `).join("")}
+    </div>
+  `;
   menu.hidden = false;
 }
 

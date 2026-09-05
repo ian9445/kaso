@@ -53,13 +53,16 @@ export function shiftMonthValue(value, offset = 1) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
-export function remainingDaysInMonth(now = new Date()) {
-  const daysInMonth = new Date(
+export function daysInMonth(now = new Date()) {
+  return new Date(
     now.getFullYear(),
     now.getMonth() + 1,
     0,
   ).getDate();
-  return Math.max(1, daysInMonth - now.getDate() + 1);
+}
+
+export function remainingDaysInMonth(now = new Date()) {
+  return Math.max(1, daysInMonth(now) - now.getDate() + 1);
 }
 
 export function escapeHtml(value) {

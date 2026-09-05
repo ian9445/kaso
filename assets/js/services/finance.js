@@ -1,9 +1,6 @@
 import { state } from "../store.js";
-import {
-  monthValueFromOffset,
-  monthsUntil,
-  remainingDaysInMonth,
-} from "../utils.js";
+import { remainingDaysInMonth } from "../utils.js";
+import { calculateBudgetPlan } from "./budget.js";
 
 const DEFAULT_PROFILE = {
   currentBalance: 6800,
@@ -16,13 +13,6 @@ const DEFAULT_PROFILE = {
 
 export function getFinance() {
   const profile = state.profile || DEFAULT_PROFILE;
-  const deadline = profile.deadline
-    || monthValueFromOffset(Math.max(1, Number(profile.months) || 1));
-  const months = profile.deadline
-    ? monthsUntil(profile.deadline)
-    : Math.max(1, Number(profile.months) || 1);
-  const monthlySave = Math.ceil(profile.target / months);
-  const flexible = Math.max(0, profile.income - profile.fixed - monthlySave);
   const spent = state.transactions.reduce(
     (sum, transaction) => sum + Number(transaction.amount || 0),
     0,
@@ -37,23 +27,24 @@ export function getFinance() {
     0,
     Number(profile.currentBalance || 0) - newSpending,
   );
-  const remainingFlexible = Math.max(0, flexible - newSpending);
-  const safe = Math.max(
-    0,
-    Math.min(currentBalance, remainingFlexible),
-  );
+  const budget = calculateBudgetPlan({
+    ...profile,
+    currentBalance,
+  });
+  const safe = Math.max(0, budget.monthlyAvailable - newSpending);
 
   return {
     ...profile,
-    deadline,
-    months,
+    deadline: budget.deadline,
+    months: budget.months,
     currentBalance,
-    monthlySave,
-    flexible,
+    remainingGoal: budget.remainingGoal,
+    monthlySave: budget.monthlySave,
+    flexible: budget.monthlyAvailable,
     spent,
     newSpending,
     safe,
-    reserve: profile.fixed + monthlySave,
+    reserve: profile.fixed + budget.monthlySave,
   };
 }
 
