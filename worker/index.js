@@ -14,14 +14,15 @@ function json(data, status = 200, extraHeaders = {}) {
   });
 }
 
-function html(content, admin = false, headOnly = false) {
+function html(content, admin = false, headOnly = false, extraHeaders = {}) {
   return new Response(headOnly ? null : content, {
     headers: {
       "content-type": "text/html; charset=utf-8",
-      "cache-control": admin ? "no-store" : "public, max-age=60",
+      "cache-control": "no-store",
       "referrer-policy": "strict-origin-when-cross-origin",
       "x-content-type-options": "nosniff",
       ...(admin ? { "x-robots-tag": "noindex, nofollow" } : {}),
+      ...extraHeaders,
     },
   });
 }
@@ -110,34 +111,33 @@ async function isAdmin(request, env) {
   return constantTimeEqual(parts[2], await sign(env.ADMIN_SESSION_SECRET, payload));
 }
 
-async function trackVisit(request, env, ctx) {
-  const body = await readJson(request);
-  if (!validSessionId(body.sessionId)) return json({ error: "invalid_session" }, 400);
-  const path = cleanPath(body.path);
+function visitorIdentity(request) {
+  const stored = parseCookies(request).kaso_visitor;
+  if (validSessionId(stored)) return { sessionId: stored, cookie: null };
+  const sessionId = crypto.randomUUID().replaceAll("-", "");
+  return {
+    sessionId,
+    cookie: `kaso_visitor=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`,
+  };
+}
+
+async function recordPageView(env, sessionId, path) {
   const sessionStatement = database(env)
     .prepare(`INSERT INTO analytics_sessions (session_id, first_seen, last_seen, path)
       VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)
       ON CONFLICT(session_id) DO UPDATE SET last_seen = CURRENT_TIMESTAMP, path = excluded.path`)
-    .bind(body.sessionId, path);
-
-  if (body.event === "view") {
-    const viewStatement = database(env)
-      .prepare("INSERT INTO analytics_pageviews (session_id, path, viewed_at) VALUES (?, ?, CURRENT_TIMESTAMP)")
-      .bind(body.sessionId, path);
-    await database(env).batch([sessionStatement, viewStatement]);
-  } else {
-    await sessionStatement.run();
-  }
+    .bind(sessionId, cleanPath(path));
+  const viewStatement = database(env)
+    .prepare("INSERT INTO analytics_pageviews (session_id, path, viewed_at) VALUES (?, ?, CURRENT_TIMESTAMP)")
+    .bind(sessionId, cleanPath(path));
+  await database(env).batch([sessionStatement, viewStatement]);
 
   if (Math.random() < 0.015) {
-    ctx.waitUntil(
-      database(env).batch([
-        database(env).prepare("DELETE FROM analytics_sessions WHERE last_seen < datetime('now', '-1 day')"),
-        database(env).prepare("DELETE FROM analytics_pageviews WHERE viewed_at < datetime('now', '-13 months')"),
-      ]),
-    );
+    await database(env).batch([
+      database(env).prepare("DELETE FROM analytics_sessions WHERE last_seen < datetime('now', '-1 day')"),
+      database(env).prepare("DELETE FROM analytics_pageviews WHERE viewed_at < datetime('now', '-13 months')"),
+    ]);
   }
-  return json({ ok: true });
 }
 
 async function submitFeedback(request, env) {
@@ -219,7 +219,6 @@ async function updateFeedback(request, env, id) {
 async function handleApi(request, env, ctx, pathname) {
   try {
     if (pathname === "/api/health" && request.method === "GET") return json({ ok: true, database: Boolean(env.DB) });
-    if (pathname === "/api/analytics/heartbeat" && request.method === "POST") return trackVisit(request, env, ctx);
     if (pathname === "/api/feedback" && request.method === "POST") return submitFeedback(request, env);
     if (pathname === "/api/admin/login" && request.method === "POST") return adminLogin(request, env);
     if (pathname === "/api/admin/session" && request.method === "GET") return json({ authenticated: await isAdmin(request, env) });
@@ -247,7 +246,10 @@ export default {
     if (pathname.startsWith("/api/")) return handleApi(request, env, ctx, pathname);
 
     if ((request.method === "GET" || request.method === "HEAD") && (pathname === "/" || pathname === "/index.html")) {
-      return html(INDEX_HTML, false, request.method === "HEAD");
+      if (request.method === "HEAD" || !env.DB) return html(INDEX_HTML, false, request.method === "HEAD");
+      const visitor = visitorIdentity(request);
+      ctx.waitUntil(recordPageView(env, visitor.sessionId, pathname).catch((error) => console.error("KASO analytics error", error)));
+      return html(INDEX_HTML, false, false, visitor.cookie ? { "set-cookie": visitor.cookie } : {});
     }
     if ((request.method === "GET" || request.method === "HEAD") && (pathname === "/admin" || pathname === "/admin.html")) {
       return html(ADMIN_HTML, true, request.method === "HEAD");
