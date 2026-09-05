@@ -97,7 +97,7 @@
     .onboarding-heading { max-width: 680px; margin: 64px 0 28px; }
     .onboarding-heading h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 4.25rem); line-height: .98; letter-spacing: -.065em; }
     .onboarding-heading > p:last-child { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
-    .mode-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; }
+    .mode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .mode-card {
       min-height: 155px; padding: 20px; border: 1px solid var(--line); border-radius: 22px; background: #fff;
       text-align: left; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 13px;
@@ -110,6 +110,43 @@
     .mode-card b { font-size: 1.1rem; }
     .mode-card small { color: var(--muted); font-size: .8rem; }
     .mode-card .mode-check { color: var(--violet); }
+
+    .persona-quiz {
+      margin-top: 22px; overflow: hidden; border: 1.5px solid var(--ink); border-radius: 16px;
+      background-color: var(--panel);
+      background-image: radial-gradient(rgba(17,24,39,.13) .75px, transparent .75px);
+      background-size: 18px 18px;
+    }
+    .persona-quiz-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; border-bottom: 1.5px solid var(--ink); background: rgba(255,255,255,.9); }
+    .persona-quiz-head h2 { margin: 0; font-size: 1rem; }
+    .persona-quiz-head p { margin: 3px 0 0; color: var(--muted); font-size: .76rem; }
+    .persona-quiz-progress { display: grid; justify-items: end; gap: 7px; min-width: 140px; }
+    .persona-quiz-progress strong { font-size: .75rem; }
+    .persona-quiz-progress span { width: 100%; height: 6px; border: 1px solid var(--ink); background: #fff; overflow: hidden; }
+    .persona-quiz-progress i { display: block; width: 0; height: 100%; background: var(--ink); transition: width .28s var(--apple-ease); }
+    .persona-question-list { min-height: 390px; }
+    .persona-question { display: none; min-height: 390px; align-content: center; justify-items: center; padding: 42px 24px 52px; text-align: center; }
+    .persona-question.active { display: grid; animation: persona-question-in .34s var(--apple-ease); }
+    @keyframes persona-question-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+    .persona-question h3 { max-width: 780px; margin: 0; font-size: clamp(1.65rem, 4vw, 3.15rem); line-height: 1.2; letter-spacing: -.045em; }
+    .persona-question h3 span { display: block; margin-bottom: 14px; color: var(--muted); font-size: .7rem; font-weight: 900; letter-spacing: .12em; }
+    .persona-answer-pair { display: grid; width: min(560px, 100%); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 8vw, 90px); margin-top: 42px; }
+    .persona-answer {
+      width: 100%; aspect-ratio: 1.18; border: 1.5px solid var(--ink); border-radius: 3px; background: rgba(255,255,255,.94);
+      padding: 18px; font-size: clamp(1rem, 2.3vw, 1.45rem); font-weight: 850; line-height: 1.35; cursor: pointer;
+      box-shadow: 5px 5px 0 transparent;
+      transition: background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    .persona-answer:hover, .persona-answer:focus-visible { background: var(--lime); outline: none; box-shadow: 5px 5px 0 var(--ink); transform: translate(-3px,-3px); }
+    .persona-answer.selected { background: var(--ink); color: #fff; box-shadow: 5px 5px 0 var(--lime); transform: translate(-3px,-3px); }
+    .persona-quiz-nav { display: flex; align-items: center; justify-content: space-between; min-height: 55px; border-top: 1.5px solid var(--ink); background: rgba(255,255,255,.92); padding: 9px 18px; }
+    .persona-quiz-nav button { border: 0; background: transparent; padding: 8px 4px; font-size: .75rem; font-weight: 850; cursor: pointer; }
+    .persona-quiz-nav button:disabled { visibility: hidden; }
+    .persona-quiz-nav span { color: var(--muted); font-size: .72rem; }
+    .persona-recommendation { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1.5px solid var(--ink); background: var(--lime); padding: 16px 22px; }
+    .persona-recommendation p { margin: 0; font-size: .82rem; }
+    .persona-recommendation strong { font-size: 1.02rem; }
+    .persona-recommendation button { flex: 0 0 auto; }
 
     .setup-card { margin-top: 18px; padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: #fbfcfe; }
     .setup-heading { display: flex; gap: 13px; align-items: center; }
@@ -605,7 +642,7 @@
       font-size: clamp(2.4rem, 5vw, 4.7rem);
       letter-spacing: -.05em;
     }
-    .mode-grid { grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
+    .mode-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .mode-card {
       min-height: 138px;
       border: 1.5px solid var(--ink);
@@ -957,6 +994,15 @@
 
     @media (max-width: 720px) {
       body { padding-bottom: 82px; }
+      .persona-quiz-head { align-items: flex-start; flex-direction: column; padding: 16px; }
+      .persona-quiz-progress { width: 100%; justify-items: start; }
+      .persona-question-list, .persona-question { min-height: 380px; }
+      .persona-question { padding: 34px 16px 42px; }
+      .persona-question h3 { font-size: clamp(1.45rem,8vw,2.2rem); }
+      .persona-answer-pair { gap: 14px; margin-top: 34px; }
+      .persona-answer { aspect-ratio: 1; padding: 10px; font-size: .95rem; }
+      .persona-recommendation { align-items: flex-start; flex-direction: column; padding: 14px 16px; }
+      .persona-recommendation span { font-size: .7rem; }
       .finance-mini, .persona-chip { display: none; }
       .header-row { grid-template-columns: 1fr auto; }
       .header-actions { grid-column: 2; grid-row: 1; }
@@ -1030,9 +1076,9 @@
       </div>
 
       <div class="onboarding-heading">
-        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 月光族設定</p>
-        <h1>先讓每一塊錢<br>有自己的位置。</h1>
-        <p>填入每月現金流，KASO 會先留住必要支出與存款，再告訴你今天能安心花多少。</p>
+        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 選擇你的省錢模式</p>
+        <h1>你現在比較需要<br>哪一種方式？</h1>
+        <p>先從兩種身分中選一個，再用 5 個直覺問題確認；答完仍可自行切換。</p>
       </div>
 
       <div class="mode-grid" aria-label="身分模式">
@@ -1043,15 +1089,56 @@
         </button>
         <button class="mode-card" type="button" data-mode="goal">
           <span class="mode-icon"><svg><use href="#i-target"/></svg></span>
-          <span><strong>目標模式</strong><b>有目標的省錢</b><small>旅行、大件商品或緊急預備金</small></span>
-          <span class="mode-check">→</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="rewards">
-          <span class="mode-icon"><svg><use href="#i-card"/></svg></span>
-          <span><strong>回饋模式</strong><b>紅利最佳化</b><small>依消費習慣選卡與放大回饋</small></span>
+          <span><strong>目標模式</strong><b>目標計畫族</b><small>旅行、大件商品或緊急預備金</small></span>
           <span class="mode-check">→</span>
         </button>
       </div>
+
+      <section class="persona-quiz" aria-labelledby="personaQuizTitle">
+        <div class="persona-quiz-head">
+          <div><h2 id="personaQuizTitle">5 題直覺選擇</h2><p>不要想太久，選你第一個想到的答案。</p></div>
+          <div class="persona-quiz-progress"><strong id="personaQuizProgressText">第 1 題／共 5 題</strong><span><i id="personaQuizProgressBar"></i></span></div>
+        </div>
+        <div class="persona-question-list">
+          <article class="persona-question active" data-question="shopping">
+            <h3><span>QUESTION 01</span>在蝦皮上突然看到很心動的好物</h3>
+            <div class="persona-answer-pair" role="radiogroup" aria-label="在蝦皮看到心動好物的選擇">
+              <button class="persona-answer" type="button" data-question-id="shopping" data-answer="buy" data-persona="moonlight" aria-pressed="false">買</button>
+              <button class="persona-answer" type="button" data-question-id="shopping" data-answer="skip" data-persona="goal" aria-pressed="false">不買</button>
+            </div>
+          </article>
+          <article class="persona-question" data-question="salary">
+            <h3><span>QUESTION 02</span>薪水下來了，現在該怎麼做？</h3>
+            <div class="persona-answer-pair" role="radiogroup" aria-label="薪水下來後的選擇">
+              <button class="persona-answer" type="button" data-question-id="salary" data-answer="enjoy" data-persona="moonlight" aria-pressed="false">出去爽兩頓</button>
+              <button class="persona-answer" type="button" data-question-id="salary" data-answer="save" data-persona="goal" aria-pressed="false">按照計畫存一半進戶頭</button>
+            </div>
+          </article>
+          <article class="persona-question" data-question="travel">
+            <h3><span>QUESTION 03</span>明年突然想出國</h3>
+            <div class="persona-answer-pair" role="radiogroup" aria-label="明年想出國的選擇">
+              <button class="persona-answer" type="button" data-question-id="travel" data-answer="future" data-persona="moonlight" aria-pressed="false">明年會有錢的</button>
+              <button class="persona-answer" type="button" data-question-id="travel" data-answer="start" data-persona="goal" aria-pressed="false">該開始存了</button>
+            </div>
+          </article>
+          <article class="persona-question" data-question="balance">
+            <h3><span>QUESTION 04</span>是否知道自己現在存款的具體數字？</h3>
+            <div class="persona-answer-pair" role="radiogroup" aria-label="是否知道具體存款數字">
+              <button class="persona-answer" type="button" data-question-id="balance" data-answer="yes" data-persona="goal" aria-pressed="false">是</button>
+              <button class="persona-answer" type="button" data-question-id="balance" data-answer="no" data-persona="moonlight" aria-pressed="false">否</button>
+            </div>
+          </article>
+          <article class="persona-question" data-question="lottery">
+            <h3><span>QUESTION 05</span>發票中了 NT$1,000，現在應該怎麼做？</h3>
+            <div class="persona-answer-pair" role="radiogroup" aria-label="發票中獎後的選擇">
+              <button class="persona-answer" type="button" data-question-id="lottery" data-answer="meal" data-persona="moonlight" aria-pressed="false">可以去爽一頓</button>
+              <button class="persona-answer" type="button" data-question-id="lottery" data-answer="deposit" data-persona="goal" aria-pressed="false">存進去</button>
+            </div>
+          </article>
+        </div>
+        <div class="persona-quiz-nav"><button id="personaQuizBack" type="button" disabled>← 上一題</button><span id="personaQuizHint">選擇後會自動進入下一題</span></div>
+        <div id="personaRecommendation" class="persona-recommendation" hidden><p>依你的選擇，較適合：<strong id="personaRecommendationLabel">月光族</strong></p><span>已套用；仍可在上方自行切換</span></div>
+      </section>
 
       <section class="setup-card" aria-labelledby="financeTitle">
         <div class="setup-heading">
@@ -1074,7 +1161,7 @@
 
       <section class="quality-card" aria-labelledby="qualityTitle">
         <div class="quality-head">
-          <div><h2 id="qualityTitle">生活品質比重</h2><p>月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。</p></div>
+          <div><h2 id="qualityTitle">生活品質比重</h2><p id="qualityIntro">月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。</p></div>
           <span class="quality-total">目前比重 <b id="qualityTotal">4</b></span>
         </div>
         <div class="quality-grid">
@@ -1172,10 +1259,15 @@
     const money = (value) => new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 }).format(Math.max(0, Number(value) || 0));
     const safeNumber = (id, fallback = 0) => Math.max(0, Number($(id).value) || fallback);
     const today = new Date();
+    const PROFILE_STORAGE_KEY = "kaso-html-profile-v2";
+    const personaQuestionIds = ["shopping", "salary", "travel", "balance", "lottery"];
 
     const state = {
       view: "home",
       mode: "moonlight",
+      personaAnswers: {},
+      quizIndex: 0,
+      quizTimer: null,
       profile: null,
       searchQuery: "Apple AirPods Pro 2 USB-C",
       searchCategory: "商品",
@@ -1255,6 +1347,65 @@
       return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`;
     }
 
+    function personaModeLabel(mode = state.mode) {
+      return mode === "goal" ? "目標計畫族" : "月光族";
+    }
+
+    function selectPersonaMode(mode, announce = false) {
+      state.mode = mode === "goal" ? "goal" : "moonlight";
+      $$(".mode-card").forEach((card) => {
+        const selected = card.dataset.mode === state.mode;
+        card.classList.toggle("selected", selected);
+        $(".mode-check", card).textContent = selected ? "✓" : "→";
+      });
+      const intro = $("#qualityIntro");
+      if (intro) intro.textContent = state.mode === "goal"
+        ? "目標計畫族會依完成期限配置比重；提高某一項時，系統會重新分配有限預算。"
+        : "月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。";
+      if (announce) showToast(`已依回答套用「${personaModeLabel()}」`);
+    }
+
+    function recommendedPersonaMode() {
+      const goalVotes = Object.values(state.personaAnswers).filter((item) => item.persona === "goal").length;
+      return goalVotes >= 3 ? "goal" : "moonlight";
+    }
+
+    function showPersonaQuestion(index, focusAnswer = false) {
+      state.quizIndex = Math.max(0, Math.min(personaQuestionIds.length - 1, index));
+      $$(".persona-question").forEach((question, questionIndex) => question.classList.toggle("active", questionIndex === state.quizIndex));
+      syncPersonaQuiz();
+      if (focusAnswer) $(".persona-question.active .persona-answer")?.focus();
+    }
+
+    function syncPersonaQuiz() {
+      const answeredCount = personaQuestionIds.filter((id) => Boolean(state.personaAnswers[id])).length;
+      $("#personaQuizProgressText").textContent = `第 ${state.quizIndex + 1} 題／共 ${personaQuestionIds.length} 題`;
+      $("#personaQuizProgressBar").style.width = `${(answeredCount / personaQuestionIds.length) * 100}%`;
+      $("#personaQuizBack").disabled = state.quizIndex === 0;
+      const completed = answeredCount === personaQuestionIds.length;
+      $("#personaQuizHint").textContent = completed ? "已完成，可直接進入 KASO" : "選擇後會自動進入下一題";
+      $("#personaRecommendation").hidden = !completed;
+      if (completed) $("#personaRecommendationLabel").textContent = personaModeLabel(recommendedPersonaMode());
+      $("#completeSetup").disabled = !completed || !safeNumber("#monthlyIncome") || safeNumber("#fixedExpense") >= safeNumber("#monthlyIncome") || !safeNumber("#savingTarget") || !safeNumber("#savingMonths", 1);
+    }
+
+    function choosePersonaAnswer(button) {
+      const questionId = button.dataset.questionId;
+      state.personaAnswers[questionId] = { answer: button.dataset.answer, persona: button.dataset.persona };
+      $$(`.persona-answer[data-question-id="${questionId}"]`).forEach((choice) => {
+        const selected = choice === button;
+        choice.classList.toggle("selected", selected);
+        choice.setAttribute("aria-pressed", String(selected));
+      });
+      const complete = personaQuestionIds.every((id) => Boolean(state.personaAnswers[id]));
+      if (complete) selectPersonaMode(recommendedPersonaMode(), true);
+      syncPersonaQuiz();
+      window.clearTimeout(state.quizTimer);
+      if (state.quizIndex < personaQuestionIds.length - 1) {
+        state.quizTimer = window.setTimeout(() => showPersonaQuestion(state.quizIndex + 1, true), 280);
+      }
+    }
+
     function updateOnboardingPreview() {
       const income = safeNumber("#monthlyIncome");
       const fixed = safeNumber("#fixedExpense");
@@ -1267,12 +1418,13 @@
       const ranges = ["qTime", "qFood", "qComfort", "qFun"];
       ranges.forEach((id) => $("#" + id + "Out").value = $("#" + id).value);
       $("#qualityTotal").textContent = ranges.reduce((sum, id) => sum + Number($("#" + id).value), 0);
-      $("#completeSetup").disabled = !income || fixed >= income || !target || !months;
+      syncPersonaQuiz();
     }
 
     function saveProfileAndEnter() {
       state.profile = {
         mode: state.mode,
+        personaAnswers: state.personaAnswers,
         currentBalance: safeNumber("#currentBalance"),
         income: safeNumber("#monthlyIncome"),
         fixed: safeNumber("#fixedExpense"),
@@ -1283,15 +1435,21 @@
           comfort: Number($("#qComfort").value), fun: Number($("#qFun").value)
         }
       };
-      localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.profile));
       $("#onboarding").hidden = true;
       $("#mainApp").hidden = false;
       renderView("home");
     }
 
     function resetProfile() {
-      localStorage.removeItem("kaso-html-profile");
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
       state.profile = null;
+      state.mode = "moonlight";
+      state.personaAnswers = {};
+      state.quizIndex = 0;
+      $$(".persona-answer").forEach((choice) => { choice.classList.remove("selected"); choice.setAttribute("aria-pressed", "false"); });
+      selectPersonaMode("moonlight");
+      showPersonaQuestion(0);
       $("#mainApp").hidden = true;
       $("#onboarding").hidden = false;
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1345,7 +1503,7 @@
       return `
         <section class="view money-overview dashboard-stage">
           <div class="balance-stage-head">
-            <div><p class="eyebrow">${icon("wallet")} 月光族首頁</p><h1>${status[0]}</h1></div>
+            <div><p class="eyebrow">${icon("wallet")} ${personaModeLabel(state.profile?.mode)}首頁</p><h1>${status[0]}</h1></div>
             <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><div id="dailyPocket" class="daily-compact${state.settlementDone ? " is-done" : ""}"><span><small>今日未用</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已結算" : "結算"}</button></div></div>
           </div>
           <div class="balance-stage-grid">
@@ -1549,7 +1707,7 @@
       const delayGoal = $("#delayGoal");
       if (delayGoal) delayGoal.addEventListener("click", () => {
         state.profile.months += 1;
-        localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.profile));
         renderView("home");
         showToast("已將完成期限延後 1 個月");
       });
@@ -1718,10 +1876,11 @@
     function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
     $$(".mode-card").forEach((card) => card.addEventListener("click", () => {
-      state.mode = card.dataset.mode;
-      $$(".mode-card").forEach((item) => { item.classList.toggle("selected", item === card); $(".mode-check", item).textContent = item === card ? "✓" : "→"; });
-      if (state.mode !== "moonlight") showToast("HTML 第一版仍以月光族主流程示範，其他模式保留入口");
+      selectPersonaMode(card.dataset.mode);
+      showToast(`已選擇「${personaModeLabel()}」`);
     }));
+    $$(".persona-answer").forEach((button) => button.addEventListener("click", () => choosePersonaAnswer(button)));
+    $("#personaQuizBack").addEventListener("click", () => showPersonaQuestion(state.quizIndex - 1, true));
     $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
     $("#backToPersona").addEventListener("click", () => {
@@ -1755,10 +1914,25 @@
     $("#feedbackOpen").addEventListener("click", () => $("#feedbackDialog").showModal());
     $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
 
-    const saved = localStorage.getItem("kaso-html-profile");
+    const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
     if (saved) {
-      try { state.profile = JSON.parse(saved); $("#onboarding").hidden = true; $("#mainApp").hidden = false; renderView("home"); } catch (_) { localStorage.removeItem("kaso-html-profile"); }
+      try {
+        const profile = JSON.parse(saved);
+        const validMode = profile.mode === "moonlight" || profile.mode === "goal";
+        const completeQuiz = profile.personaAnswers && personaQuestionIds.every((id) => profile.personaAnswers[id]);
+        if (!validMode || !completeQuiz) throw new Error("舊版身分資料");
+        state.profile = profile;
+        state.mode = profile.mode;
+        state.personaAnswers = profile.personaAnswers;
+        $("#onboarding").hidden = true;
+        $("#mainApp").hidden = false;
+        renderView("home");
+      } catch (_) {
+        localStorage.removeItem(PROFILE_STORAGE_KEY);
+      }
     }
+    selectPersonaMode(state.mode);
+    showPersonaQuestion(0);
     updateOnboardingPreview();
     renderMessages();
   </script>
