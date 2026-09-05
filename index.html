@@ -1116,11 +1116,122 @@
     .setup-error { margin: 12px 0 0; border-left: 5px solid var(--danger); background: #fff0ed; padding: 10px 12px; color: #9b2017; font-size: .82rem; }
     .budget-actions { justify-content: flex-end; margin-top: 18px; }
 
-    .service-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
-
-    @media (max-width: 980px) {
-      .service-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    /* v26: keep the first dashboard screen quiet and move services into a floating sheet. */
+    .dashboard-stage {
+      min-height: calc(100svh - 144px);
+      display: flex;
+      flex-direction: column;
     }
+    .dashboard-stage .balance-stage-grid { flex: 1; }
+
+    .service-launcher {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 86;
+      min-height: 58px;
+      padding: 7px 8px 7px 22px;
+      border: 1.5px solid #303030;
+      border-radius: 999px;
+      background: #1d1d1f;
+      color: #fff;
+      box-shadow: 0 18px 45px rgba(0,0,0,.24);
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      transform: translateX(-50%);
+      cursor: pointer;
+      font: 750 .9rem/1 "SF Pro Display", "Taipei Sans TC Beta", "Noto Sans TC", sans-serif;
+      letter-spacing: -.015em;
+      transition: transform .26s var(--apple-ease), box-shadow .26s ease, background .26s ease;
+    }
+    .service-launcher:hover { transform: translateX(-50%) translateY(-3px); background: #0b0b0b; box-shadow: 0 22px 52px rgba(0,0,0,.3); }
+    .service-launcher:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+    .service-launcher b {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: grid;
+      place-items: center;
+      font-size: 1.65rem;
+      font-weight: 400;
+      line-height: 1;
+      transition: transform .32s var(--apple-ease);
+    }
+    .service-launcher:hover b { transform: rotate(90deg); }
+
+    dialog.service-sheet {
+      position: fixed;
+      inset: auto 0 0;
+      width: min(980px, calc(100% - 28px));
+      max-width: none;
+      max-height: min(78dvh, 720px);
+      margin: 0 auto;
+      padding: 0;
+      overflow: auto;
+      border: 1.5px solid var(--ink);
+      border-bottom: 0;
+      border-radius: 34px 34px 0 0;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 -30px 90px rgba(0,0,0,.26);
+    }
+    dialog.service-sheet[open] { animation: service-sheet-up .56s var(--apple-ease) both; }
+    dialog.service-sheet::backdrop { background: rgba(0,0,0,.68); backdrop-filter: blur(6px); animation: service-backdrop-in .3s ease both; }
+    @keyframes service-sheet-up { from { opacity: .45; transform: translateY(105%); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes service-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+    .service-sheet-head {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 32px 34px 22px;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid #dedede;
+      backdrop-filter: blur(18px);
+    }
+    .service-sheet-head small { color: #616161; font-size: .68rem; font-weight: 800; letter-spacing: .14em; }
+    .service-sheet-head h2 { margin: 6px 0 0; font-size: clamp(1.8rem,4vw,3rem); line-height: 1; letter-spacing: -.045em; }
+    .service-sheet-close {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border: 0;
+      border-radius: 50%;
+      background: #1d1d1f;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .service-sheet-close svg { width: 20px; height: 20px; }
+    .service-sheet-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; padding: 26px 34px 38px; }
+    .service-sheet-card {
+      min-height: 238px;
+      padding: 24px;
+      border: 1px solid #d7d7d7;
+      border-radius: 24px;
+      background: #f5f5f7;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .32s var(--apple-ease), background .25s ease, box-shadow .32s ease;
+    }
+    .service-sheet-card:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 18px 45px rgba(0,0,0,.11); }
+    .service-sheet-icon { width: 48px; height: 48px; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--lime); display: grid; place-items: center; }
+    .service-sheet-icon svg { width: 23px; height: 23px; }
+    .service-sheet-card small { margin-top: 24px; color: #666; font-size: .72rem; font-weight: 750; }
+    .service-sheet-card strong { margin-top: 5px; font-size: 1.45rem; letter-spacing: -.03em; }
+    .service-sheet-card p { margin: 8px 0 18px; color: #5d5d5d; font-size: .82rem; line-height: 1.55; }
+    .service-sheet-card > b { margin-top: auto; font-size: .78rem; }
+    .service-sheet-card > b::after { content: "  ↗"; color: var(--blue); }
 
     @media (max-width: 760px) {
       .onboarding-brand { top: 16px; left: 16px; }
@@ -1141,7 +1252,15 @@
       .budget-stage .quality-grid, .budget-stage .finance-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .budget-stage .quality-head { flex-direction: column; }
       .budget-actions { flex-direction: column-reverse; }
-      .service-grid { grid-template-columns: 1fr; }
+      .dashboard-stage { min-height: calc(100svh - 108px); }
+      .service-launcher { bottom: calc(92px + env(safe-area-inset-bottom)); min-height: 54px; padding-left: 18px; gap: 14px; }
+      .service-launcher b { width: 40px; height: 40px; }
+      .assistant-fab, .assistant-panel { bottom: calc(154px + env(safe-area-inset-bottom)); }
+      dialog.service-sheet { width: 100%; max-height: 82dvh; border-right: 0; border-left: 0; border-radius: 28px 28px 0 0; }
+      .service-sheet-head { padding: 24px 20px 18px; }
+      .service-sheet-grid { grid-template-columns: 1fr; padding: 18px 18px 30px; }
+      .service-sheet-card { min-height: 168px; padding: 20px; }
+      .service-sheet-card small { margin-top: 16px; }
     }
 
     @media (max-height: 650px) and (min-width: 761px) {
@@ -1151,7 +1270,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .product-flip-inner, .onboarding-stage, .result-quality-card i b { transition-duration: .01ms; animation-duration: .01ms; }
+      .product-flip-inner, .onboarding-stage, .result-quality-card i b, dialog.service-sheet[open], dialog.service-sheet::backdrop { transition-duration: .01ms; animation-duration: .01ms; }
     }
   </style>
 </head>
@@ -1300,6 +1419,27 @@
     <main class="shell main-content">
       <div id="viewRoot"></div>
     </main>
+
+    <button id="serviceLauncher" class="service-launcher" type="button" aria-haspopup="dialog" aria-controls="serviceSheet">
+      <span>所有功能</span><b aria-hidden="true">＋</b>
+    </button>
+    <dialog id="serviceSheet" class="service-sheet" aria-labelledby="serviceSheetTitle">
+      <div class="service-sheet-head">
+        <div><small>KASO SERVICES</small><h2 id="serviceSheetTitle">想先做什麼？</h2></div>
+        <button id="serviceSheetClose" class="service-sheet-close" type="button" aria-label="關閉所有功能"><svg><use href="#i-x"/></svg></button>
+      </div>
+      <div class="service-sheet-grid">
+        <button class="service-sheet-card" type="button" data-service-view="search">
+          <span class="service-sheet-icon"><svg><use href="#i-search"/></svg></span><small>同品項與價格整理</small><strong>商品比價</strong><p>確認完整型號，再整理不同平台的同品項價格。</p><b>開始比價</b>
+        </button>
+        <button class="service-sheet-card" type="button" data-service-view="nearby">
+          <span class="service-sheet-icon"><svg><use href="#i-pin"/></svg></span><small>位置與持有優惠</small><strong>附近優惠</strong><p>查看附近店家、文化幣與免費活動可用選項。</p><b>查看附近</b>
+        </button>
+        <button class="service-sheet-card" type="button" data-service-view="ledger">
+          <span class="service-sheet-icon"><svg><use href="#i-grid"/></svg></span><small>帳務、旅遊與保障</small><strong>生活規劃</strong><p>集中查看記帳、旅遊、保險與訂閱規劃。</p><b>打開生活工具</b>
+        </button>
+      </div>
+    </dialog>
 
     <button id="assistantFab" class="assistant-fab" type="button"><svg><use href="#i-bot"/></svg> 問 KASO AI</button>
     <aside id="assistantPanel" class="assistant-panel" hidden aria-label="KASO AI 助手">
@@ -1699,14 +1839,6 @@
           </div>
           ${needsDelay ? `<div class="zero-balance-card"><p><strong>目前可花餘額不足，建議延後完成期限</strong><small>延長一個月能降低每月存款壓力，避免再用信用額度補生活費。</small></p><button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button></div>` : ""}
         </section>
-        <section class="view service-panel">
-          <div class="section-head"><div><h2>所有功能</h2></div></div>
-          <div class="service-grid">
-            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["日常採買", "search"], ["3C 家電", "search"]], "商品、日常、3C", true)}
-            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
-            ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
-          </div>
-        </section>
         <section class="view qa-section" aria-labelledby="qaTitle">
           <div class="qa-title"><p class="eyebrow">${icon("grid")} KASO 使用說明</p><h2 id="qaTitle">有問？有答。</h2></div>
           <div class="qa-list">
@@ -1745,10 +1877,6 @@
       const foodPercent = rawTotal > 0 ? (q.food * 1.15 / rawTotal) * .62 : .18;
       const foodBudget = Math.max(0, Math.round(f.safe * foodPercent));
       return { foodBudget, available: Math.max(0, f.safe - foodBudget) };
-    }
-
-    function serviceCard(iconId, view, kicker, title, detail, children, metric, primary = false) {
-      return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div></article>`;
     }
 
     function renderSearch() {
@@ -2054,6 +2182,12 @@
     });
     $("#accountLogout").addEventListener("click", () => { localStorage.removeItem("kaso-html-account"); syncAccountDialog(); showToast("已登出"); });
     $("#profileReset").addEventListener("click", () => { $("#profileDialog").close(); resetProfile(); });
+    $("#serviceLauncher").addEventListener("click", () => $("#serviceSheet").showModal());
+    $("#serviceSheetClose").addEventListener("click", () => $("#serviceSheet").close());
+    $$('[data-service-view]', $("#serviceSheet")).forEach((button) => button.addEventListener("click", () => {
+      $("#serviceSheet").close();
+      renderView(button.dataset.serviceView);
+    }));
     $("#assistantFab").addEventListener("click", () => openAssistant());
     $("#assistantClose").addEventListener("click", () => { $("#assistantPanel").hidden = true; $("#assistantFab").hidden = false; });
     $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; addMessage("user", text); setTimeout(() => addMessage("ai", assistantReply(text)), 260); });
