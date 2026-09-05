@@ -321,10 +321,6 @@
     .settlement-pocket button:disabled { opacity: .48; cursor: default; }
     .daily-pocket { border: 1px solid #b2ddff; background: linear-gradient(145deg,#fff,#f3f9ff); }
     .settlement-tray.is-moving .daily-pocket { opacity: .28; transform: scale(.98); transition: 220ms ease; }
-    .settlement-fly-card { position: fixed; z-index: 120; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 2px solid #0878df; border-radius: 21px; background: #fff; padding: 15px 17px; color: var(--ink); box-shadow: 0 28px 65px rgba(8,120,223,.3); pointer-events: none; }
-    .settlement-fly-card small, .settlement-fly-card strong { display: block; }
-    .settlement-fly-card small { color: var(--muted); font-size: .68rem; }
-    .settlement-fly-card strong { font-size: 1.05rem; }
     .donut-side.is-receiving .donut { animation: balance-absorb 1.22s var(--apple-ease); }
     @keyframes balance-absorb { 0%,62% { transform: scale(1); filter: none; } 78% { transform: scale(1.09); filter: drop-shadow(0 0 18px rgba(8,120,223,.36)); } 100% { transform: scale(1); filter: none; } }
 
@@ -774,7 +770,6 @@
     .settlement-pocket { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--panel); box-shadow: none; }
     .daily-pocket { background: var(--lime); }
     .settlement-pocket button { border-radius: 2px; }
-    .settlement-fly-card { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--lime); box-shadow: 6px 6px 0 var(--ink); }
 
     /* Give the functions room to breathe instead of filling one dense row. */
     .service-panel {
@@ -1033,8 +1028,130 @@
       .feedback-btn { bottom: 92px; }
     }
 
+    /* v25: distraction-free first-use flow */
+    body.onboarding-active { overflow: hidden; padding-bottom: 0 !important; }
+    .onboarding {
+      position: fixed; inset: 0; z-index: 200; min-height: 100dvh; padding: 0; overflow: hidden;
+      background-color: #fbfaf5;
+      background-image: radial-gradient(rgba(11,11,11,.13) .7px, transparent .7px);
+      background-size: 18px 18px;
+    }
+    .onboarding-brand {
+      position: fixed; top: clamp(18px,3vw,34px); left: clamp(18px,3vw,42px); z-index: 3;
+      cursor: default;
+    }
+    .onboarding-brand .brand-mark { width: 40px; height: 40px; background: var(--panel); }
+    .onboarding-brand .brand-copy strong { font-size: .98rem; letter-spacing: .035em; }
+    .onboarding-flow { height: 100%; }
+    .onboarding-stage {
+      width: 100%; height: 100dvh; padding: 88px clamp(20px,5vw,72px) 42px;
+      display: grid; place-items: center; overflow: hidden;
+      animation: onboarding-stage-in .46s var(--apple-ease);
+    }
+    @keyframes onboarding-stage-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+    .quiz-stage .persona-quiz { width: min(980px,100%); margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
+    .quiz-stage .persona-question-list, .quiz-stage .persona-question { min-height: 0; }
+    .quiz-stage .persona-question { align-content: center; justify-items: center; padding: 0; }
+    .quiz-stage .persona-question h3 {
+      max-width: 1040px; margin: 0; font-family: Arial Black, Arial, "Taipei Sans TC Beta", "Noto Sans TC", sans-serif;
+      font-size: clamp(2.2rem,5.3vw,5.25rem); line-height: 1.08; letter-spacing: -.055em;
+    }
+    .quiz-stage .persona-question h3 span { margin-bottom: clamp(12px,2vw,22px); color: #585858; font-size: clamp(.72rem,1.15vw,.94rem); letter-spacing: .14em; }
+    .quiz-stage .persona-answer-pair { width: min(700px,100%); gap: clamp(22px,7vw,110px); margin-top: clamp(34px,6vh,70px); }
+    .quiz-stage .persona-answer {
+      aspect-ratio: 1.18; min-height: 170px; border: 1.5px solid var(--ink); border-radius: 3px; background: rgba(255,255,255,.92);
+      font-size: clamp(1.12rem,2.2vw,1.65rem); font-weight: 700; box-shadow: 7px 7px 0 transparent;
+    }
+    .quiz-stage .persona-answer:hover, .quiz-stage .persona-answer:focus-visible {
+      background: var(--ink); color: #fff; box-shadow: 7px 7px 0 var(--lime); transform: translate(-4px,-4px);
+    }
+    .quiz-stage .persona-answer.selected { background: var(--ink); color: #fff; box-shadow: 7px 7px 0 var(--lime); transform: translate(-4px,-4px); }
+    .quiz-back {
+      position: fixed; left: 50%; bottom: clamp(15px,3vh,30px); transform: translateX(-50%);
+      border: 0; border-bottom: 1px solid currentColor; background: transparent; padding: 5px 0; font-size: .8rem; cursor: pointer;
+    }
+    .quiz-back:disabled { visibility: hidden; }
+
+    .result-stage, .budget-stage { overflow-y: auto; }
+    .result-stage-content { width: min(980px,100%); text-align: center; }
+    .stage-kicker { margin: 0 0 14px; color: #555; font-size: .78rem; font-weight: 700; letter-spacing: .14em; }
+    .result-stage h1, .budget-stage-heading h1 {
+      margin: 0; font-family: Arial Black, Arial, "Taipei Sans TC Beta", "Noto Sans TC", sans-serif;
+      font-size: clamp(2.7rem,6vw,5.6rem); line-height: 1.02; letter-spacing: -.06em;
+    }
+    .result-stage h1 strong { color: var(--blue); }
+    .result-description { max-width: 660px; margin: 18px auto 0; color: #525252; font-size: 1rem; }
+    .result-choice-grid { display: grid; grid-template-columns: .9fr 1.25fr; gap: 18px; width: min(820px,100%); margin: 34px auto 0; text-align: left; }
+    .result-persona-card, .result-quality-card { min-height: 218px; border: 1.5px solid var(--ink); border-radius: 4px; padding: 25px; }
+    .result-persona-card { display: flex; flex-direction: column; justify-content: center; background: var(--ink); color: #fff; box-shadow: 7px 7px 0 var(--lime); }
+    .result-persona-card small { color: #d5d5d5; font-size: .72rem; }
+    .result-persona-card strong { margin-top: 10px; font-size: clamp(1.9rem,4vw,3.25rem); line-height: 1; }
+    .result-persona-card span { margin-top: 14px; color: #d5d5d5; font-size: .78rem; }
+    .result-quality-card { display: grid; align-content: center; gap: 15px; background: rgba(255,255,255,.9); }
+    .result-quality-card > div { display: grid; grid-template-columns: 78px 1fr 42px; gap: 10px; align-items: center; font-size: .77rem; }
+    .result-quality-card i { height: 8px; overflow: hidden; border: 1px solid var(--ink); background: #fff; }
+    .result-quality-card i b { display: block; width: 25%; height: 100%; background: var(--blue); transition: width .5s var(--apple-ease); }
+    .result-quality-card > div:nth-child(2) i b { background: var(--lime); }
+    .result-quality-card > div:nth-child(3) i b { background: var(--sage); }
+    .result-quality-card > div:nth-child(4) i b { background: var(--ink); }
+    .stage-actions { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 30px; }
+    .stage-actions .primary-btn, .stage-actions .secondary-btn { min-height: 52px; border-radius: 3px; padding-inline: 22px; }
+    .stage-actions .primary-btn { box-shadow: 5px 5px 0 var(--lime); }
+
+    .budget-stage { align-items: start; padding-top: 96px; padding-bottom: 44px; }
+    .budget-stage-card { display: grid; grid-template-columns: minmax(250px,.75fr) minmax(0,1.65fr); gap: clamp(28px,5vw,72px); width: min(1120px,100%); }
+    .budget-stage-heading { position: sticky; top: 0; align-self: start; }
+    .budget-stage-heading h1 { font-size: clamp(2.35rem,4.6vw,4.7rem); }
+    .budget-stage-heading > p:last-child { max-width: 340px; margin: 18px 0 0; color: #555; }
+    .budget-stage-form { min-width: 0; }
+    .budget-stage .quality-card { margin: 0; border: 1.5px solid var(--ink); border-radius: 8px; padding: 20px; }
+    .budget-stage .quality-grid { gap: 8px; margin-top: 14px; }
+    .budget-stage .quality-item { padding: 11px; }
+    .budget-stage .quality-item small { display: none; }
+    .budget-stage .finance-grid { grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 16px; }
+    .budget-stage .field { font-size: .78rem; }
+    .budget-stage .field input { min-height: 58px; margin-top: 2px; font-size: 1rem; }
+    .budget-stage .finance-preview { margin-top: 12px; }
+    .setup-error { margin: 12px 0 0; border-left: 5px solid var(--danger); background: #fff0ed; padding: 10px 12px; color: #9b2017; font-size: .82rem; }
+    .budget-actions { justify-content: flex-end; margin-top: 18px; }
+
+    .service-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+
+    @media (max-width: 980px) {
+      .service-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .onboarding-brand { top: 16px; left: 16px; }
+      .onboarding-brand .brand-copy strong { font-size: .86rem; }
+      .onboarding-stage { padding: 76px 18px 30px; }
+      .quiz-stage .persona-question h3 { font-size: clamp(2rem,10vw,3.2rem); }
+      .quiz-stage .persona-answer-pair { gap: 14px; margin-top: clamp(28px,5vh,46px); }
+      .quiz-stage .persona-answer { min-height: 132px; aspect-ratio: 1; padding: 12px 8px; font-size: .98rem; }
+      .result-stage { align-items: start; padding-top: 92px; padding-bottom: 34px; }
+      .result-choice-grid { grid-template-columns: 1fr; margin-top: 25px; }
+      .result-persona-card, .result-quality-card { min-height: 172px; padding: 20px; }
+      .stage-actions { align-items: stretch; flex-direction: column-reverse; }
+      .stage-actions button { width: 100%; }
+      .budget-stage { padding-top: 84px; }
+      .budget-stage-card { grid-template-columns: 1fr; gap: 25px; }
+      .budget-stage-heading { position: static; }
+      .budget-stage-heading h1 { font-size: clamp(2.25rem,11vw,3.4rem); }
+      .budget-stage .quality-grid, .budget-stage .finance-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .budget-stage .quality-head { flex-direction: column; }
+      .budget-actions { flex-direction: column-reverse; }
+      .service-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-height: 650px) and (min-width: 761px) {
+      .quiz-stage .persona-question h3 { font-size: clamp(2rem,4.7vw,4rem); }
+      .quiz-stage .persona-answer-pair { margin-top: 28px; }
+      .quiz-stage .persona-answer { min-height: 140px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .product-flip-inner { transition-duration: .01ms; }
+      .product-flip-inner, .onboarding-stage, .result-quality-card i b { transition-duration: .01ms; animation-duration: .01ms; }
     }
   </style>
 </head>
@@ -1062,106 +1179,101 @@
     <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 8l11-2" fill="none" stroke="currentColor"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor"/></symbol>
   </svg>
 
-  <section id="onboarding" class="onboarding">
-    <div class="onboarding-card">
-      <div class="onboarding-top">
-        <div class="brand" aria-label="卡搜 KASO">
-          <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
-          <span class="brand-copy"><strong>卡搜 KASO</strong><small>個人省錢模式</small></span>
-        </div>
-        <div class="onboarding-actions">
-          <button id="backToPersona" class="secondary-btn" type="button" hidden>重新作答</button>
-          <button id="completeSetup" class="primary-btn" type="button" hidden>進入 KASO <svg><use href="#i-arrow"/></svg></button>
-        </div>
-      </div>
+  <section id="onboarding" class="onboarding stage-quiz">
+    <div class="onboarding-brand brand" aria-label="卡搜 KASO">
+      <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
+      <span class="brand-copy"><strong>卡搜 KASO</strong></span>
+    </div>
 
-      <div class="onboarding-heading">
-        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 先回答 5 個問題</p>
-        <h1>先不用選身分，<br>照直覺回答。</h1>
-        <p>KASO 會依答案判定你較接近月光族或目標計畫族，並自動配置生活品質比重。</p>
-      </div>
-
-      <section class="persona-quiz" aria-labelledby="personaQuizTitle">
-        <div class="persona-quiz-head">
-          <div><h2 id="personaQuizTitle">5 題直覺選擇</h2><p>不要想太久，選你第一個想到的答案。</p></div>
-          <div class="persona-quiz-progress"><strong id="personaQuizProgressText">第 1 題／共 5 題</strong><span><i id="personaQuizProgressBar"></i></span></div>
+    <main class="onboarding-flow">
+      <section id="quizStage" class="onboarding-stage quiz-stage" aria-label="KASO 初次使用問題">
+        <div class="persona-quiz">
+          <div class="persona-question-list">
+            <article class="persona-question active" data-question="shopping">
+              <h3><span>QUESTION 01</span>在蝦皮上突然看到很心動的好物</h3>
+              <div class="persona-answer-pair" role="radiogroup" aria-label="在蝦皮看到心動好物的選擇">
+                <button class="persona-answer" type="button" data-question-id="shopping" data-answer="buy" data-persona="moonlight" aria-pressed="false">買</button>
+                <button class="persona-answer" type="button" data-question-id="shopping" data-answer="skip" data-persona="goal" aria-pressed="false">不買</button>
+              </div>
+            </article>
+            <article class="persona-question" data-question="salary">
+              <h3><span>QUESTION 02</span>薪水下來了，現在該怎麼做？</h3>
+              <div class="persona-answer-pair" role="radiogroup" aria-label="薪水下來後的選擇">
+                <button class="persona-answer" type="button" data-question-id="salary" data-answer="enjoy" data-persona="moonlight" aria-pressed="false">出去爽兩頓</button>
+                <button class="persona-answer" type="button" data-question-id="salary" data-answer="save" data-persona="goal" aria-pressed="false">按照計畫存一半進戶頭</button>
+              </div>
+            </article>
+            <article class="persona-question" data-question="travel">
+              <h3><span>QUESTION 03</span>明年突然想出國</h3>
+              <div class="persona-answer-pair" role="radiogroup" aria-label="明年想出國的選擇">
+                <button class="persona-answer" type="button" data-question-id="travel" data-answer="future" data-persona="moonlight" aria-pressed="false">明年會有錢的</button>
+                <button class="persona-answer" type="button" data-question-id="travel" data-answer="start" data-persona="goal" aria-pressed="false">該開始存了</button>
+              </div>
+            </article>
+            <article class="persona-question" data-question="balance">
+              <h3><span>QUESTION 04</span>是否知道自己現在存款的具體數字？</h3>
+              <div class="persona-answer-pair" role="radiogroup" aria-label="是否知道具體存款數字">
+                <button class="persona-answer" type="button" data-question-id="balance" data-answer="yes" data-persona="goal" aria-pressed="false">是</button>
+                <button class="persona-answer" type="button" data-question-id="balance" data-answer="no" data-persona="moonlight" aria-pressed="false">否</button>
+              </div>
+            </article>
+            <article class="persona-question" data-question="lottery">
+              <h3><span>QUESTION 05</span>發票中了 NT$1,000，現在應該怎麼做？</h3>
+              <div class="persona-answer-pair" role="radiogroup" aria-label="發票中獎後的選擇">
+                <button class="persona-answer" type="button" data-question-id="lottery" data-answer="meal" data-persona="moonlight" aria-pressed="false">可以去爽一頓</button>
+                <button class="persona-answer" type="button" data-question-id="lottery" data-answer="deposit" data-persona="goal" aria-pressed="false">存進去</button>
+              </div>
+            </article>
+          </div>
+          <button id="personaQuizBack" class="quiz-back" type="button" disabled>← 上一題</button>
         </div>
-        <div class="persona-question-list">
-          <article class="persona-question active" data-question="shopping">
-            <h3><span>QUESTION 01</span>在蝦皮上突然看到很心動的好物</h3>
-            <div class="persona-answer-pair" role="radiogroup" aria-label="在蝦皮看到心動好物的選擇">
-              <button class="persona-answer" type="button" data-question-id="shopping" data-answer="buy" data-persona="moonlight" aria-pressed="false">買</button>
-              <button class="persona-answer" type="button" data-question-id="shopping" data-answer="skip" data-persona="goal" aria-pressed="false">不買</button>
-            </div>
-          </article>
-          <article class="persona-question" data-question="salary">
-            <h3><span>QUESTION 02</span>薪水下來了，現在該怎麼做？</h3>
-            <div class="persona-answer-pair" role="radiogroup" aria-label="薪水下來後的選擇">
-              <button class="persona-answer" type="button" data-question-id="salary" data-answer="enjoy" data-persona="moonlight" aria-pressed="false">出去爽兩頓</button>
-              <button class="persona-answer" type="button" data-question-id="salary" data-answer="save" data-persona="goal" aria-pressed="false">按照計畫存一半進戶頭</button>
-            </div>
-          </article>
-          <article class="persona-question" data-question="travel">
-            <h3><span>QUESTION 03</span>明年突然想出國</h3>
-            <div class="persona-answer-pair" role="radiogroup" aria-label="明年想出國的選擇">
-              <button class="persona-answer" type="button" data-question-id="travel" data-answer="future" data-persona="moonlight" aria-pressed="false">明年會有錢的</button>
-              <button class="persona-answer" type="button" data-question-id="travel" data-answer="start" data-persona="goal" aria-pressed="false">該開始存了</button>
-            </div>
-          </article>
-          <article class="persona-question" data-question="balance">
-            <h3><span>QUESTION 04</span>是否知道自己現在存款的具體數字？</h3>
-            <div class="persona-answer-pair" role="radiogroup" aria-label="是否知道具體存款數字">
-              <button class="persona-answer" type="button" data-question-id="balance" data-answer="yes" data-persona="goal" aria-pressed="false">是</button>
-              <button class="persona-answer" type="button" data-question-id="balance" data-answer="no" data-persona="moonlight" aria-pressed="false">否</button>
-            </div>
-          </article>
-          <article class="persona-question" data-question="lottery">
-            <h3><span>QUESTION 05</span>發票中了 NT$1,000，現在應該怎麼做？</h3>
-            <div class="persona-answer-pair" role="radiogroup" aria-label="發票中獎後的選擇">
-              <button class="persona-answer" type="button" data-question-id="lottery" data-answer="meal" data-persona="moonlight" aria-pressed="false">可以去爽一頓</button>
-              <button class="persona-answer" type="button" data-question-id="lottery" data-answer="deposit" data-persona="goal" aria-pressed="false">存進去</button>
-            </div>
-          </article>
-        </div>
-        <div class="persona-quiz-nav"><button id="personaQuizBack" type="button" disabled>← 上一題</button><span id="personaQuizHint">選擇後會自動進入下一題</span></div>
-        <div id="personaRecommendation" class="persona-recommendation" hidden><p>依你的選擇，判定為：<strong id="personaRecommendationLabel">月光族</strong></p><span>身分與生活品質比重已自動套用</span></div>
       </section>
 
-      <div id="postQuizSetup" class="post-quiz-setup" hidden>
-        <section class="quality-card" aria-labelledby="qualityTitle">
-          <div class="quality-head">
-            <div><h2 id="qualityTitle">依答案產生的生活品質比重</h2><p id="qualityIntro">完成五題後，KASO 會先替你配置；你仍可拖曳微調。</p></div>
-            <span class="quality-total">比重合計 <b id="qualityTotal">100%</b></span>
+      <section id="resultStage" class="onboarding-stage result-stage" aria-labelledby="resultTitle" hidden>
+        <div class="result-stage-content">
+          <p class="stage-kicker">PROFILE RESULT</p>
+          <h1 id="resultTitle">你可能是<br><strong id="personaRecommendationLabel">月光族</strong></h1>
+          <p id="resultDescription" class="result-description">你比較重視當下感受，KASO 會先幫你守住固定支出與存款。</p>
+          <div class="result-choice-grid">
+            <div class="result-persona-card"><small>你的省錢模式</small><strong id="resultPersonaCard">月光族</strong><span>已依 5 題答案自動判定</span></div>
+            <div class="result-quality-card">
+              <div><span>節省時間</span><i><b id="resultTimeBar"></b></i><strong id="resultTime">25%</strong></div>
+              <div><span>飲食品質</span><i><b id="resultFoodBar"></b></i><strong id="resultFood">25%</strong></div>
+              <div><span>舒適便利</span><i><b id="resultComfortBar"></b></i><strong id="resultComfort">25%</strong></div>
+              <div><span>娛樂體驗</span><i><b id="resultFunBar"></b></i><strong id="resultFun">25%</strong></div>
+            </div>
           </div>
-          <div class="quality-grid">
-            <div class="quality-item"><label>節省時間 <output id="qTimeOut">25%</output></label><small>交通、外送與距離便利</small><input id="qTime" type="range" min="1" max="5" value="1"></div>
-            <div class="quality-item"><label>飲食品質 <output id="qFoodOut">25%</output></label><small>餐食健康、品質與體驗</small><input id="qFood" type="range" min="1" max="5" value="1"></div>
-            <div class="quality-item"><label>舒適便利 <output id="qComfortOut">25%</output></label><small>居家、服務與耐用度</small><input id="qComfort" type="range" min="1" max="5" value="1"></div>
-            <div class="quality-item"><label>娛樂體驗 <output id="qFunOut">25%</output></label><small>影音、活動與休閒</small><input id="qFun" type="range" min="1" max="5" value="1"></div>
-          </div>
-        </section>
+          <div class="stage-actions"><button id="resultRestart" class="secondary-btn" type="button">重新作答</button><button id="continueToBudget" class="primary-btn" type="button">設定我的預算 <svg><use href="#i-arrow"/></svg></button></div>
+        </div>
+      </section>
 
-        <section class="setup-card" aria-labelledby="financeTitle">
-          <div class="setup-heading">
-            <span><svg><use href="#i-wallet"/></svg></span>
-            <div><h2 id="financeTitle">再填寫現在的收入與支出</h2><p>填入真實數字後，KASO 才會計算可花餘額與存款進度。</p></div>
+      <section id="budgetStage" class="onboarding-stage budget-stage" aria-labelledby="financeTitle" hidden>
+        <div class="budget-stage-card">
+          <div class="budget-stage-heading"><p class="stage-kicker">FINAL SETUP · <span id="budgetPersonaLabel">月光族</span></p><h1 id="financeTitle">把現在的數字<br>告訴 KASO</h1><p>我們已依回答排好生活比重；填完收入與支出，就能開始使用。</p></div>
+          <div class="budget-stage-form">
+            <section class="quality-card" aria-labelledby="qualityTitle">
+              <div class="quality-head"><div><h2 id="qualityTitle">建議生活品質比重</h2><p id="qualityIntro">你仍可拖曳微調。</p></div><span class="quality-total">合計 <b id="qualityTotal">100%</b></span></div>
+              <div class="quality-grid">
+                <div class="quality-item"><label>節省時間 <output id="qTimeOut">25%</output></label><input id="qTime" type="range" min="1" max="5" value="1"></div>
+                <div class="quality-item"><label>飲食品質 <output id="qFoodOut">25%</output></label><input id="qFood" type="range" min="1" max="5" value="1"></div>
+                <div class="quality-item"><label>舒適便利 <output id="qComfortOut">25%</output></label><input id="qComfort" type="range" min="1" max="5" value="1"></div>
+                <div class="quality-item"><label>娛樂體驗 <output id="qFunOut">25%</output></label><input id="qFun" type="range" min="1" max="5" value="1"></div>
+              </div>
+            </section>
+            <div class="finance-grid">
+              <label class="field">目前餘額<input id="currentBalance" type="number" min="0" step="100" placeholder="例如：6800"></label>
+              <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="1" step="1000" placeholder="例如：30000"></label>
+              <label class="field">每月固定支出<input id="fixedExpense" type="number" min="0" step="1000" placeholder="例如：24000"></label>
+              <label class="field">想存到多少<input id="savingTarget" type="number" min="1" step="1000" value="12000"></label>
+              <label class="field">希望幾個月完成<input id="savingMonths" type="number" min="1" max="36" value="6"></label>
+            </div>
+            <div class="finance-preview" aria-live="polite"><span><small>每月先存</small><strong id="previewSave">NT$2,000</strong></span><span><small>每月可安排</small><strong id="previewFlexible">填完後計算</strong></span><span><small>預計完成</small><strong id="previewDate">—</strong></span></div>
+            <p id="setupError" class="setup-error" role="alert" hidden></p>
+            <div class="stage-actions budget-actions"><button id="budgetBack" class="secondary-btn" type="button">返回結果</button><button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button></div>
           </div>
-          <div class="finance-grid">
-            <label class="field">目前餘額<input id="currentBalance" type="number" min="0" step="100" placeholder="例如：6800"></label>
-            <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="1" step="1000" placeholder="例如：30000"></label>
-            <label class="field">每月固定支出<input id="fixedExpense" type="number" min="0" step="1000" placeholder="例如：24000"></label>
-            <label class="field">想存到多少<input id="savingTarget" type="number" min="1" step="1000" value="12000"></label>
-            <label class="field">希望幾個月完成<input id="savingMonths" type="number" min="1" max="36" value="6"></label>
-          </div>
-          <div class="finance-preview" aria-live="polite">
-            <span><small>每月先存</small><strong id="previewSave">NT$2,000</strong></span>
-            <span><small>每月可安排</small><strong id="previewFlexible">填完後計算</strong></span>
-            <span><small>預計完成</small><strong id="previewDate">—</strong></span>
-          </div>
-        </section>
-        <p class="onboarding-note"><svg><use href="#i-shield"/></svg> HTML 互動稿僅在這台裝置保存設定，不會連接銀行或上傳個人資料。</p>
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   </section>
 
   <section id="mainApp" hidden>
@@ -1174,7 +1286,6 @@
         <nav class="main-nav" aria-label="主要功能">
           <button class="nav-btn" type="button" data-view="search" data-mega="search">商品比價</button>
           <button class="nav-btn" type="button" data-view="nearby" data-mega="nearby">附近優惠</button>
-          <button class="nav-btn" type="button" data-view="cards" data-mega="cards">辦卡推薦</button>
           <button class="nav-btn" type="button" data-view="ledger" data-mega="life">生活規劃</button>
         </nav>
         <div class="header-actions">
@@ -1198,7 +1309,7 @@
       </div>
       <div id="chatLog" class="chat-log" aria-live="polite"></div>
       <form id="assistantForm" class="assistant-form">
-        <input id="assistantInput" autocomplete="off" placeholder="問預算、商品、卡片或保險…" aria-label="輸入問題">
+        <input id="assistantInput" autocomplete="off" placeholder="問預算、商品、旅遊或保險…" aria-label="輸入問題">
         <button type="submit" aria-label="送出"><svg><use href="#i-send"/></svg></button>
       </form>
     </aside>
@@ -1249,7 +1360,7 @@
     const safeNumber = (id, fallback = 0) => Math.max(0, Number($(id).value) || fallback);
     const hasInput = (id) => $(id).value.trim() !== "" && Number.isFinite(Number($(id).value));
     const today = new Date();
-    const PROFILE_STORAGE_KEY = "kaso-html-profile-v3";
+    const PROFILE_STORAGE_KEY = "kaso-html-profile-v4";
     const personaQuestionIds = ["shopping", "salary", "travel", "balance", "lottery"];
 
     const state = {
@@ -1273,7 +1384,7 @@
       filterOpen: false,
       assistantTopic: null,
       messages: [
-        { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、哪張卡適合，或貼商品連結讓我一起比較。" }
+        { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、旅遊怎麼分配，或貼商品連結讓我一起比較。" }
       ]
     };
 
@@ -1293,12 +1404,6 @@
       { name: "台北地下街創意市集", type: "免費活動", note: "不消費也能參加", address: "台北市中正區市民大道一段 100 號", price: 0, distance: "650 公尺", lat: 25.0492, lon: 121.5146, icon: "pin" }
     ];
 
-    const cardMatches = [
-      { name: "台新 Richart 卡", score: 92, color: "#f04438", reason: "現金回饋規則較直覺，適合目前需要控制每月支出的設定。" },
-      { name: "國泰 CUBE 卡", score: 86, color: "#6d4aff", reason: "餐飲與日常情境彈性高，但要記得切換權益。" },
-      { name: "永豐 DAWHO 卡", score: 78, color: "#12b76a", reason: "一般消費與日常採買使用簡單。" }
-    ];
-
     const megaContent = {
       search: [
         ["比價分類", ["一般商品", "附近推薦", "日常採買", "3C 家電"]]
@@ -1306,11 +1411,6 @@
       nearby: [
         ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
         ["為你換算", ["只用我的持有卡", "折扣＋卡片回饋", "開啟大按鈕導航"]]
-      ],
-      cards: [
-        ["辦卡推薦", ["依客製答案推薦", "完整 6 題微調", "指定銀行比較"]],
-        ["使用情境", ["每月現金流配卡", "日常消費配卡", "海外刷卡試算"]],
-        ["我的卡片", ["持有卡與回饋缺口", "年費與回饋上限", "申辦前注意事項"]]
       ],
       life: [
         ["每月生活", ["自動記帳", "訂閱月費", "支出與目標進度"]],
@@ -1345,6 +1445,12 @@
       state.mode = mode === "goal" ? "goal" : "moonlight";
       const intro = $("#qualityIntro");
       if (intro) intro.textContent = `依五題答案為「${personaModeLabel()}」產生；你仍可拖曳微調，推薦會跟著重新分配。`;
+      if ($("#personaRecommendationLabel")) $("#personaRecommendationLabel").textContent = personaModeLabel();
+      if ($("#resultPersonaCard")) $("#resultPersonaCard").textContent = personaModeLabel();
+      if ($("#budgetPersonaLabel")) $("#budgetPersonaLabel").textContent = personaModeLabel();
+      if ($("#resultDescription")) $("#resultDescription").textContent = state.mode === "goal"
+        ? "你習慣先替未來留位置。KASO 會把目標期限放進每一次消費判斷。"
+        : "你比較重視當下感受。KASO 會先幫你守住固定支出與存款，再算真正能花的金額。";
       if (announce) showToast(`已依回答套用「${personaModeLabel()}」`);
     }
 
@@ -1379,6 +1485,16 @@
       updateOnboardingPreview();
     }
 
+    function showOnboardingStage(stage) {
+      const stages = { quiz: "#quizStage", result: "#resultStage", budget: "#budgetStage" };
+      Object.entries(stages).forEach(([key, selector]) => $(selector).hidden = key !== stage);
+      const onboarding = $("#onboarding");
+      onboarding.classList.remove("stage-quiz", "stage-result", "stage-budget");
+      onboarding.classList.add(`stage-${stage}`);
+      document.body.classList.add("onboarding-active");
+      window.scrollTo(0, 0);
+    }
+
     function showPersonaQuestion(index, focusAnswer = false) {
       state.quizIndex = Math.max(0, Math.min(personaQuestionIds.length - 1, index));
       $$(".persona-question").forEach((question, questionIndex) => question.classList.toggle("active", questionIndex === state.quizIndex));
@@ -1387,21 +1503,7 @@
     }
 
     function syncPersonaQuiz() {
-      const answeredCount = personaQuestionIds.filter((id) => Boolean(state.personaAnswers[id])).length;
-      $("#personaQuizProgressText").textContent = `第 ${state.quizIndex + 1} 題／共 ${personaQuestionIds.length} 題`;
-      $("#personaQuizProgressBar").style.width = `${(answeredCount / personaQuestionIds.length) * 100}%`;
       $("#personaQuizBack").disabled = state.quizIndex === 0;
-      const completed = answeredCount === personaQuestionIds.length;
-      $("#personaQuizHint").textContent = completed ? "已完成，請確認比重後填寫收入支出" : "選擇後會自動進入下一題";
-      $("#personaRecommendation").hidden = !completed;
-      $("#postQuizSetup").hidden = !completed;
-      $("#backToPersona").hidden = answeredCount === 0;
-      $("#completeSetup").hidden = !completed;
-      if (completed) $("#personaRecommendationLabel").textContent = personaModeLabel(recommendedPersonaMode());
-      const financesReady = hasInput("#currentBalance") && hasInput("#monthlyIncome") && hasInput("#fixedExpense")
-        && safeNumber("#monthlyIncome") > 0 && safeNumber("#fixedExpense") < safeNumber("#monthlyIncome")
-        && safeNumber("#savingTarget") > 0 && safeNumber("#savingMonths", 1) > 0;
-      $("#completeSetup").disabled = !completed || !financesReady;
     }
 
     function choosePersonaAnswer(button) {
@@ -1422,7 +1524,7 @@
       if (state.quizIndex < personaQuestionIds.length - 1) {
         state.quizTimer = window.setTimeout(() => showPersonaQuestion(state.quizIndex + 1, true), 280);
       } else if (complete) {
-        state.quizTimer = window.setTimeout(() => $("#personaRecommendation").scrollIntoView({ behavior: "smooth", block: "center" }), 320);
+        state.quizTimer = window.setTimeout(() => showOnboardingStage("result"), 360);
       }
     }
 
@@ -1445,11 +1547,37 @@
         $("#" + id + "Out").value = label;
         $("#" + id + "Out").textContent = label;
       });
+      const resultKeys = ["Time", "Food", "Comfort", "Fun"];
+      resultKeys.forEach((key, index) => {
+        $("#result" + key).textContent = `${percentages[index]}%`;
+        $("#result" + key + "Bar").style.width = `${percentages[index]}%`;
+      });
       $("#qualityTotal").textContent = "100%";
-      syncPersonaQuiz();
+      if (!$("#setupError").hidden) $("#setupError").hidden = true;
+    }
+
+    function validateFinanceSetup() {
+      const required = ["#currentBalance", "#monthlyIncome", "#fixedExpense", "#savingTarget", "#savingMonths"];
+      const missing = required.find((selector) => !hasInput(selector));
+      let message = "";
+      let field = missing ? $(missing) : null;
+      if (missing) message = "請先填完目前餘額、收入、支出與存款目標。";
+      else if (safeNumber("#monthlyIncome") <= 0) { message = "每月固定收入需要大於 0。"; field = $("#monthlyIncome"); }
+      else if (safeNumber("#fixedExpense") >= safeNumber("#monthlyIncome")) { message = "固定支出需要低於固定收入，才能計算可安排金額。"; field = $("#fixedExpense"); }
+      else if (safeNumber("#savingTarget") <= 0 || safeNumber("#savingMonths") <= 0) { message = "請填入有效的存款目標與完成月數。"; field = $("#savingTarget"); }
+      if (!message) return true;
+      $("#setupError").textContent = message;
+      $("#setupError").hidden = false;
+      field?.focus();
+      return false;
     }
 
     function saveProfileAndEnter() {
+      if (!personaQuestionIds.every((id) => Boolean(state.personaAnswers[id]))) {
+        showOnboardingStage("quiz");
+        return;
+      }
+      if (!validateFinanceSetup()) return;
       state.mode = recommendedPersonaMode();
       state.profile = {
         mode: state.mode,
@@ -1467,6 +1595,7 @@
       localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.profile));
       $("#onboarding").hidden = true;
       $("#mainApp").hidden = false;
+      document.body.classList.remove("onboarding-active");
       renderView("home");
     }
 
@@ -1486,6 +1615,7 @@
       }
       showPersonaQuestion(0);
       updateOnboardingPreview();
+      showOnboardingStage("quiz");
     }
 
     function resetProfile() {
@@ -1494,7 +1624,7 @@
       restartPersonaQuiz(true);
       $("#mainApp").hidden = true;
       $("#onboarding").hidden = false;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      showOnboardingStage("quiz");
     }
 
     function syncHeader() {
@@ -1512,7 +1642,7 @@
     }
 
     function viewLabel(view) {
-      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", cards: "辦卡推薦", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
+      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
     }
 
     function renderView(view) {
@@ -1521,7 +1651,7 @@
       syncHeader();
       const root = $("#viewRoot");
       const renderer = ({
-        home: renderHome, search: renderSearch, nearby: renderNearby, cards: renderCards,
+        home: renderHome, search: renderSearch, nearby: renderNearby,
         ledger: renderLedger, travel: renderTravel, insurance: renderInsurance,
         subscriptions: renderSubscriptions, overseas: renderOverseas
       })[view] || renderHome;
@@ -1532,14 +1662,15 @@
 
     function renderHome() {
       const f = getFinance();
-      const total = Math.max(f.reserve + f.spent + f.safe, 1);
+      const carryover = Math.min(240, f.safe);
+      const settledCarryover = state.settlementDone ? carryover : 0;
+      const total = Math.max(f.reserve + f.spent + f.safe + settledCarryover, 1);
       const reserveStop = (f.fixed / total) * 100;
       const saveStop = reserveStop + (f.monthlySave / total) * 100;
       const spentStop = Math.min(100, saveStop + (f.spent / total) * 100);
       const bg = `conic-gradient(#0b0b0b 0 ${reserveStop}%, #2f5fd0 ${reserveStop}% ${saveStop}%, #94a79b ${saveStop}% ${spentStop}%, #f4d400 ${spentStop}% 100%)`;
       const status = f.safe > 3000 ? ["今天有一點彈性", "可以安排小額享受，但先確認不會動到存款。"] : ["今天需要注意", "先以必要支出和低價選項為主，避免月底壓力。"];
-      const carryover = Math.min(240, f.safe);
-      const displayBalance = f.currentBalance + (state.settlementDone ? carryover : 0);
+      const displayBalance = f.currentBalance + settledCarryover;
       const needsDelay = f.safe <= 0 || f.currentBalance < f.monthlySave;
       const savingProgress = f.target > 0 ? Math.min(100, Math.round((f.monthlySave / f.target) * 100)) : 0;
       return `
@@ -1561,7 +1692,7 @@
             </section>
             <aside id="balanceDonut" class="donut-side">
               <small>目前餘額</small>
-              <div class="donut large" style="background:${bg}"><span><small>目前餘額</small><strong>${money(displayBalance)}</strong></span></div>
+              <div class="donut large" style="background:${bg}"><span><small>目前餘額</small><strong id="balanceAmountDisplay">${money(displayBalance)}</strong></span></div>
               <div class="legend"><span><i class="legend-fixed"></i>固定</span><span><i class="legend-saving"></i>存款</span><span><i class="legend-spent"></i>已花</span><span><i class="legend-available"></i>可花</span></div>
               <span class="status-pill">${f.safe > 3000 ? "可以稍微放鬆" : "支出要收斂"}</span>
             </aside>
@@ -1573,7 +1704,6 @@
           <div class="service-grid">
             ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["日常採買", "search"], ["3C 家電", "search"]], "商品、日常、3C", true)}
             ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
-            ${serviceCard("card", "cards", "現金流＋習慣", "辦卡推薦", "客製答案直接帶入。", [["快速問答", "cards"], ["海外刷卡", "overseas"]], "3 張配對卡")}
             ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
           </div>
         </section>
@@ -1657,17 +1787,6 @@
       return `<section class="nearby-map" aria-label="附近推薦地圖"><div class="nearby-map-head"><h2>附近推薦地圖</h2><small>點標記直接開啟導航</small></div><div class="nearby-map-canvas">${offers.map((offer, index) => { const left = 12 + ((offer.lon - minLon) / lonSpan) * 76; const top = 14 + ((maxLat - offer.lat) / latSpan) * 70; return `<a class="map-marker" style="left:${left}%;top:${top}%" href="https://www.google.com/maps/search/?api=1&query=${offer.lat},${offer.lon}" target="_blank" rel="noreferrer" title="${escapeAttr(offer.name)}"><span>${index + 1}</span></a>`; }).join("")}</div></section>`;
     }
 
-    function renderCards() {
-      const f = getFinance();
-      const topQuality = Object.entries(f.quality).sort((a, b) => b[1] - a[1])[0][0];
-      const labels = { time: "節省時間", food: "飲食品質", comfort: "舒適便利", fun: "娛樂體驗" };
-      return `<section class="view">
-        ${pageTitle("辦卡推薦", "第一步客製化答案已直接帶入；需要時再用快速問答微調。")}
-        <div class="two-col"><aside class="feature-card"><p class="eyebrow">${icon("bot")} 已帶入客製化</p><h2>用現金流，而不是信用額度選卡</h2><p>每月收入、固定支出、存款目標與生活品質比重會一起影響配對。</p><div class="profile-rule">每月先存 ${money(f.monthlySave)} · 安心可花 ${money(f.safe)} · ${labels[topQuality]}優先</div><div class="allocation-bars"><div class="allocation-line"><span>現金流安全</span><div class="bar"><i style="width:95%"></i></div><strong>95%</strong></div><div class="allocation-line"><span>日常回饋</span><div class="bar"><i style="width:88%"></i></div><strong>88%</strong></div><div class="allocation-line"><span>規則簡單</span><div class="bar"><i style="width:90%"></i></div><strong>90%</strong></div></div><button id="cardQuestions" class="secondary-btn" type="button" style="margin-top:18px">用 6 題再微調</button></aside>
-        <div class="result-panel"><p class="eyebrow">${icon("card")} 初始配對完成</p><h2>最符合目前設定</h2><div class="card-winner" style="border-color:${cardMatches[0].color}"><small>第一推薦 · ${cardMatches[0].score}%</small><h3>${cardMatches[0].name}</h3><p>${cardMatches[0].reason}</p></div><div class="rank-list">${cardMatches.map((c, i) => `<div class="rank"><span>${i + 1}</span><strong>${c.name}</strong><b>${c.score}%</b></div>`).join("")}</div><div class="warning">這是生活習慣配對，不是核卡保證。申辦前仍要確認年費、回饋上限與銀行最新條款。</div></div></div>
-      </section>`;
-    }
-
     function renderLedger() {
       const f = getFinance();
       const recovery = state.recovery ? `<div class="recovery"><h3>${state.recovery === "extend" ? "目標日期已延後" : "7 天低價優先已啟用"}</h3><p>${state.recovery === "extend" ? "系統會把本次超支平均攤回新的期限。" : "商品比價與附近優惠會先顯示低實付選項。"}</p></div>` : "";
@@ -1740,8 +1859,6 @@
       $$('[data-insurance]').forEach((el) => el.addEventListener("click", () => { state.insuranceTab = el.dataset.insurance; renderView("insurance"); }));
       const claimCheck = $("#claimCheck");
       if (claimCheck) claimCheck.addEventListener("click", () => { if (!$("#claimText").value.trim()) { showToast("請先描述發生的狀況"); return; } $("#claimResult").hidden = false; });
-      const cardQuestions = $("#cardQuestions");
-      if (cardQuestions) cardQuestions.addEventListener("click", () => openAssistant("我想再回答問題微調信用卡推薦"));
       const calculateForeign = $("#calculateForeign");
       if (calculateForeign) calculateForeign.addEventListener("click", calculateForeignCost);
       const settleDaily = $("#settleDaily");
@@ -1771,34 +1888,29 @@
 
     function settleDailyBudget() {
       const button = $("#settleDaily");
-      const source = $("#dailyPocket");
-      const target = $("#balanceDonut");
-      if (!button || !source || !target || state.settlementDone) return;
+      const sourceAmount = $("#dailyCarryoverAmount");
+      const balanceAmount = $("#balanceAmountDisplay");
+      if (!button || !sourceAmount || !balanceAmount || state.settlementDone) return;
+      const finance = getFinance();
+      const carryover = Math.min(240, finance.safe);
+      if (carryover <= 0) return;
       button.disabled = true;
-      source.classList.add("is-moving");
-      target.classList.add("is-receiving");
-      const sourceRect = source.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const flyingCard = document.createElement("div");
-      flyingCard.className = "settlement-fly-card";
-      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(Math.min(240, getFinance().safe))}</strong>`;
-      Object.assign(flyingCard.style, { left: sourceRect.left + "px", top: sourceRect.top + "px", width: sourceRect.width + "px", height: sourceRect.height + "px" });
-      document.body.appendChild(flyingCard);
-      const dx = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
-      const dy = targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
-      if (typeof flyingCard.animate === "function") {
-        flyingCard.animate([
-          { transform: "translate(0,0) scale(1)", opacity: 1 },
-          { transform: `translate(${dx * .22}px,${Math.min(-110, dy * .45)}px) scale(.96)`, opacity: 1, offset: .45 },
-          { transform: `translate(${dx}px,${dy}px) scale(.16)`, opacity: .12 }
-        ], { duration: 1180, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
-      }
-      window.setTimeout(() => {
-        flyingCard.remove();
+      button.textContent = "結算中";
+      const startBalance = finance.currentBalance;
+      const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 1050;
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const moved = Math.round(carryover * eased);
+        sourceAmount.textContent = money(carryover - moved);
+        balanceAmount.textContent = money(startBalance + moved);
+        if (progress < 1) return requestAnimationFrame(tick);
         state.settlementDone = true;
         renderView("home");
-        showToast("今日未用預算已移回目前餘額");
-      }, 1220);
+        showToast("今日未用預算已加回目前餘額");
+      };
+      requestAnimationFrame(tick);
     }
 
     function calculateForeignCost() {
@@ -1834,7 +1946,6 @@
       if (/保險|保障|理賠|保單/.test(label)) return renderView("insurance");
       if (/訂閱|音樂|影音/.test(label)) return renderView("subscriptions");
       if (/海外/.test(label)) return renderView("overseas");
-      if (/卡|年費|回饋/.test(label)) return renderView("cards");
       if (/記帳|支出|目標/.test(label)) return renderView("ledger");
       if (/附近|文化幣|免費活動|公尺|店家/.test(label)) return renderView("nearby");
       renderView("search");
@@ -1881,7 +1992,6 @@
       }
       if (/還能花|剩多少|預算|餘額/.test(q)) { state.assistantTopic = "budget"; return `目前餘額 ${money(f.currentBalance)}，已先保留固定支出與每月存款；今天安心可花約 ${money(f.safe)}。` }
       if (/保險|延誤|行李|住院|理賠/.test(q)) { state.assistantTopic = "insurance"; return "我可以先找『可能申請』的項目。請補上事件日期、發生狀況、損失金額，以及你是否保留證明或單據；最終仍依保單條款與保險公司審核。"; }
-      if (/卡|回饋|信用卡/.test(q)) { state.assistantTopic = "card"; return `依你第一步的現金流與生活比重，目前先推薦 ${cardMatches[0].name}。重點是規則簡單，且不會用信用額度放大你的 ${money(f.safe)} 可花預算。`; }
       if (/商品|買|比價|多少錢|連結|http/.test(q) || state.assistantTopic === "product") {
         state.assistantTopic = "product";
         const hasSpecific = /airpods|iphone|switch|macbook|http|https|型號|gb/i.test(q);
@@ -1889,7 +1999,7 @@
       }
       if (/附近|餐廳|咖啡|超市/.test(q)) { state.assistantTopic = "nearby"; return `目前以台北車站 1,000 公尺為示範位置，共有 ${nearbyOffers.length} 個預算內選項；要我優先找餐飲、日常採買，還是免費活動？`; }
       if (/旅遊|機票|飯店|日本/.test(q)) { state.assistantTopic = "travel"; return "可以。我會把住宿、餐飲、交通和景點放在同一個上限內。你想住得更好、吃得更好，還是玩更多景點？"; }
-      return state.assistantTopic ? "我會延續上一個主要問題。可以再補充你剛才回答的是哪個條件，或直接貼相關連結，我就接著整理。" : "我還不知道你要處理的是商品、預算、信用卡、旅遊或保險。請多給我一個關鍵資訊，我會先確認再回答。";
+      return state.assistantTopic ? "我會延續上一個主要問題。可以再補充你剛才回答的是哪個條件，或直接貼相關連結，我就接著整理。" : "我還不知道你要處理的是商品、預算、旅遊或保險。請多給我一個關鍵資訊，我會先確認再回答。";
     }
 
     function showToast(message) {
@@ -1920,12 +2030,10 @@
     $$(".persona-answer").forEach((button) => button.addEventListener("click", () => choosePersonaAnswer(button)));
     $("#personaQuizBack").addEventListener("click", () => showPersonaQuestion(state.quizIndex - 1, true));
     $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
+    $("#continueToBudget").addEventListener("click", () => showOnboardingStage("budget"));
+    $("#resultRestart").addEventListener("click", () => restartPersonaQuiz(false));
+    $("#budgetBack").addEventListener("click", () => showOnboardingStage("result"));
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
-    $("#backToPersona").addEventListener("click", () => {
-      restartPersonaQuiz(false);
-      $("#personaQuizTitle").scrollIntoView({ behavior: "smooth", block: "start" });
-      showToast("已清除答案，請重新作答");
-    });
     $("#resetProfile").addEventListener("click", resetProfile);
     $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
     $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
@@ -1953,6 +2061,7 @@
     $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
 
     const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
+    let restoredProfile = false;
     if (saved) {
       try {
         const profile = JSON.parse(saved);
@@ -1964,6 +2073,8 @@
         state.personaAnswers = profile.personaAnswers;
         $("#onboarding").hidden = true;
         $("#mainApp").hidden = false;
+        document.body.classList.remove("onboarding-active");
+        restoredProfile = true;
         renderView("home");
       } catch (_) {
         localStorage.removeItem(PROFILE_STORAGE_KEY);
@@ -1972,6 +2083,7 @@
     selectPersonaMode(state.mode);
     showPersonaQuestion(0);
     updateOnboardingPreview();
+    if (!restoredProfile) showOnboardingStage("quiz");
     renderMessages();
   </script>
 </body>
