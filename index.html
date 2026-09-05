@@ -258,6 +258,11 @@
     .donut.large small { font-size: .72rem; }
     .donut.large strong { font-size: 1.35rem; }
     .donut-side .legend { max-width: 220px; }
+    .donut-side .legend i { position: static; flex: 0 0 auto; }
+    .donut-side .legend-fixed { background: #111827; }
+    .donut-side .legend-saving { background: #6d4aff; }
+    .donut-side .legend-spent { background: #0878df; }
+    .donut-side .legend-available { background: #b8ff3d; }
     .donut-side .status-pill { margin-top: 2px; }
 
     .settlement-tray {
@@ -309,14 +314,14 @@
     .section-head p { margin: 4px 0 0; color: var(--muted); font-size: .8rem; }
     .section-head > span { color: var(--muted); font-size: .74rem; }
     .service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .service-card { min-height: 276px; padding: 19px; border: 1px solid var(--line); border-radius: 25px; background: #fff; display: flex; flex-direction: column; }
+    .service-card { min-height: 226px; padding: 19px; border: 1px solid var(--line); border-radius: 25px; background: #fff; display: flex; flex-direction: column; }
     .service-card.primary { background: linear-gradient(145deg, #f8fff0, #fff 55%); border-color: #d9f5aa; }
-    .service-title { display: flex; gap: 11px; }
+    .service-title { display: flex; min-height: 48px; align-items: center; gap: 11px; }
     .service-title > span { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--soft); }
     .service-title small { color: var(--muted); font-size: .68rem; }
     .service-title h3 { margin: 2px 0 0; font-size: 1.12rem; }
     .service-title p { margin: 5px 0 0; color: var(--muted); font-size: .76rem; }
-    .service-main { width: 100%; min-height: 42px; margin-top: 18px; border: 0; border-radius: 15px; background: var(--ink); color: #fff; cursor: pointer; font-weight: 800; }
+    .service-main { width: 100%; min-height: 44px; margin-top: 20px; border: 0; border-radius: 15px; background: var(--ink); color: #fff; cursor: pointer; font-weight: 800; }
     .service-children { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
     .service-children button { min-height: 34px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0 10px; cursor: pointer; font-size: .7rem; font-weight: 750; }
     .metric { margin-top: auto; padding-top: 16px; color: var(--muted); font-size: .7rem; }
@@ -848,7 +853,7 @@
             <aside id="balanceDonut" class="donut-side">
               <small>目前餘額</small>
               <div class="donut large" style="background:${bg}"><span><small>目前餘額</small><strong>${money(displayBalance)}</strong></span></div>
-              <div class="legend"><span><i style="background:#111827"></i>固定</span><span><i style="background:#6d4aff"></i>存款</span><span><i style="background:#0878df"></i>已花</span><span><i style="background:#b8ff3d"></i>可花</span></div>
+              <div class="legend"><span><i class="legend-fixed"></i>固定</span><span><i class="legend-saving"></i>存款</span><span><i class="legend-spent"></i>已花</span><span><i class="legend-available"></i>可花</span></div>
               <span class="status-pill">${f.safe > 3000 ? "可以稍微放鬆" : "支出要收斂"}</span>
             </aside>
           </div>
@@ -860,7 +865,7 @@
           ${needsDelay ? `<div class="zero-balance-card"><p><strong>目前可花餘額不足，建議延後完成期限</strong><small>延長一個月能降低每月存款壓力，避免再用信用額度補生活費。</small></p><button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button></div>` : ""}
         </section>
         <section class="view service-panel">
-          <div class="section-head"><div><h2>所有功能</h2><p>四個入口，一次看懂。</p></div><span>4 個分類</span></div>
+          <div class="section-head"><div><h2>所有功能</h2></div></div>
           <div class="service-grid">
             ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["餐飲", "search"], ["日常採買", "search"]], "商品、餐飲、日常", true)}
             ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
@@ -896,11 +901,11 @@
 
     function budgetDetailMarkup(f, id) {
       const detail = budgetDetailData(f, id);
-      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${Math.max(3, width)}%;--line-color:${id === "saving" ? "#a98bff" : id === "safe" ? "#b8ff3d" : "#70b7ff"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
+      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${amount > 0 ? Math.max(3, width) : 0}%;--line-color:${id === "saving" ? "#a98bff" : id === "safe" ? "#b8ff3d" : "#70b7ff"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
     }
 
     function serviceCard(iconId, view, kicker, title, detail, children, metric, primary = false) {
-      return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3><p>${detail}</p></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div><small class="metric">${metric}</small></article>`;
+      return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div></article>`;
     }
 
     function renderSearch() {
