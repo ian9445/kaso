@@ -71,6 +71,13 @@ router.post("/offers/nearby", requireProfile, async (req, res) => {
   res.json(await offers.nearbyOffers(lat, lng));
 });
 
+// ---- 前端設定 ----
+// Google Maps JavaScript API 的 key 設計上就是給瀏覽器用的（用 HTTP referrer 限制，不是靠保密），
+// 跟 Claude/BigGo 那種必須留在後端的 key 不一樣，所以這裡直接回傳給前端沒問題。
+router.get("/config", (req, res) => {
+  res.json({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || null });
+});
+
 // ---- KASO AI（Claude API） ----
 router.post("/assistant/chat", async (req, res) => {
   const { message, history } = req.body;
