@@ -1,6 +1,7 @@
 // 比價層 — 對應「比價」表格。已決議：用總預算判定，不做 classifyItem()。
 // 資料來源：真的打 BigGo 搜尋 API（見 providers/biggoProvider.js），不是假資料。
 const biggoProvider = require("../providers/biggoProvider");
+const { applyFilters, buildFacets } = require("./priceFilters");
 const { calcBudget, checkBudget, monthlySavingsTarget, fixedExpenseTotal } = require("./budget");
 const { load } = require("../store");
 
@@ -27,14 +28,36 @@ function calcCutRatio(over, totalExpenses) {
 
 // searchProduct() + fetchPrices() + getLowestPrice()：BigGo 一次查詢就回一份跨平台候選清單，
 // 每一筆已經是「某平台的一個刊登」，所以不用像假資料時代那樣另外組 platform×price 矩陣。
-async function search(keyword) {
-  const { items, lowPrice, highPrice, total, error } = await biggoProvider.searchProducts(keyword);
+//
+// 第二個參數 filters 是篩選條件（平台 / 價格區間 / 只看預算內 / 排序），
+// 因為 BigGo 不吃篩選參數，所以是拿回 30 筆之後我們自己篩。詳見 priceFilters.js。
+async function search(keyword, filters = {}) {
+  const { items, lowPrice, highPrice, total, globalPlatforms, error } =
+    await biggoProvider.searchProducts(keyword);
+
   const state = load();
   const budget = calcBudget(state);
   const safe = budget ? budget.safe : 0;
+
+  // 先標上 withinBudget，facet 與篩選都用得到
+  const marked = items.map((item) => ({ ...item, withinBudget: item.price <= safe }));
+
+  // facet 從「未篩選」的結果算，這樣按下篩選之後，其他選項的筆數不會跟著消失
+  const facets = buildFacets(marked, safe);
+  const { items: filtered, matched, applied } = applyFilters(marked, filters, safe);
+
   return {
-    items: items.map((item) => ({ ...item, withinBudget: item.price <= safe })),
-    lowPrice, highPrice, total, safe, source: "biggo", error: error || null,
+    items: filtered,
+    matched, // 符合篩選的筆數（可能大於實際回傳的 limit）
+    facets, // 可選的篩選條件與各自筆數
+    globalPlatforms, // BigGo 全站的平台分佈，僅供參考
+    applied, // 這次實際套用了哪些條件
+    lowPrice,
+    highPrice,
+    total,
+    safe,
+    source: "biggo",
+    error: error || null,
   };
 }
 

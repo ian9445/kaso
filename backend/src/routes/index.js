@@ -53,10 +53,24 @@ router.delete("/ledger/:id", (req, res) => {
 });
 
 // ---- 比價 ----
+// 篩選條件（都是選填，直接接在 query string）：
+//   platform        平台代碼或名稱，例如 tw_mall_shopeemall 或「蝦皮商城」
+//   min / max       價格區間
+//   onlyAffordable  true = 只看安心可花以內的（這是我們的差異化）
+//   cashback        true = 只看有回饋的平台
+//   sort            price（預設，低到高）| price_desc | relevance
+//   limit           回傳幾筆，預設 15
 router.get("/products/search", async (req, res) => {
   const q = req.query.q || "";
-  if (!q.trim()) return res.json({ items: [], lowPrice: 0, highPrice: 0, total: 0, safe: 0, source: "biggo" });
-  res.json(await price.search(q));
+  if (!q.trim()) {
+    return res.json({
+      items: [], matched: 0,
+      facets: { platforms: [], priceRange: { min: 0, max: 0 }, affordableCount: 0, totalReturned: 0, cashbackCount: 0 },
+      globalPlatforms: [], applied: {},
+      lowPrice: 0, highPrice: 0, total: 0, safe: 0, source: "biggo",
+    });
+  }
+  res.json(await price.search(q, req.query));
 });
 router.post("/products/evaluate", requireProfile, (req, res) => {
   res.json(price.evaluatePurchase(Number(req.body.price)));
