@@ -11,8 +11,8 @@ const [indexHtml, adminHtml] = await Promise.all([
 ]);
 
 const output = workerSource
-  .replace("__KASO_INDEX_HTML__", JSON.stringify(indexHtml))
-  .replace("__KASO_ADMIN_HTML__", JSON.stringify(adminHtml));
+  .replace("__KASO_INDEX_HTML__", () => JSON.stringify(indexHtml))
+  .replace("__KASO_ADMIN_HTML__", () => JSON.stringify(adminHtml));
 
 if (output.includes("__KASO_INDEX_HTML__") || output.includes("__KASO_ADMIN_HTML__")) {
   throw new Error("HTML build placeholders were not replaced");
