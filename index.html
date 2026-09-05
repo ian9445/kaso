@@ -39,7 +39,7 @@
       margin: 0;
       color: var(--ink);
       background: #f5f5f7;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+      font-family: "SF Pro Display", "SF Pro Text", "Taipei Sans TC Beta", "Taipei Sans TC", "Noto Sans TC", "PingFang TC", sans-serif;
       font-size: 16px;
       line-height: 1.5;
     }
@@ -93,10 +93,12 @@
       box-shadow: var(--shadow); backdrop-filter: blur(18px);
     }
     .onboarding-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .onboarding-actions { display: flex; align-items: center; gap: 8px; }
     .onboarding-heading { max-width: 680px; margin: 64px 0 28px; }
     .onboarding-heading h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 4.25rem); line-height: .98; letter-spacing: -.065em; }
     .onboarding-heading > p:last-child { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
     .mode-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; }
+    #quizOptions.mode-grid { grid-template-columns: 1fr 1fr; }
     .mode-card {
       min-height: 155px; padding: 20px; border: 1px solid var(--line); border-radius: 22px; background: #fff;
       text-align: left; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 13px;
@@ -155,6 +157,8 @@
     .finance-mini small { color: var(--muted); font-size: .6rem; }
     .finance-mini strong { font-size: .76rem; margin-top: 4px; }
     .finance-mini .safe strong { color: var(--blue); }
+    .finance-mini .goal { max-width: 132px; }
+    .finance-mini .goal strong { overflow: hidden; text-overflow: ellipsis; }
     .location-btn { width: 38px; height: 38px; border: 0; border-radius: 999px; display: grid; place-items: center; color: #fff; background: var(--blue); cursor: pointer; }
 
     .mega-menu { position: absolute; inset: 68px 0 auto; background: rgba(255,255,255,.98); border-bottom: 1px solid var(--line); box-shadow: 0 22px 45px rgba(17,24,39,.12); }
@@ -332,6 +336,15 @@
     .toolbar input, .toolbar select { min-height: 44px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 12px; background: #fff; }
     .toolbar input { flex: 1 1 300px; }
     .toolbar .primary-btn { min-height: 44px; }
+    .filter-toggle {
+      width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center;
+      border: 1.5px solid var(--ink); border-radius: 50%; background: #fff; cursor: pointer;
+    }
+    .filter-toggle:hover, .filter-toggle.active { background: var(--lime); }
+    .filter-dropdown { width: 100%; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 14px; border: 1.5px solid var(--ink); border-radius: 8px; background: #fff; padding: 16px; animation: filter-open .28s var(--apple-ease); }
+    .filter-dropdown label { display: grid; gap: 6px; color: var(--muted); font-size: .72rem; }
+    .filter-dropdown select { width: 100%; min-height: 42px; border: 1px solid #d6d2c8; border-radius: 4px; background: #fff; padding-inline: 10px; }
+    @keyframes filter-open { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
     .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
     .chip { min-height: 36px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0 12px; cursor: pointer; font-size: .75rem; font-weight: 750; }
     .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
@@ -367,6 +380,15 @@
     .merchant-result small { color: var(--muted); font-size: .7rem; }
     .directions { min-height: 42px; margin-top: 9px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 7px; background: var(--blue); color: #fff; font-size: .78rem; font-weight: 850; }
     .directions:hover { background: var(--blue-deep); }
+    .nearby-map { margin: 18px 0; border: 1.5px solid var(--ink); border-radius: 18px; overflow: hidden; background: #e8eef1; }
+    .nearby-map-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1.5px solid var(--ink); background: #fff; padding: 13px 16px; }
+    .nearby-map-head h2 { margin: 0; font-size: 1rem; }
+    .nearby-map-head small { color: var(--muted); }
+    .nearby-map-canvas { position: relative; min-height: 300px; overflow: hidden; background-color: #dfe7e5; background-image: linear-gradient(28deg,transparent 46%,rgba(255,255,255,.9) 47% 52%,transparent 53%), linear-gradient(105deg,transparent 42%,rgba(255,255,255,.72) 43% 48%,transparent 49%), linear-gradient(rgba(47,95,208,.12) 1px,transparent 1px), linear-gradient(90deg,rgba(47,95,208,.12) 1px,transparent 1px); background-size: 100% 100%,100% 100%,44px 44px,44px 44px; }
+    .nearby-map-canvas::after { content: "目前位置"; position: absolute; left: 50%; top: 50%; z-index: 1; width: 14px; height: 14px; border: 4px solid #fff; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 2px var(--blue); color: var(--ink); font-size: .64rem; text-indent: 18px; white-space: nowrap; }
+    .map-marker { position: absolute; z-index: 2; width: 34px; height: 34px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50% 50% 50% 8px; background: var(--ink); color: #fff; font-size: .72rem; font-weight: 800; box-shadow: 0 6px 14px rgba(11,11,11,.24); transform: translate(-50%,-50%) rotate(-45deg); }
+    .map-marker span { transform: rotate(45deg); }
+    .map-marker:hover { background: var(--blue); }
 
     .two-col { display: grid; grid-template-columns: .82fr 1.18fr; gap: 18px; align-items: start; }
     .feature-card, .result-panel { padding: 21px; }
@@ -430,6 +452,7 @@
     .bubble { max-width: 88%; padding: 11px 12px; border-radius: 15px; font-size: .78rem; white-space: pre-line; }
     .bubble.ai { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 5px; }
     .bubble.user { align-self: flex-end; background: var(--violet); color: #fff; border-bottom-right-radius: 5px; }
+    .bubble.pending { color: var(--muted); font-style: italic; }
     .assistant-form { padding: 11px; display: grid; grid-template-columns: 1fr auto; gap: 8px; border-top: 1px solid var(--line); }
     .assistant-form input { min-height: 43px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 11px; outline: none; }
     .assistant-form button { width: 43px; border: 0; border-radius: 12px; background: var(--violet); color: #fff; cursor: pointer; }
@@ -439,7 +462,7 @@
     .dialog-body { padding: 22px; }
     .dialog-head { display: flex; justify-content: space-between; gap: 10px; }
     .dialog-head h2 { margin: 0; font-size: 1.35rem; }
-    .dialog-close { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: #fff; cursor: pointer; }
+    .dialog-close { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: #fff; cursor: pointer;padding: 8px; }
     .dialog-body textarea { width: 100%; min-height: 130px; margin-top: 14px; border: 1px solid #d8dde6; border-radius: 14px; padding: 12px; resize: vertical; }
     .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
     .toast { position: fixed; z-index: 80; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 11px 15px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .76rem; transition: .22s ease; }
@@ -511,6 +534,464 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+
+    /* Editorial UI concept — warm paper, disciplined whitespace and flat color. */
+    :root {
+      --ink: #0b0b0b;
+      --muted: #66645f;
+      --line: #171717;
+      --soft: #ebe8df;
+      --panel: #fffefa;
+      --violet: #2f5fd0;
+      --violet-soft: #e8edfb;
+      --blue: #2f5fd0;
+      --blue-deep: #2148a8;
+      --lime: #f4d400;
+      --lime-deep: #c9ae00;
+      --paper: #f3f0e7;
+      --sage: #94a79b;
+      --shadow: none;
+      --radius: 14px;
+      --radius-xl: 30px;
+      --radius-lg: 18px;
+      --radius-md: 9px;
+    }
+
+    body {
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, "Noto Sans TC", "PingFang TC", sans-serif;
+    }
+    .shell { width: min(1120px, calc(100% - 48px)); }
+    svg { stroke-width: 2.3; }
+    .eyebrow { color: var(--ink); letter-spacing: .07em; }
+
+    .primary-btn, .secondary-btn, .text-btn, .icon-btn {
+      border-radius: 3px;
+      box-shadow: none;
+    }
+    .primary-btn { background: var(--ink); }
+    .primary-btn:hover { background: var(--lime); color: var(--ink); transform: none; }
+    .secondary-btn, .icon-btn { border: 1.5px solid var(--ink); background: var(--panel); }
+    .text-btn { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+    /* Entry screen */
+    .onboarding {
+      padding-block: 38px 74px;
+      background: var(--paper);
+    }
+    .onboarding-card {
+      width: min(1040px, calc(100% - 36px));
+      padding: 34px;
+      border: 1.5px solid var(--ink);
+      border-radius: 36px;
+      background: var(--panel);
+      box-shadow: 10px 10px 0 var(--ink);
+      backdrop-filter: none;
+    }
+    .brand-mark {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: var(--lime);
+      color: var(--ink);
+    }
+    .brand-mark svg { display: none; }
+    .brand-mark::after { content: "K"; font: 900 1.35rem/1 Arial, sans-serif; }
+    .brand-copy strong { font-size: 1.05rem; letter-spacing: .025em; }
+    .onboarding-heading { max-width: 760px; margin-top: 76px; }
+    .onboarding-heading h1 {
+      font-family: Arial Black, Arial, "Noto Sans TC", sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4.7rem);
+      letter-spacing: -.05em;
+    }
+    .mode-grid { grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
+    .mode-card {
+      min-height: 138px;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .mode-card.featured { background: var(--panel); }
+    .mode-card:hover, .mode-card.selected {
+      border-color: var(--ink);
+      background: var(--lime);
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: translate(-2px, -2px);
+    }
+    .mode-icon { border: 1px solid var(--ink); border-radius: 2px; background: var(--panel); }
+    .mode-card.selected .mode-icon { background: var(--ink); color: #fff; }
+    .mode-card .mode-check { color: var(--ink); }
+    .setup-card { border: 1.5px solid var(--ink); border-radius: 16px; background: #f8f6ef; }
+    .setup-heading > span { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .field input, .field select, .field textarea { border: 1.5px solid var(--ink); border-radius: 3px; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(244,212,0,.45); }
+    .finance-preview { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--ink); }
+    .quality-card { border-radius: 16px; background: var(--ink); }
+    .quality-item { border-radius: 4px; background: #181818; }
+    .quality-total { border-radius: 2px; }
+
+    /* Navigation: no chevrons, just a line that draws in on hover. */
+    .site-header {
+      background: rgba(243,240,231,.96);
+      border-bottom: 1.5px solid var(--ink);
+      backdrop-filter: blur(10px);
+    }
+    .header-row { min-height: 74px; grid-template-columns: 230px 1fr auto; }
+    .main-nav { gap: 20px; }
+    .nav-btn {
+      position: relative;
+      min-height: 44px;
+      padding-inline: 3px;
+      border-radius: 0;
+      background: transparent;
+      font-weight: 900;
+      letter-spacing: .035em;
+    }
+    .nav-btn:hover, .nav-btn.active { background: transparent; }
+    .nav-btn::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 100%;
+      bottom: 5px;
+      height: 3px;
+      background: var(--ink);
+      transition: right .28s var(--apple-ease);
+    }
+    .nav-btn:hover::after, .nav-btn:focus-visible::after, .nav-btn.active::after { right: 0; }
+    .persona-chip, .finance-mini { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); }
+    .finance-mini span + span { border-color: var(--ink); }
+    .finance-mini .safe { background: var(--lime); }
+    .finance-mini .safe strong { color: var(--ink); }
+    .location-btn { border-radius: 3px; background: var(--ink); }
+    .mega-menu {
+      inset: 74px 0 auto;
+      background: var(--panel);
+      border-bottom: 1.5px solid var(--ink);
+      box-shadow: 0 9999px 0 9999px rgba(11,11,11,.38);
+    }
+    .mega-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 54px; padding-block: 38px 42px; }
+    .mega-grid.single { grid-template-columns: minmax(0, 520px); }
+    .mega-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mega-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+    .search-mega-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; padding-block: 30px 34px; }
+    .search-mega-grid button { display: grid; min-height: 88px; align-content: center; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; padding: 16px; text-align: left; font-weight: 600; cursor: pointer; }
+    .search-mega-grid button:hover { background: var(--lime); box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px,-2px); }
+    .mega-col { gap: 0; }
+    .mega-col small { margin-bottom: 10px; color: var(--muted); }
+    .mega-col button {
+      width: 100%;
+      padding: 12px 0;
+      border-bottom: 1px solid #d6d2c8;
+      font-size: .96rem;
+      font-weight: 850;
+    }
+    .mega-col button::after { display: none !important; content: none !important; }
+    .mega-col.primary button { font-size: 1.12rem; letter-spacing: -.015em; }
+
+    /* Main dashboard */
+    .main-content { padding-top: 40px; }
+    .money-overview {
+      border: 1.5px solid var(--ink);
+      border-radius: 32px;
+      background: var(--panel);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+    .balance-stage-head { padding: 34px 36px 24px; }
+    .balance-stage-head h1 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; font-size: clamp(1.9rem, 4vw, 3.35rem); }
+    .money-actions button { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); }
+    .money-actions button:hover { background: var(--lime); }
+    .balance-stage-grid { grid-template-columns: 190px minmax(0, 1fr) 280px; gap: 22px; padding: 0 30px 26px; }
+    .spend-rail { padding: 0; border-radius: 0; background: transparent; }
+    .spend-rail > small { margin-bottom: 8px; }
+    .spend-pill {
+      min-height: 56px;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      background: var(--panel);
+      color: var(--ink);
+    }
+    .spend-pill:hover { transform: translateX(4px); background: #faf8f1; }
+    .spend-pill.active { border-color: var(--ink); background: var(--lime); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+    .spend-pill .plus { border-radius: 2px; }
+    .spend-detail { border-radius: 22px; background: var(--ink); }
+    .spend-detail::after { display: none; }
+    .detail-kicker, .detail-copy { color: #d4d4d4; }
+    .detail-line i { background: #333; }
+    .donut-side { border: 1.5px solid var(--ink); border-radius: 22px; background: #f8f6ef; }
+    .donut.large::after { background: #f8f6ef; }
+    .donut-side .legend-fixed { background: #0b0b0b; }
+    .donut-side .legend-saving { background: #2f5fd0; }
+    .donut-side .legend-spent { background: #94a79b; }
+    .donut-side .legend-available { background: #f4d400; border: 1px solid var(--ink); }
+    .status-pill { border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .settlement-tray {
+      margin: 0 30px 30px;
+      padding: 22px 0 0;
+      border-top: 1.5px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+    }
+    .settlement-guide small { color: var(--ink); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 6px; text-underline-offset: -2px; }
+    .settlement-pocket { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--panel); box-shadow: none; }
+    .daily-pocket { background: var(--lime); }
+    .settlement-pocket button { border-radius: 2px; }
+    .settlement-fly-card { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--lime); box-shadow: 6px 6px 0 var(--ink); }
+
+    /* Give the functions room to breathe instead of filling one dense row. */
+    .service-panel {
+      width: min(900px, 100%);
+      margin: 72px auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .section-head { margin-bottom: 24px; }
+    .section-head h2, .qa-title h2 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; letter-spacing: -.035em; }
+    .section-head h2 { position: relative; padding-bottom: 8px; font-size: 1.6rem; }
+    .section-head h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 6px; background: var(--lime); }
+    .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .service-card {
+      min-height: 0;
+      padding: 24px;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .service-card.primary { border-color: var(--ink); background: var(--panel); box-shadow: inset 8px 0 0 var(--lime); }
+    .service-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+    .service-title { min-height: 52px; }
+    .service-title > span { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .service-title small { color: var(--muted); }
+    .service-main { width: auto; min-width: 154px; margin-top: 22px; padding-inline: 18px; border-radius: 2px; background: var(--ink); }
+    .service-children { gap: 18px; margin-top: 18px; }
+    .service-children button {
+      min-height: 28px;
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      font-size: .76rem;
+    }
+    .service-children button:hover { border-bottom-width: 4px; border-bottom-color: var(--lime-deep); }
+    .qa-section { width: min(900px, 100%); margin: 78px auto 0; padding: 38px 0 8px; border-top: 1.5px solid var(--ink); border-radius: 0; background: transparent; }
+    .qa-title h2 { font-size: clamp(2.4rem, 6vw, 4.8rem); }
+    .qa-list details { border-color: var(--ink); }
+    .qa-list summary::after { border: 1px solid var(--ink); border-radius: 2px; background: var(--panel); color: var(--ink); }
+    .qa-list details[open] summary::after { background: var(--lime); color: var(--ink); }
+    .qa-answer a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 5px; text-underline-offset: -1px; }
+
+    /* Inner pages and price results */
+    .page-title h1 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; }
+    .demo-pill { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .toolbar, .feature-card, .result-panel, .notice-card,
+    .merchant-card, .policy, .subscription { border: 1.5px solid var(--ink); border-radius: 8px; background: var(--panel); }
+    .toolbar input, .toolbar select, .ledger-form input, .ledger-form select { border: 1.5px solid var(--ink); border-radius: 3px; }
+    .chip, .tab-row button { border: 1px solid var(--ink); border-radius: 2px; }
+    .chip.active, .tab-row button.active { border-color: var(--ink); background: var(--lime); color: var(--ink); }
+    .summary-strip { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--ink); }
+    .result-grid { max-width: 980px; grid-template-columns: 1fr; gap: 18px; }
+    .product-card {
+      grid-template-columns: 170px minmax(0, 1fr);
+      grid-template-rows: none;
+      overflow: visible;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+      perspective: 1100px;
+    }
+    .product-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+    .product-image { border-right: 1.5px solid var(--ink); border-radius: 7px 0 0 7px; background: #ece9e0; color: var(--ink); }
+    .platform { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .match { color: var(--blue-deep); }
+    .product-actions button, .product-actions a { border-radius: 2px; }
+    .product-actions button { border: 1px solid var(--ink); }
+
+    .budget-flip {
+      position: relative;
+      width: min(100%, 440px);
+      height: 72px;
+      margin-top: 12px;
+      outline: none;
+      transform-origin: left center;
+      transition: transform .28s var(--apple-ease);
+      perspective: 900px;
+    }
+    .budget-flip:hover, .budget-flip:focus-visible { z-index: 8; transform: scale(1.075); }
+    .budget-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .55s var(--apple-ease);
+    }
+    .budget-flip:hover .budget-flip-inner, .budget-flip:focus .budget-flip-inner { transform: rotateX(180deg); }
+    .budget-flip-front, .budget-flip-back {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      backface-visibility: hidden;
+    }
+    .budget-flip-front { background: #fff4ef; color: #a22618; }
+    .budget-flip-front span { padding: 3px 6px; border: 1px solid currentColor; border-radius: 2px; font-size: .66rem; font-weight: 850; }
+    .budget-flip-front strong { font-size: .8rem; }
+    .budget-flip-back { flex-wrap: wrap; background: var(--lime); color: var(--ink); transform: rotateX(180deg); }
+    .budget-flip-back small { width: 100%; font-size: .64rem; font-weight: 900; letter-spacing: .08em; }
+    .budget-flip-back strong { font-size: .84rem; }
+    .budget-flip-back p { margin: 0; font-size: .7rem; }
+
+    .merchant-icon { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .directions { border-radius: 2px; background: var(--ink); }
+    .profile-rule, .claim-result, .recovery, .warning { border: 1px solid var(--ink); border-radius: 3px; background: #fff7c7; color: var(--ink); }
+    .card-winner { border-color: var(--ink); border-radius: 5px; box-shadow: 5px 5px 0 var(--lime); }
+    .card-winner small, .rank b { color: var(--blue-deep); }
+    .bar { background: #dcd8cd; }
+    .bar i { background: var(--blue); }
+
+    .assistant-fab { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--lime); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+    .assistant-panel { border: 1.5px solid var(--ink); border-radius: 9px; box-shadow: 6px 6px 0 var(--ink); }
+    .assistant-head { background: var(--ink); }
+    .bubble { border-radius: 4px; }
+    .bubble.ai { border-color: var(--ink); }
+    .bubble.user { background: var(--blue); }
+    .assistant-form input, .assistant-form button { border-radius: 2px; }
+    .assistant-form input { border-color: var(--ink); }
+    .feedback-btn { border-color: var(--ink); border-radius: 2px; color: var(--ink); }
+
+    @media (max-width: 980px) {
+      .header-row { grid-template-columns: 170px 1fr auto; }
+      .main-nav { gap: 10px; }
+      .balance-stage-grid { grid-template-columns: 170px minmax(0, 1fr); }
+      .service-panel, .qa-section { width: min(820px, 100%); }
+    }
+
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 28px, 1120px); }
+      .onboarding-card { padding: 20px; border-radius: 26px; box-shadow: 5px 5px 0 var(--ink); }
+      .onboarding-heading { margin-top: 46px; }
+      .header-row { min-height: 64px; grid-template-columns: auto 1fr auto; }
+      .mega-menu { inset: 64px 0 auto; }
+      .mega-grid { grid-template-columns: 1fr; gap: 24px; }
+      .nav-btn::after { bottom: 6px; }
+      .money-overview { border-radius: 24px; box-shadow: 5px 5px 0 var(--ink); }
+      .balance-stage-head { padding: 22px 18px 16px; }
+      .balance-stage-grid { padding: 0 14px 14px; }
+      .settlement-tray { margin: 0 14px 18px; }
+      .service-panel { margin-top: 52px; }
+      .service-grid { grid-template-columns: 1fr; }
+      .qa-section { margin-top: 58px; padding-top: 28px; }
+      .product-card { grid-template-columns: 1fr; grid-template-rows: 130px auto; }
+      .product-image { border-right: 0; border-bottom: 1.5px solid var(--ink); border-radius: 7px 7px 0 0; }
+      .budget-flip { width: 100%; transform-origin: center; }
+    }
+
+    /* v21: full-card purchase decision, profile access and mobile navigation */
+    body { font-weight: 400; }
+    :is(h1, h2, h3, strong, b, button, summary) { font-weight: 600; }
+    :is(p, small, label, input, select, textarea) { font-weight: 400; }
+
+    .profile-btn {
+      width: 42px; height: 42px; display: grid; place-items: center;
+      border: 1.5px solid var(--ink); border-radius: 50%; background: var(--panel); cursor: pointer;
+    }
+    .profile-btn:hover, .profile-btn:focus-visible { background: var(--lime); outline: 0; }
+    .profile-dialog { width: min(480px, calc(100% - 28px)); border: 1.5px solid var(--ink); border-radius: 22px; background: var(--panel); padding: 0; box-shadow: 8px 8px 0 var(--ink); }
+    .profile-dialog::backdrop { background: rgba(11,11,11,.58); backdrop-filter: blur(6px); }
+    .profile-dialog .dialog-body { display: grid; gap: 18px; padding: 28px; }
+    .profile-provider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .profile-provider-grid button { min-height: 48px; border: 1.5px solid var(--ink); border-radius: 5px; background: var(--panel); cursor: pointer; font-weight: 600; }
+    .profile-provider-grid button:hover { background: var(--lime); }
+    .provider-mark { display: inline-grid; width: 24px; height: 24px; margin-right: 8px; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; }
+    .account-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: .75rem; }
+    .account-divider::before, .account-divider::after { height: 1px; flex: 1; background: #d6d2c8; content: ""; }
+    .account-login-form { display: grid; gap: 10px; }
+    .account-login-form input { min-height: 46px; border: 1.5px solid var(--ink); border-radius: 4px; background: #fff; padding: 0 12px; }
+    .account-login-form button { min-height: 46px; border: 0; border-radius: 4px; background: var(--ink); color: #fff; cursor: pointer; }
+    .account-login-form button:hover { background: var(--blue); }
+    .account-note { margin: 12px 0 0; color: var(--muted); font-size: .75rem; line-height: 1.55; }
+    .account-card { display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: center; border: 1.5px solid var(--ink); border-radius: 6px; padding: 16px; }
+    .account-avatar { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: var(--lime); }
+    .account-card small, .account-card strong { display: block; }
+
+    .daily-compact {
+      display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--ink); border-radius: 5px;
+      background: var(--lime); padding: 8px 10px;
+    }
+    .daily-compact span { display: grid; line-height: 1.1; }
+    .daily-compact small { font-size: .68rem; }
+    .daily-compact strong { margin-top: 3px; font-size: 1rem; }
+    .daily-compact button { min-height: 34px; border: 0; border-radius: 3px; background: var(--ink); color: #fff; padding: 0 10px; cursor: pointer; }
+    .daily-compact button:disabled { opacity: .5; cursor: default; }
+    .daily-compact.is-moving { opacity: .35; }
+    .detail-line strong, .spend-pill small { color: #d8d8d8; font-variant-numeric: tabular-nums; }
+    .spend-pill:not(.active) small { color: var(--muted); }
+
+    .product-flip-card { margin-bottom: 18px; outline: none; perspective: 1200px; }
+    .product-flip-inner { display: grid; transform-origin: center; transform-style: preserve-3d; transition: transform .58s var(--apple-ease); }
+    .product-flip-face {
+      grid-area: 1 / 1; min-height: 238px; backface-visibility: hidden;
+      border: 1.5px solid var(--ink); border-radius: 8px; background: var(--panel); overflow: hidden;
+    }
+    .product-flip-front { display: grid; grid-template-columns: 170px minmax(0,1fr); }
+    .product-flip-back { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(240px,.8fr); gap: 24px; align-items: center; padding: 26px; background: var(--lime); transform: rotateX(-180deg); pointer-events: none; }
+    .product-flip-card:hover .product-flip-inner, .product-flip-card:focus .product-flip-inner, .product-flip-card:focus-within .product-flip-inner { transform: rotateX(-180deg); }
+    .product-flip-card:hover .product-flip-front, .product-flip-card:focus .product-flip-front, .product-flip-card:focus-within .product-flip-front { pointer-events: none; }
+    .product-flip-card:hover .product-flip-back, .product-flip-card:focus .product-flip-back, .product-flip-card:focus-within .product-flip-back { pointer-events: auto; }
+    .flip-prompt { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; border-bottom: 3px solid var(--lime); font-size: .75rem; }
+    .purchase-verdict { display: inline-flex; width: max-content; border: 1.5px solid var(--ink); border-radius: 3px; background: #fff; padding: 5px 8px; font-size: .76rem; }
+    .purchase-analysis h3 { margin: 14px 0 7px; font-size: clamp(1.35rem,3vw,2.15rem); line-height: 1.05; }
+    .purchase-analysis p { margin: 0; font-size: .8rem; line-height: 1.55; }
+    .purchase-metrics { display: grid; gap: 1px; border: 1.5px solid var(--ink); background: var(--ink); }
+    .purchase-metrics span { display: flex; justify-content: space-between; gap: 12px; background: var(--panel); padding: 10px 12px; font-size: .78rem; }
+    .purchase-back-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+    .purchase-back-actions button, .purchase-back-actions a { min-height: 39px; display: inline-flex; align-items: center; border: 1.5px solid var(--ink); border-radius: 3px; padding: 0 12px; font-size: .76rem; }
+    .purchase-back-actions button { background: var(--ink); color: #fff; cursor: pointer; }
+    .purchase-back-actions a { background: var(--panel); }
+
+    @media (max-width: 720px) {
+      body { padding-bottom: 82px; }
+      .finance-mini, .persona-chip { display: none; }
+      .header-row { grid-template-columns: 1fr auto; }
+      .header-actions { grid-column: 2; grid-row: 1; }
+      .main-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; justify-content: flex-start; overflow-x: auto; }
+      .main-content { padding-top: 22px; }
+      .money-actions { flex-wrap: wrap; }
+      .daily-compact { width: 100%; justify-content: space-between; }
+      .balance-stage-grid { grid-template-columns: 1fr; }
+      .spend-rail {
+        position: fixed; right: 0; bottom: 0; left: 0; z-index: 90; display: grid; grid-template-columns: repeat(4,1fr);
+        gap: 4px; padding: 8px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+        border: 0; background: var(--blue); box-shadow: 0 -8px 24px rgba(11,11,11,.18);
+      }
+      .spend-rail > small { display: none; }
+      .spend-pill, .spend-pill:hover { min-height: 54px; grid-template-columns: 1fr; gap: 1px; border: 0; background: transparent; color: #fff; padding: 5px 3px; text-align: center; transform: none; box-shadow: none; }
+      .spend-pill.active { background: #fff; color: var(--blue); box-shadow: none; }
+      .spend-pill .plus { display: none; }
+      .spend-pill small, .spend-pill:not(.active) small { color: inherit; font-size: .66rem; }
+      .spend-detail { order: 1; min-height: 330px; }
+      .donut-side { order: 2; }
+      .product-flip-front { grid-template-columns: 1fr; }
+      .product-flip-front .product-image { min-height: 120px; border-right: 0; border-bottom: 1.5px solid var(--ink); }
+      .product-flip-back { grid-template-columns: 1fr; min-height: 390px; padding: 20px; }
+      .filter-dropdown { grid-template-columns: 1fr; }
+      .nearby-map-canvas { min-height: 250px; }
+      .search-mega-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .assistant-fab, .assistant-panel { bottom: 88px; }
+      .feedback-btn { bottom: 92px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .product-flip-inner { transition-duration: .01ms; }
+    }
   </style>
 </head>
 <body>
@@ -525,6 +1006,8 @@
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9.5 4.6-1.3 8-4.5 8-9.5V6z" fill="none" stroke="currentColor"/><path d="m8.5 12 2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-plane" viewBox="0 0 24 24"><path d="m21 16-8-4V5.5a1.5 1.5 0 0 0-3 0V12l-8 4v2l8-2v4l-2 1v1l3.5-.5L15 22v-1l-2-1v-4l8 2z" fill="none" stroke="currentColor" stroke-linejoin="round"/></symbol>
     <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3v7M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3v18M16 3c3 1 4 4 4 7h-4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2 11h10l3-8H6M9 20h.01M17 20h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor"/><path d="M8 21h8M12 17v4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
@@ -533,6 +1016,7 @@
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2" fill="none" stroke="currentColor"/><path d="M10 18h4" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
     <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 8l11-2" fill="none" stroke="currentColor"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor"/></symbol>
+    <symbol id="i-return" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" fill="none" stroke="currentColor"/><path d="M20 20v-7a4 4 0 0 0-4-4H4" fill="none" stroke="currentColor"/></symbol>
   </svg>
 
   <section id="onboarding" class="onboarding">
@@ -542,65 +1026,51 @@
           <span class="brand-mark"><svg><use href="#i-grid"/></svg></span>
           <span class="brand-copy"><strong>卡搜 KASO</strong><small>個人省錢模式</small></span>
         </div>
-        <button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button>
+        <div class="onboarding-actions">
+          <!-- <button id="backToPersona" class="secondary-btn" type="button">返回身分</button> -->
+          <button id="completeSetup" class="primary-btn" type="button">進入 KASO <svg><use href="#i-arrow"/></svg></button>
+        </div>
       </div>
 
       <div class="onboarding-heading">
-        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 月光族設定</p>
-        <h1>先讓每一塊錢<br>有自己的位置。</h1>
-        <p>填入每月現金流，KASO 會先留住必要支出與存款，再告訴你今天能安心花多少。</p>
+        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 判斷身分</p>
+        <h1>先回答一題<br>再讓每一塊錢有位置。</h1>
+        <p>身分只有兩種：月光族、目標計畫族。身分只改「怎麼呈現」，不改「資料從哪來」。</p>
       </div>
 
-      <div class="mode-grid" aria-label="身分模式">
-        <button class="mode-card featured selected" type="button" data-mode="moonlight">
-          <span class="mode-icon"><svg><use href="#i-wallet"/></svg></span>
-          <span><strong>主要模式</strong><b>月光族</b><small>守住月底、建立第一個存錢目標</small></span>
-          <span class="mode-check">✓</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="goal">
-          <span class="mode-icon"><svg><use href="#i-target"/></svg></span>
-          <span><strong>目標模式</strong><b>有目標的省錢</b><small>旅行、大件商品或緊急預備金</small></span>
-          <span class="mode-check">→</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="rewards">
-          <span class="mode-icon"><svg><use href="#i-card"/></svg></span>
-          <span><strong>回饋模式</strong><b>紅利最佳化</b><small>依消費習慣選卡與放大回饋</small></span>
-          <span class="mode-check">→</span>
-        </button>
-      </div>
+      <section class="setup-card" id="quizCard" aria-labelledby="quizTitle">
+        <div class="setup-heading">
+          <span><svg><use href="#i-target"/></svg></span>
+          <div><h2 id="quizTitle">你比較符合哪一種？</h2><p id="quizSub">讀取問題中…</p></div>
+        </div>
+        <div id="quizOptions" class="mode-grid" aria-label="身分問答"></div>
+      </section>
 
-      <section class="setup-card" aria-labelledby="financeTitle">
+      <section class="setup-card" id="financeCard" hidden aria-labelledby="financeTitle">
         <div class="setup-heading">
           <span><svg><use href="#i-wallet"/></svg></span>
-          <div><h2 id="financeTitle">先填五個數字</h2><p>預設值可直接修改，所有計算會即時更新。</p></div>
+          <div><h2 id="financeTitle">先填幾個數字</h2><p>食衣住行育樂六類都要填，兩種身分一樣。</p></div>
         </div>
         <div class="finance-grid">
           <label class="field">目前餘額<input id="currentBalance" type="number" min="0" step="100" value="6800"></label>
-          <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="1" step="1000" value="30000"></label>
-          <label class="field">每月固定支出<input id="fixedExpense" type="number" min="0" step="1000" value="24000"></label>
-          <label class="field">想存到多少<input id="savingTarget" type="number" min="1" step="1000" value="12000"></label>
-          <label class="field">希望幾個月完成<input id="savingMonths" type="number" min="1" max="36" value="6"></label>
+          <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="0" step="1000" value="30000"></label>
         </div>
+        <div class="finance-grid" style="margin-top:12px">
+          <label class="field">食<input id="expFood" type="number" min="0" step="100" value="400"></label>
+          <label class="field">衣<input id="expClothing" type="number" min="0" step="100" value="100"></label>
+          <label class="field">住<input id="expHousing" type="number" min="0" step="100" value="0"></label>
+          <label class="field">行<input id="expTransport" type="number" min="0" step="100" value="200"></label>
+          <label class="field">育<input id="expEducation" type="number" min="0" step="100" value="0"></label>
+          <label class="field">樂<input id="expEntertainment" type="number" min="0" step="100" value="100"></label>
+        </div>
+        <div class="finance-grid" id="goalFields" style="margin-top:12px"></div>
         <div class="finance-preview" aria-live="polite">
-          <span><small>每月先存</small><strong id="previewSave">NT$2,000</strong></span>
-          <span><small>每月可安排</small><strong id="previewFlexible">NT$4,000</strong></span>
-          <span><small>預計完成</small><strong id="previewDate">2027 年 3 月</strong></span>
+          <span><small>每月先存</small><strong id="previewSave">NT$0</strong></span>
+          <span><small>安心可花（估）</small><strong id="previewFlexible">NT$0</strong></span>
+          <span id="previewDateWrap"><small>預計完成</small><strong id="previewDate">—</strong></span>
         </div>
       </section>
-
-      <section class="quality-card" aria-labelledby="qualityTitle">
-        <div class="quality-head">
-          <div><h2 id="qualityTitle">生活品質比重</h2><p>月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。</p></div>
-          <span class="quality-total">目前比重 <b id="qualityTotal">4</b></span>
-        </div>
-        <div class="quality-grid">
-          <div class="quality-item"><label>節省時間 <output id="qTimeOut">1</output></label><small>交通、外送與距離便利</small><input id="qTime" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>飲食品質 <output id="qFoodOut">1</output></label><small>餐食健康、品質與體驗</small><input id="qFood" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>舒適便利 <output id="qComfortOut">1</output></label><small>居家、服務與耐用度</small><input id="qComfort" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>娛樂體驗 <output id="qFunOut">1</output></label><small>影音、活動與休閒</small><input id="qFun" type="range" min="1" max="5" value="1"></div>
-        </div>
-      </section>
-      <p class="onboarding-note"><svg><use href="#i-shield"/></svg> HTML 互動稿僅在這台裝置保存設定，不會連接銀行或上傳個人資料。</p>
+      <p class="onboarding-note"><svg><use href="#i-shield"/></svg> 資料會存到本機啟動的 KASO 後端（backend/data/store.json），不會上傳到外部服務。</p>
     </div>
   </section>
 
@@ -614,13 +1084,11 @@
         <nav class="main-nav" aria-label="主要功能">
           <button class="nav-btn" type="button" data-view="search" data-mega="search">商品比價</button>
           <button class="nav-btn" type="button" data-view="nearby" data-mega="nearby">附近優惠</button>
-          <button class="nav-btn" type="button" data-view="cards" data-mega="cards">辦卡推薦</button>
           <button class="nav-btn" type="button" data-view="ledger" data-mega="life">生活規劃</button>
         </nav>
         <div class="header-actions">
-          <button id="resetProfile" class="persona-chip" type="button" title="重新設定"><svg><use href="#i-wallet"/></svg><span>月光族</span></button>
-          <div class="finance-mini"><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
-          <button id="locateHeader" class="location-btn" type="button" title="定位找優惠" aria-label="定位找優惠"><svg><use href="#i-pin"/></svg></button>
+          <div class="finance-mini"><span id="headGoal" class="goal" hidden><small>目標</small><strong id="headGoalName">存款計畫</strong></span><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
+          <button id="profileOpen" class="profile-btn" type="button" title="個人資料與登入" aria-label="開啟個人資料與登入"><svg><use href="#i-user"/></svg></button>
         </div>
       </div>
       <div id="megaMenu" class="mega-menu" hidden></div>
@@ -652,6 +1120,33 @@
         <div class="dialog-actions"><button class="secondary-btn" value="cancel">取消</button><button id="feedbackSend" class="primary-btn" value="default">送出回報</button></div>
       </form>
     </dialog>
+    <dialog id="profileDialog" class="profile-dialog">
+      <div class="dialog-body">
+        <div class="dialog-head">
+          <div><p class="eyebrow">KASO 帳號</p><h2>個人資料與登入<button id="resetProfile" class="persona-chip" type="button" title="返回身分選擇"><svg><use href="#i-return"/></svg><span>返回身分選擇</span></button></h2>
+          
+          </div>
+          <button id="profileClose" class="dialog-close" type="button" aria-label="關閉"><svg><use href="#i-x"/></svg></button></div>
+        <div id="profileSignedOut">
+          <div class="profile-provider-grid">
+            <button type="button" data-provider="Google"><span class="provider-mark">G</span>Google</button>
+            <button type="button" data-provider="Apple"><span class="provider-mark"></span>Apple</button>
+          </div>
+          <div class="account-divider">或使用一般帳號</div>
+          <form id="accountLoginForm" class="account-login-form">
+            <input id="accountName" autocomplete="name" placeholder="姓名">
+            <input id="accountEmail" type="email" autocomplete="email" placeholder="電子郵件" required>
+            <input id="accountPassword" type="password" autocomplete="current-password" placeholder="密碼" minlength="4" required>
+            <button type="submit">登入</button>
+          </form>
+          <p class="account-note">一般帳號目前會保存在這台裝置；Google 與 Apple 按鈕已預留，正式 OAuth 需設定應用程式金鑰。</p>
+        </div>
+        <div id="profileSignedIn" hidden>
+          <div class="account-card"><span class="account-avatar"><svg><use href="#i-user"/></svg></span><span><small>已登入</small><strong id="signedInName">KASO 使用者</strong><small id="signedInEmail"></small></span></div>
+          <div class="dialog-actions"><button id="profileReset" class="secondary-btn" type="button">重新設定預算</button><button id="accountLogout" class="primary-btn" type="button">登出</button></div>
+        </div>
+      </div>
+    </dialog>
   </section>
 
   <div id="toast" class="toast" role="status"></div>
@@ -666,16 +1161,27 @@
     const safeNumber = (id, fallback = 0) => Math.max(0, Number($(id).value) || fallback);
     const today = new Date();
 
+    const CATEGORY_LABEL = { food: "食", clothing: "衣", housing: "住", transport: "行", education: "育", entertainment: "樂" };
+
     const state = {
       view: "home",
-      mode: "moonlight",
-      profile: null,
-      searchQuery: "Apple AirPods Pro 2 USB-C",
+      profile: null,       // 後端回傳的完整 profile（type/income/expenses/goal/...）
+      budget: null,        // 後端 calcBudget() 的結果
+      quiz: [],
+      resolvedType: null,  // 'moonlight' | 'goal'，來自 resolveProfile()
+      searchQuery: "iPhone 15",
       searchCategory: "商品",
-      transactions: [
-        { merchant: "北車慢慢咖啡", amount: 130, category: "餐飲", time: "今天 15:35" },
-        { merchant: "全聯 台北站前店", amount: 428, category: "日常", time: "昨天 19:12" }
-      ],
+      searchResults: null,
+      searchResultsQuery: null,
+      searchPlatformFilter: "all",
+      searchSort: "price_asc",
+      evaluations: {},     // productId -> evaluatePurchase() 結果快取
+      filterOpen: false,
+      ledgerEntries: [],
+      nearbyStores: null,
+      nearbyLoading: false,
+      mapsApiKey: null,
+      mapsLoadState: "idle", // idle | loading | ready | error
       recovery: null,
       insuranceTab: "travel",
       travelPriority: "balanced",
@@ -683,47 +1189,23 @@
       settlementDone: false,
       assistantTopic: null,
       messages: [
-        { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、哪張卡適合，或貼商品連結讓我一起比較。" }
+        { role: "ai", text: "嗨，我是 KASO AI。你可以問我：今天還能花多少、這筆消費划不划算，或任何跟財務有關的問題。" }
       ]
     };
 
-    const productResults = [
-      { platform: "PChome", title: "Apple AirPods Pro 2 USB-C 台灣公司貨", price: 6590, match: "同品項 98%", link: "https://24h.pchome.com.tw/search/?q=AirPods%20Pro%202%20USB-C" },
-      { platform: "momo", title: "Apple AirPods Pro（第 2 代）MagSafe USB-C", price: 6790, match: "同品項 96%", link: "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=AirPods%20Pro%202%20USB-C" },
-      { platform: "蝦皮", title: "AirPods Pro 2 USB-C 公司貨｜全新未拆", price: 6290, match: "同品項 92%", link: "https://shopee.tw/search?keyword=AirPods%20Pro%202%20USB-C" },
-      { platform: "Yahoo購物", title: "Apple AirPods Pro 2 USB-C 版", price: 6990, match: "同品項 95%", link: "https://tw.buy.yahoo.com/search/product?p=AirPods%20Pro%202%20USB-C" },
-      { platform: "樂天市場", title: "AirPods Pro 第二代 USB-C 原廠保固", price: 6488, match: "同品項 91%", link: "https://www.rakuten.com.tw/search/airpods%20pro%202/" },
-      { platform: "露天", title: "Apple AirPods Pro 2 USB-C 台灣版", price: 6180, match: "同品項 88%", link: "https://www.ruten.com.tw/find/?q=AirPods%20Pro%202%20USB-C" }
-    ];
-
-    const nearbyOffers = [
-      { name: "站前台味便當", type: "餐廳", note: "午餐折價＋持有卡回饋", address: "台北市中正區館前路 12 號", price: 130, distance: "240 公尺", lat: 25.0465, lon: 121.5154, icon: "food" },
-      { name: "北車慢慢咖啡", type: "咖啡", note: "平日下午折價，不用湊單", address: "台北市中正區許昌街 20 號", price: 126, distance: "310 公尺", lat: 25.0459, lon: 121.5168, icon: "food" },
-      { name: "全聯 台北站前店", type: "超市", note: "支付券＋日常採買回饋", address: "台北市中正區館前路 8 號", price: 431, distance: "420 公尺", lat: 25.0457, lon: 121.5145, icon: "cart" },
-      { name: "台北地下街創意市集", type: "免費活動", note: "不消費也能參加", address: "台北市中正區市民大道一段 100 號", price: 0, distance: "650 公尺", lat: 25.0492, lon: 121.5146, icon: "pin" }
-    ];
-
-    const cardMatches = [
-      { name: "台新 Richart 卡", score: 92, color: "#f04438", reason: "現金回饋規則較直覺，適合目前需要控制每月支出的設定。" },
-      { name: "國泰 CUBE 卡", score: 86, color: "#6d4aff", reason: "餐飲與日常情境彈性高，但要記得切換權益。" },
-      { name: "永豐 DAWHO 卡", score: 78, color: "#12b76a", reason: "一般消費與日常採買使用簡單。" }
-    ];
+    async function api(path, options) {
+      const res = await fetch(path, options ? { headers: { "Content-Type": "application/json" }, ...options } : undefined);
+      if (!res.ok) throw new Error(`${path} → ${res.status}`);
+      return res.json();
+    }
 
     const megaContent = {
       search: [
-        ["商品", ["探索所有商品", "手機、平板、電腦", "家電、遊戲、收藏卡"]],
-        ["餐飲與日常", ["餐廳與咖啡", "超市與生鮮", "藥妝與日用品"]],
-        ["其他比價", ["音樂與影音月費", "機票與飯店", "AI 同品項檢查"]]
+        ["比價分類", ["一般商品", "日常採買", "3C 家電"]]
       ],
       nearby: [
-        ["探索附近", ["1,000 公尺內優惠", "餐廳與咖啡", "超市與藥妝"]],
         ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
-        ["為你換算", ["只用我的持有卡", "折扣＋卡片回饋", "開啟大按鈕導航"]]
-      ],
-      cards: [
-        ["辦卡推薦", ["依客製答案推薦", "完整 6 題微調", "指定銀行比較"]],
-        ["使用情境", ["每月現金流配卡", "日常消費配卡", "海外刷卡試算"]],
-        ["我的卡片", ["持有卡與回饋缺口", "年費與回饋上限", "申辦前注意事項"]]
+        ["為你換算", ["折扣是否在預算內", "免費活動優先", "開啟大按鈕導航"]]
       ],
       life: [
         ["每月生活", ["自動記帳", "訂閱月費", "支出與目標進度"]],
@@ -732,16 +1214,18 @@
       ]
     };
 
+    // getFinance(): 把後端 calcBudget() 的結果整理成畫面要用的形狀。
     function getFinance() {
-      const p = state.profile || {
-        currentBalance: 6800, income: 30000, fixed: 24000, target: 12000, months: 6,
-        quality: { time: 1, food: 1, comfort: 1, fun: 1 }
+      const p = state.profile;
+      const b = state.budget;
+      if (!p || !b) {
+        return { currentBalance: 0, fixed: 0, monthlySave: 0, spent: 0, safe: 0, reserve: 0, type: "moonlight", goal: null, expenses: {} };
+      }
+      return {
+        currentBalance: b.currentBalance, fixed: b.fixedExpense, monthlySave: b.savingsGoal,
+        spent: b.spentThisMonth, safe: b.safe, reserve: b.fixedExpense + b.savingsGoal,
+        type: p.type, goal: p.goal, income: p.income, expenses: p.expenses,
       };
-      const monthlySave = Math.ceil(p.target / Math.max(1, p.months));
-      const flexible = Math.max(0, p.income - p.fixed - monthlySave);
-      const spent = state.transactions.reduce((sum, item) => sum + item.amount, 0);
-      const safe = Math.max(0, Math.min(p.currentBalance - monthlySave, flexible) - Math.max(0, spent - 558));
-      return { ...p, monthlySave, flexible, spent, safe, reserve: p.fixed + monthlySave };
     }
 
     function futureMonth(months) {
@@ -750,50 +1234,115 @@
       return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`;
     }
 
-    function updateOnboardingPreview() {
-      const income = safeNumber("#monthlyIncome");
-      const fixed = safeNumber("#fixedExpense");
-      const target = safeNumber("#savingTarget");
-      const months = Math.max(1, safeNumber("#savingMonths", 1));
-      const save = Math.ceil(target / months);
-      $("#previewSave").textContent = money(save);
-      $("#previewFlexible").textContent = money(Math.max(0, income - fixed - save));
-      $("#previewDate").textContent = futureMonth(months);
-      const ranges = ["qTime", "qFood", "qComfort", "qFun"];
-      ranges.forEach((id) => $("#" + id + "Out").value = $("#" + id).value);
-      $("#qualityTotal").textContent = ranges.reduce((sum, id) => sum + Number($("#" + id).value), 0);
-      $("#completeSetup").disabled = !income || fixed >= income || !target || !months;
+    // ---- 入口 · 二選一問答 ----
+    async function loadQuiz() {
+      state.quiz = await api("/api/onboarding/quiz");
+      renderQuiz();
     }
 
-    function saveProfileAndEnter() {
-      state.profile = {
-        mode: state.mode,
+    function renderQuiz() {
+      const q = state.quiz[0];
+      if (!q) return;
+      $("#quizSub").textContent = "身分只有兩種：月光族、目標計畫族。";
+      $("#quizOptions").innerHTML = q.options.map((opt, i) => `
+        <button class="mode-card${state.resolvedType === (opt.value === "yes" ? "goal" : "moonlight") ? " selected featured" : ""}" type="button" data-answer="${opt.value}">
+          <span class="mode-icon"><svg><use href="#i-${i === 0 ? "target" : "wallet"}"/></svg></span>
+          <span><strong>${q.question}</strong><b>${opt.label}</b><small>${opt.value === "yes" ? "目標計畫族" : "月光族"}</small></span>
+          <span class="mode-check">${state.resolvedType === (opt.value === "yes" ? "goal" : "moonlight") ? "✓" : "→"}</span>
+        </button>`).join("");
+      $$('#quizOptions [data-answer]').forEach((btn) => btn.addEventListener("click", () => handleQuizAnswer(btn.dataset.answer)));
+    }
+
+    async function handleQuizAnswer(answer) {
+      const { type } = await api("/api/onboarding/resolve", { method: "POST", body: JSON.stringify({ answers: { hasGoal: answer } }) });
+      state.resolvedType = type;
+      renderQuiz();
+      renderGoalFields();
+      $("#financeCard").hidden = false;
+      updateOnboardingPreview();
+    }
+
+    function renderGoalFields() {
+      const wrap = $("#goalFields");
+      if (state.resolvedType === "goal") {
+        wrap.innerHTML = `
+          <label class="field">目標名稱<input id="goalName" placeholder="例如：換筆電"></label>
+          <label class="field">目標金額<input id="goalAmount" type="number" min="1" step="500" value="30000"></label>
+          <label class="field">期望幾個月完成<input id="goalMonths" type="number" min="1" max="60" value="6"></label>`;
+      } else {
+        wrap.innerHTML = `<label class="field">每月存款目標（自己設）<input id="monthlySaveInput" type="number" min="0" step="100" value="2000"></label>`;
+      }
+      $$("#goalFields input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
+    }
+
+    function updateOnboardingPreview() {
+      if (!state.resolvedType) return;
+      const income = safeNumber("#monthlyIncome");
+      const expenseIds = ["expFood", "expClothing", "expHousing", "expTransport", "expEducation", "expEntertainment"];
+      const fixed = expenseIds.reduce((sum, id) => sum + safeNumber("#" + id), 0);
+      const save = state.resolvedType === "goal"
+        ? Math.ceil(safeNumber("#goalAmount", 1) / Math.max(1, safeNumber("#goalMonths", 1)))
+        : safeNumber("#monthlySaveInput");
+      $("#previewSave").textContent = money(save);
+      $("#previewFlexible").textContent = money(Math.max(0, income - fixed - save));
+      if (state.resolvedType === "goal") {
+        $("#previewDateWrap").hidden = false;
+        $("#previewDate").textContent = futureMonth(safeNumber("#goalMonths", 1));
+      } else {
+        $("#previewDateWrap").hidden = true;
+      }
+      $("#completeSetup").disabled = !income;
+    }
+
+    async function saveProfileAndEnter() {
+      if (!state.resolvedType) { showToast("請先回答第一步的問題"); return; }
+      const payload = {
+        type: state.resolvedType,
         currentBalance: safeNumber("#currentBalance"),
         income: safeNumber("#monthlyIncome"),
-        fixed: safeNumber("#fixedExpense"),
-        target: safeNumber("#savingTarget"),
-        months: Math.max(1, safeNumber("#savingMonths", 1)),
-        quality: {
-          time: Number($("#qTime").value), food: Number($("#qFood").value),
-          comfort: Number($("#qComfort").value), fun: Number($("#qFun").value)
-        }
+        expenses: {
+          food: safeNumber("#expFood"), clothing: safeNumber("#expClothing"), housing: safeNumber("#expHousing"),
+          transport: safeNumber("#expTransport"), education: safeNumber("#expEducation"), entertainment: safeNumber("#expEntertainment"),
+        },
       };
-      localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      if (state.resolvedType === "goal") {
+        payload.goal = { name: $("#goalName").value.trim() || "存錢目標", amount: safeNumber("#goalAmount", 1), months: Math.max(1, safeNumber("#goalMonths", 1)) };
+      } else {
+        payload.monthlySave = safeNumber("#monthlySaveInput");
+      }
+      const { profile, budget } = await api("/api/profile", { method: "POST", body: JSON.stringify(payload) });
+      state.profile = profile;
+      state.budget = budget;
+      state.settlementDone = false;
       $("#onboarding").hidden = true;
       $("#mainApp").hidden = false;
+      await loadLedger();
       renderView("home");
     }
 
     function resetProfile() {
-      localStorage.removeItem("kaso-html-profile");
-      state.profile = null;
+      state.resolvedType = null;
       $("#mainApp").hidden = true;
       $("#onboarding").hidden = false;
+      $("#financeCard").hidden = true;
+      renderQuiz();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function refreshBudget() {
+      state.budget = await api("/api/budget");
+    }
+
+    async function loadLedger() {
+      const month = new Date().toISOString().slice(0, 7);
+      state.ledgerEntries = await api(`/api/ledger?month=${month}`);
     }
 
     function syncHeader() {
       const f = getFinance();
+      const isGoal = f.type === "goal";
+      $("#headGoal").hidden = !isGoal;
+      $("#headGoalName").textContent = isGoal && f.goal ? `存 ${money(f.goal.amount)}` : "存款計畫";
       $("#headReserve").textContent = money(f.reserve);
       $("#headSafe").textContent = money(f.safe);
       $$(".nav-btn").forEach((btn) => {
@@ -804,7 +1353,7 @@
     }
 
     function viewLabel(view) {
-      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", cards: "辦卡推薦", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
+      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
     }
 
     function renderView(view) {
@@ -813,12 +1362,14 @@
       syncHeader();
       const root = $("#viewRoot");
       const renderer = ({
-        home: renderHome, search: renderSearch, nearby: renderNearby, cards: renderCards,
+        home: renderHome, search: renderSearch, nearby: renderNearby,
         ledger: renderLedger, travel: renderTravel, insurance: renderInsurance,
         subscriptions: renderSubscriptions, overseas: renderOverseas
       })[view] || renderHome;
       root.innerHTML = renderer();
       bindViewEvents();
+      if (view === "search") loadSearch();
+      if (view === "nearby") { loadNearby(); initNearbyMap(); }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -828,24 +1379,26 @@
       const reserveStop = (f.fixed / total) * 100;
       const saveStop = reserveStop + (f.monthlySave / total) * 100;
       const spentStop = Math.min(100, saveStop + (f.spent / total) * 100);
-      const bg = `conic-gradient(#111827 0 ${reserveStop}%, #6d4aff ${reserveStop}% ${saveStop}%, #0878df ${saveStop}% ${spentStop}%, #b8ff3d ${spentStop}% 100%)`;
+      const bg = `conic-gradient(#0b0b0b 0 ${reserveStop}%, #2f5fd0 ${reserveStop}% ${saveStop}%, #94a79b ${saveStop}% ${spentStop}%, #f4d400 ${spentStop}% 100%)`;
       const status = f.safe > 3000 ? ["今天有一點彈性", "可以安排小額享受，但先確認不會動到存款。"] : ["今天需要注意", "先以必要支出和低價選項為主，避免月底壓力。"];
       const carryover = Math.min(240, f.safe);
       const displayBalance = f.currentBalance + (state.settlementDone ? carryover : 0);
-      const needsDelay = f.safe <= 0 || f.currentBalance < f.monthlySave;
+      const isGoal = f.type === "goal";
+      const needsDelay = f.safe <= 0 && isGoal;
+      const savingProgress = isGoal && f.goal?.amount > 0 ? Math.min(100, Math.round((f.monthlySave / f.goal.amount) * 100)) : Math.round((f.monthlySave / total) * 100);
       return `
         <section class="view money-overview dashboard-stage">
           <div class="balance-stage-head">
-            <div><p class="eyebrow">${icon("wallet")} 月光族首頁</p><h1>${status[0]}</h1></div>
-            <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><button type="button" data-view="nearby">${icon("pin")} 找附近優惠</button></div>
+            <div><p class="eyebrow">${icon("wallet")} ${isGoal ? "目標計畫族首頁" : "月光族首頁"}</p><h1>${status[0]}</h1></div>
+            <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><div id="dailyPocket" class="daily-compact${state.settlementDone ? " is-done" : ""}"><span><small>今日未用</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已結算" : "結算"}</button></div></div>
           </div>
           <div class="balance-stage-grid">
             <nav class="spend-rail" aria-label="花費分類明細">
               <small>按下分類放大檢視</small>
-              ${budgetPill("fixed", "固定支出", money(f.fixed))}
-              ${budgetPill("saving", "存款目標", money(f.monthlySave))}
-              ${budgetPill("spent", "本月已花", money(f.spent))}
-              ${budgetPill("safe", "安心可花", money(f.safe))}
+              ${budgetPill("fixed", "固定支出", Math.round((f.fixed / total) * 100) + "%")}
+              ${budgetPill("saving", "存款目標", savingProgress + "%")}
+              ${budgetPill("spent", "本月已花", Math.round((f.spent / total) * 100) + "%")}
+              ${budgetPill("safe", "安心可花", Math.round((f.safe / total) * 100) + "%")}
             </nav>
             <section id="spendDetail" class="spend-detail" style="--detail-glow:${budgetDetailData(f, state.budgetDetail).glow}" aria-live="polite">
               <div id="spendDetailContent" class="spend-detail-content">${budgetDetailMarkup(f, state.budgetDetail)}</div>
@@ -857,19 +1410,13 @@
               <span class="status-pill">${f.safe > 3000 ? "可以稍微放鬆" : "支出要收斂"}</span>
             </aside>
           </div>
-          <div id="settlementTray" class="settlement-tray${state.settlementDone ? " is-done" : ""}">
-            <div class="settlement-guide"><small>每日結算</small><strong>把今天沒用完的預算移回目前餘額</strong><span>按下後，金額卡片會往上移入圓餅圖。</span></div>
-            <div class="settlement-pocket goal-pocket"><span><small>本月已保留 · 存款目標 ${money(f.target)}</small><strong id="goalSavedAmount">${money(f.monthlySave)}</strong></span><span class="status-pill">預計 ${futureMonth(f.months)}</span></div>
-            <div id="dailyPocket" class="settlement-pocket daily-pocket"><span><small>今日未用預算</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已移回餘額" : "今日結算"}</button></div>
-          </div>
           ${needsDelay ? `<div class="zero-balance-card"><p><strong>目前可花餘額不足，建議延後完成期限</strong><small>延長一個月能降低每月存款壓力，避免再用信用額度補生活費。</small></p><button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button></div>` : ""}
         </section>
         <section class="view service-panel">
           <div class="section-head"><div><h2>所有功能</h2></div></div>
           <div class="service-grid">
-            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["餐飲", "search"], ["日常採買", "search"]], "商品、餐飲、日常", true)}
-            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
-            ${serviceCard("card", "cards", "現金流＋習慣", "辦卡推薦", "客製答案直接帶入。", [["快速問答", "cards"], ["海外刷卡", "overseas"]], "3 張配對卡")}
+            ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["日常採買", "search"], ["3C 家電", "search"]], "商品、日常、3C", true)}
+            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], "1,000 公尺內")}
             ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
           </div>
         </section>
@@ -888,12 +1435,21 @@
       return `<button class="spend-pill${state.budgetDetail === id ? " active" : ""}" type="button" data-budget-detail="${id}"><span class="plus">+</span><span><strong>${label}</strong><small>${value}</small></span></button>`;
     }
 
+    function spentByCategoryLines(totalSpent) {
+      const byCat = {};
+      state.ledgerEntries.forEach((e) => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+      const entries = Object.entries(byCat);
+      if (!entries.length) return [["尚無記帳", 0, 0]];
+      return entries.map(([cat, amt]) => [CATEGORY_LABEL[cat] || cat, totalSpent > 0 ? Math.round((amt / totalSpent) * 100) : 0, amt]);
+    }
+
     function budgetDetailData(f, id) {
-      const settledSaving = f.monthlySave;
+      const isGoal = f.type === "goal";
+      const savingProgress = isGoal && f.goal?.amount > 0 ? Math.min(100, Math.round((f.monthlySave / f.goal.amount) * 100)) : 0;
       const details = {
         fixed: { kicker: "每月必要保留", amount: f.fixed, title: "固定支出", copy: "房租、帳單與必要支出先保留，不會出現在可花預算裡。", glow: "rgba(0,113,227,.30)", lines: [["固定帳單", 72, f.fixed * .72], ["交通通訊", 18, f.fixed * .18], ["其他必要", 10, f.fixed * .1]] },
-        saving: { kicker: "存款目標進度", amount: settledSaving, title: "本月先存", copy: `目前目標是 ${money(f.target)}，預計 ${futureMonth(f.months)} 完成。`, glow: "rgba(109,74,255,.42)", lines: [["固定存入", 100, f.monthlySave]] },
-        spent: { kicker: "交易自動分類", amount: f.spent, title: "本月已記帳", copy: "點開交易紀錄，可查看餐飲、日常與其他分類的每一筆明細。", glow: "rgba(8,120,223,.42)", lines: [["日常採買", 77, 428], ["餐飲咖啡", 23, 130]] },
+        saving: { kicker: "存款目標進度", amount: f.monthlySave, title: "本月先存", copy: isGoal ? `目標 ${money(f.goal?.amount)}，目前已完成 ${savingProgress}%。` : "月光族的存款目標是你自己設的每月金額，沒有設完成日期。", glow: "rgba(109,74,255,.42)", lines: isGoal ? [["目標進度", savingProgress, f.monthlySave]] : [["每月存入", 100, f.monthlySave]] },
+        spent: { kicker: "交易自動分類", amount: f.spent, title: "本月已記帳", copy: "點開自動記帳，可查看食衣住行育樂各分類的每一筆明細。", glow: "rgba(8,120,223,.42)", lines: spentByCategoryLines(f.spent) },
         safe: { kicker: "扣除保留後", amount: f.safe, title: "安心可花", copy: "這才是目前能使用的金額；商品與附近優惠都會以它為上限。", glow: "rgba(184,255,61,.28)", lines: [["今日可用", 64, f.safe], ["今日未用", 24, Math.min(240, f.safe)], ["彈性緩衝", 12, Math.max(0, f.safe - Math.min(240, f.safe))]] }
       };
       return details[id] || details.safe;
@@ -901,53 +1457,208 @@
 
     function budgetDetailMarkup(f, id) {
       const detail = budgetDetailData(f, id);
-      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${amount > 0 ? Math.max(3, width) : 0}%;--line-color:${id === "saving" ? "#a98bff" : id === "safe" ? "#b8ff3d" : "#70b7ff"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
+      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${amount > 0 ? Math.max(3, width) : 0}%;--line-color:${id === "saving" ? "#2f5fd0" : id === "safe" ? "#f4d400" : "#94a79b"}"></i><strong>${Math.round(width)}%</strong></div>`).join("")}</div>`;
     }
 
     function serviceCard(iconId, view, kicker, title, detail, children, metric, primary = false) {
       return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div></article>`;
     }
 
+    async function loadSearch() {
+      if (state.searchResultsQuery === state.searchQuery && state.searchResults) return;
+      const q = state.searchQuery;
+      state.searchResults = null;
+      const grid = $("#searchResultGrid");
+      if (grid) grid.innerHTML = `<p class="muted">搜尋中…</p>`;
+      const results = await api(`/api/products/search?q=${encodeURIComponent(q)}`);
+      if (state.searchQuery !== q) return; // 使用者已經改搜尋別的字了
+      state.searchResults = results;
+      state.searchResultsQuery = q;
+      state.evaluations = {};
+      // 超出預算的項目先預先算好「怎麼辦」，flip card 翻過去就直接看得到，不用另外點按鈕。
+      if (results.items) {
+        await Promise.all(results.items.filter((item) => !item.withinBudget).map(async (item) => {
+          try { state.evaluations[item.id] = await api("/api/products/evaluate", { method: "POST", body: JSON.stringify({ price: item.price }) }); } catch (_) {}
+        }));
+      }
+      if (state.view === "search") renderView("search");
+    }
+
+    function visibleSearchItems() {
+      const items = state.searchResults?.items || [];
+      let filtered = state.searchPlatformFilter === "all" ? items : items.filter((i) => i.platform === state.searchPlatformFilter);
+      filtered = [...filtered].sort((a, b) => state.searchSort === "price_desc" ? b.price - a.price : a.price - b.price);
+      return filtered;
+    }
+
     function renderSearch() {
       const f = getFinance();
+      const results = state.searchResults;
+      const allItems = results?.items || [];
+      const platforms = [...new Set(allItems.map((i) => i.platform))];
+      const items = visibleSearchItems();
       return `<section class="view">
-        ${pageTitle("商品比價", "先確認完整型號，再比較同一個商品；未指定商品時，AI 會先追問。")}
-        <div class="chip-row">${["商品", "餐飲", "日常", "3C 家電"].map((c) => `<button class="chip${state.searchCategory === c ? " active" : ""}" type="button" data-category="${c}">${c}</button>`).join("")}</div>
-        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><select aria-label="排序"><option>價格由低到高</option><option>同品項信心</option><option>平台評價</option></select><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
-        <div class="summary-strip"><div><small>搜尋來源</small><strong>8 個平台</strong></div><div><small>找到候選</small><strong>48 筆</strong></div><div><small>確認同品項</small><strong>6 筆</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
-        <div class="result-grid">${productResults.map((p) => `<article class="product-card"><div class="product-image">${icon("phone")}</div><div class="product-body"><div class="product-meta"><span class="platform">${p.platform}</span><span class="match">${p.match}</span></div><h3>${escapeHtml(state.searchQuery || p.title)}</h3><div class="product-price">${money(p.price)}</div><p class="after-buy${p.price > f.safe ? " insufficient" : ""}">${p.price > f.safe ? `目前不足 ${money(p.price - f.safe)}，建議延後購買或完成期限` : `買下後安心可花還剩 <strong>${money(f.safe - p.price)}</strong>`}</p><div class="product-actions"><button type="button" data-ask-product="${escapeAttr(p.title)}｜${p.platform}｜${p.price}">問 AI</button><a href="${p.link}" target="_blank" rel="noreferrer">查看來源</a></div></div></article>`).join("")}</div>
-        <p class="onboarding-note">商品、價格及連結為 HTML 介面展示；正式站的即時搜尋仍需由後端來源供應。</p>
+        ${pageTitle("商品比價", "資料來源：BigGo 搜尋 API，即時跨平台比價。")}
+        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入商品名稱，例如 iPhone 15 / MacBook Air M3"><button id="filterToggle" class="filter-toggle${state.filterOpen ? " active" : ""}" type="button" aria-label="展開篩選條件" aria-expanded="${state.filterOpen}">${icon("filter")}</button><button class="primary-btn" type="submit">${icon("search")} 開始比價</button></form>
+        ${state.filterOpen ? `<div class="filter-dropdown" aria-label="商品篩選條件">
+          <label>電商平台<select id="platformFilter"><option value="all">全部平台（${platforms.length}）</option>${platforms.map((p) => `<option value="${escapeAttr(p)}"${state.searchPlatformFilter === p ? " selected" : ""}>${escapeHtml(p)}</option>`).join("")}</select></label>
+          <label>排序方式<select id="sortFilter"><option value="price_asc"${state.searchSort === "price_asc" ? " selected" : ""}>價格由低到高</option><option value="price_desc"${state.searchSort === "price_desc" ? " selected" : ""}>價格由高到低</option></select></label>
+        </div>` : ""}
+        <div class="summary-strip"><div><small>比對身分</small><strong>${f.type === "goal" ? "目標計畫族" : "月光族"}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div><div><small>找到候選</small><strong>${results ? items.length : "—"}</strong></div><div><small>資料來源</small><strong>BigGo</strong></div></div>
+        <div class="result-grid" id="searchResultGrid">${!results ? `<p class="muted">搜尋中…</p>` : results.error ? `<p class="muted">BigGo 暫時連不上，請稍後再試。</p>` : items.length === 0 ? `<p class="muted">找不到符合的商品，換個關鍵字或篩選條件試試。</p>` : items.map(renderProductCard).join("")}</div>
+        <p class="onboarding-note">已決議：比價用「總預算」判定，不區分食衣住行育樂分類。BigGo 回來的是跨平台候選刊登，不是同一商品的多平台比對。</p>
       </section>`;
+    }
+
+    function renderProductCard(item) {
+      const f = getFinance();
+      const over = !item.withinBudget;
+      const evalData = state.evaluations[item.id];
+      const back = !over
+        ? `<span class="purchase-verdict ok">可以考慮購買</span><h3>買下後安心可花還剩 ${money(f.safe - item.price)}</h3><p>目前價格在你的安心可花範圍內。</p>`
+        : evalData?.profileType === "moonlight"
+        ? `<span class="purchase-verdict">目前不建議購買</span><h3>超出 ${money(evalData.overAmount)}</h3><p>${evalData.monthsToAfford != null ? `照目前每月存款速度，約 ${evalData.monthsToAfford} 個月後可入手。` : "目前存款目標是 0，算不出多久後可入手。"}</p>`
+        : evalData?.profileType === "goal"
+        ? `<span class="purchase-verdict">超出預算，換算代價</span><h3>超出 ${money(evalData.overAmount)}</h3><p>維持開支：目標延後約 ${evalData.options?.keepSpending?.goalDelayMonths ?? "—"} 個月；想準時：六類各砍約 ${evalData.options?.stayOnSchedule?.cutRatio != null ? Math.round(evalData.options.stayOnSchedule.cutRatio * 100) + "%" : "—"}。</p>`
+        : `<span class="purchase-verdict">目前不建議購買</span><h3>超出 ${money(item.price - f.safe)}</h3><p>計算中…</p>`;
+      return `<article class="product-flip-card" tabindex="0" aria-label="${escapeAttr(item.title)}，滑入查看購買判斷"><div class="product-flip-inner">
+        <div class="product-flip-face product-flip-front">
+          <div class="product-image">${item.image ? `<img src="${escapeAttr(item.image)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">` : icon("phone")}</div>
+          <div class="product-body"><div class="product-meta"><span class="platform">${escapeHtml(item.platform)}</span>${item.isAd ? `<span class="match">廣告</span>` : ""}</div><h3>${escapeHtml(item.title)}</h3><div class="product-price">${money(item.price)}</div><span class="flip-prompt">滑入查看購買判斷 →</span></div>
+        </div>
+        <div class="product-flip-face product-flip-back">
+          <div class="purchase-analysis">${back}</div>
+          <div><div class="purchase-back-actions"><a href="${item.url}" target="_blank" rel="noreferrer">查看來源</a></div></div>
+        </div>
+      </div></article>`;
+    }
+
+    function loadNearby() {
+      if (state.nearbyStores || state.nearbyLoading) return;
+      startNearbyLookup();
+    }
+
+    function startNearbyLookup() {
+      state.nearbyLoading = true;
+      state.nearbyStores = null;
+      const fallback = { lat: 25.0478, lng: 121.5170 };
+      const proceed = async (lat, lng) => {
+        state.nearbyCenter = { lat, lng };
+        try {
+          state.nearbyStores = await api("/api/offers/nearby", { method: "POST", body: JSON.stringify({ lat, lng }) });
+        } catch {
+          state.nearbyStores = [];
+        }
+        state.nearbyLoading = false;
+        if (state.view === "nearby") { renderView("nearby"); initNearbyMap(); }
+      };
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => proceed(pos.coords.latitude, pos.coords.longitude),
+          () => { showToast("無法取得定位，改用台北車站示範位置"); proceed(fallback.lat, fallback.lng); },
+          { timeout: 6000 }
+        );
+      } else {
+        proceed(fallback.lat, fallback.lng);
+      }
     }
 
     function renderNearby() {
       const f = getFinance();
+      const stores = state.nearbyStores;
       return `<section class="view">
         ${pageTitle("附近優惠", `帳戶有 ${money(f.currentBalance)}，今天只放心花 ${money(f.safe)}。`)}
-        <div class="summary-strip"><div><small>目前位置</small><strong>台北車站</strong></div><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>符合預算</small><strong>${nearbyOffers.length} 個</strong></div></div>
-        <div class="merchant-list">${nearbyOffers.map((o) => `<article class="merchant-card"><span class="merchant-icon">${icon(o.icon)}</span><div><span class="platform">${o.type} · ${o.distance}</span><h3>${o.name}</h3><p>${o.address}</p><p>${o.note}</p></div><div class="merchant-result"><small>預估最低支出</small><strong>${o.price ? money(o.price) : "免費"}</strong><small>花完還剩 ${money(f.safe - o.price)}</small><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${o.lat},${o.lon}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div></article>`).join("")}</div>
+        <div class="summary-strip"><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>附近店家</small><strong>${stores ? stores.length : "—"}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
+        <section class="nearby-map" aria-label="附近推薦地圖"><div class="nearby-map-head"><h2>附近推薦地圖</h2><small>${state.mapsLoadState === "error" || !state.mapsApiKey ? "尚未設定 Google Maps API key" : "點標記查看優惠"}</small></div><div id="nearbyMapCanvas" class="nearby-map-canvas"></div></section>
+        ${state.nearbyLoading ? `<p class="muted">定位並搜尋附近優惠中…</p>` : !stores ? `<p class="muted">尚未取得位置。</p>` : stores.length === 0 ? `<p class="muted">附近 1,000 公尺內沒有找到店家。</p>` : `<div class="merchant-list">${stores.map(renderStoreCard).join("")}</div>`}
       </section>`;
     }
 
-    function renderCards() {
-      const f = getFinance();
-      const topQuality = Object.entries(f.quality).sort((a, b) => b[1] - a[1])[0][0];
-      const labels = { time: "節省時間", food: "飲食品質", comfort: "舒適便利", fun: "娛樂體驗" };
-      return `<section class="view">
-        ${pageTitle("辦卡推薦", "第一步客製化答案已直接帶入；需要時再用快速問答微調。")}
-        <div class="two-col"><aside class="feature-card"><p class="eyebrow">${icon("bot")} 已帶入客製化</p><h2>用現金流，而不是信用額度選卡</h2><p>每月收入、固定支出、存款目標與生活品質比重會一起影響配對。</p><div class="profile-rule">每月先存 ${money(f.monthlySave)} · 安心可花 ${money(f.safe)} · ${labels[topQuality]}優先</div><div class="allocation-bars"><div class="allocation-line"><span>現金流安全</span><div class="bar"><i style="width:95%"></i></div><strong>95%</strong></div><div class="allocation-line"><span>日常回饋</span><div class="bar"><i style="width:88%"></i></div><strong>88%</strong></div><div class="allocation-line"><span>規則簡單</span><div class="bar"><i style="width:90%"></i></div><strong>90%</strong></div></div><button id="cardQuestions" class="secondary-btn" type="button" style="margin-top:18px">用 6 題再微調</button></aside>
-        <div class="result-panel"><p class="eyebrow">${icon("card")} 初始配對完成</p><h2>最符合目前設定</h2><div class="card-winner" style="border-color:${cardMatches[0].color}"><small>第一推薦 · ${cardMatches[0].score}%</small><h3>${cardMatches[0].name}</h3><p>${cardMatches[0].reason}</p></div><div class="rank-list">${cardMatches.map((c, i) => `<div class="rank"><span>${i + 1}</span><strong>${c.name}</strong><b>${c.score}%</b></div>`).join("")}</div><div class="warning">這是生活習慣配對，不是核卡保證。申辦前仍要確認年費、回饋上限與銀行最新條款。</div></div></div>
-      </section>`;
+    function renderStoreCard(store) {
+      const free = store.offers.filter((o) => o.type === "free");
+      const paid = store.offers.filter((o) => o.type === "paid");
+      return `<article class="merchant-card">
+        <span class="merchant-icon">${icon("pin")}</span>
+        <div><span class="platform">${CATEGORY_LABEL[store.category] || store.category} · ${store.distance} 公尺</span><h3>${escapeHtml(store.name)}</h3>
+          ${free.length ? `<p>免費活動：${free.map((o) => escapeHtml(o.title)).join("、")}</p>` : ""}
+          ${paid.length ? `<p>預算內優惠：${paid.map((o) => `${escapeHtml(o.title)}（${money(o.value)}）`).join("、")}</p>` : ""}
+          ${!free.length && !paid.length ? `<p class="muted">這個分類目前沒有符合預算的優惠</p>` : ""}
+        </div>
+        <div class="merchant-result"><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lng}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div>
+      </article>`;
+    }
+
+    // ---- 附近優惠：真的 Google Map（GCP Maps JavaScript API） ----
+    let googleMapsScriptPromise = null;
+    async function ensureGoogleMaps() {
+      if (window.google?.maps) { state.mapsLoadState = "ready"; return true; }
+      if (state.mapsApiKey === null) {
+        try {
+          const cfg = await api("/api/config");
+          state.mapsApiKey = cfg.googleMapsApiKey || "";
+        } catch (_) {
+          state.mapsApiKey = "";
+        }
+      }
+      if (!state.mapsApiKey) { state.mapsLoadState = "error"; return false; }
+      if (!googleMapsScriptPromise) {
+        state.mapsLoadState = "loading";
+        googleMapsScriptPromise = new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(state.mapsApiKey)}`;
+          script.async = true;
+          script.onload = () => resolve(true);
+          script.onerror = () => reject(new Error("google maps 腳本載入失敗"));
+          document.head.appendChild(script);
+        });
+      }
+      try {
+        await googleMapsScriptPromise;
+        state.mapsLoadState = "ready";
+        return true;
+      } catch (_) {
+        state.mapsLoadState = "error";
+        return false;
+      }
+    }
+
+    async function initNearbyMap() {
+      const canvas = $("#nearbyMapCanvas");
+      if (!canvas) return;
+      const ok = await ensureGoogleMaps();
+      if (!canvas.isConnected) return; // 使用者已經切到別的頁面
+      if (!ok) {
+        canvas.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px;text-align:center;color:var(--muted);font-size:.8rem">尚未設定 Google Maps API key，見 backend/.env 的 GOOGLE_MAPS_API_KEY。</div>`;
+        return;
+      }
+      const center = state.nearbyCenter || { lat: 25.0478, lng: 121.5170 };
+      const map = new google.maps.Map(canvas, { center, zoom: 15, disableDefaultUI: true, zoomControl: true, clickableIcons: false });
+      new google.maps.Marker({ position: center, map, title: "目前位置", label: { text: "你", color: "#fff" } });
+      (state.nearbyStores || []).forEach((store, i) => {
+        const marker = new google.maps.Marker({ position: { lat: store.lat, lng: store.lng }, map, title: store.name, label: String(i + 1) });
+        const info = new google.maps.InfoWindow({ content: `<strong>${escapeHtml(store.name)}</strong><br>${store.distance} 公尺` });
+        marker.addListener("click", () => info.open({ map, anchor: marker }));
+      });
     }
 
     function renderLedger() {
       const f = getFinance();
-      const recovery = state.recovery ? `<div class="recovery"><h3>${state.recovery === "extend" ? "目標日期已延後" : "7 天低價優先已啟用"}</h3><p>${state.recovery === "extend" ? "系統會把本次超支平均攤回新的期限。" : "商品比價與附近優惠會先顯示低實付選項。"}</p></div>` : "";
       return `<section class="view">
-        ${pageTitle("自動記帳", "交易通知進來後，自動分類並更新今天還能花多少。")}
+        ${pageTitle("自動記帳", "記帳不是加分功能，是預算引擎的必要輸入：沒有它，本月已花永遠是 0。")}
         <div class="summary-strip"><div><small>目前餘額</small><strong>${money(f.currentBalance)}</strong></div><div><small>本月已記帳</small><strong>${money(f.spent)}</strong></div><div><small>每月先存</small><strong>${money(f.monthlySave)}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
-        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("bell")} 新增一筆</p><h2>手動輸入或模擬通知</h2><form id="ledgerForm" class="ledger-form"><input id="ledgerMerchant" placeholder="店家名稱" required><input id="ledgerAmount" type="number" min="1" placeholder="金額" required><select id="ledgerCategory"><option>餐飲</option><option>日常</option><option>交通</option><option>娛樂</option></select><button class="primary-btn" type="submit">新增</button></form><button id="simulateMeal" class="secondary-btn" type="button" style="margin-top:10px">模擬朋友臨時約吃飯 NT$1,200</button>${recovery}<div id="recoveryBox" class="recovery" hidden><h3>今天超過預算，要怎麼補回？</h3><p>由你選擇調整方式，系統不會偷偷挪動其他預算。</p><div class="recovery-actions"><button class="secondary-btn" type="button" data-recovery="extend">延長存錢期限</button><button class="primary-btn" type="button" data-recovery="low">之後優先推薦低價</button></div></div></section>
-        <section class="result-panel"><div class="section-head"><div><h2>交易紀錄</h2><p>最新交易會排在最上方。</p></div><span>${state.transactions.length} 筆</span></div><div class="transaction-list">${state.transactions.map((t) => `<div class="transaction"><span>${icon(t.category === "餐飲" ? "food" : "cart")}</span><p><strong>${escapeHtml(t.merchant)}</strong><small>${t.category} · ${t.time}</small></p><strong>−${money(t.amount)}</strong></div>`).join("")}</div></section></div>
+        <div class="two-col">
+          <section class="feature-card"><p class="eyebrow">${icon("bell")} 新增一筆</p><h2>手動記一筆支出</h2>
+            <form id="ledgerForm" class="ledger-form">
+              <input id="ledgerNote" placeholder="備註（選填）">
+              <input id="ledgerAmount" type="number" min="1" placeholder="金額" required>
+              <select id="ledgerCategory">${Object.entries(CATEGORY_LABEL).map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>
+              <button class="primary-btn" type="submit">新增</button>
+            </form>
+          </section>
+          <section class="result-panel"><div class="section-head"><div><h2>交易紀錄</h2><p>最新交易會排在最上方。</p></div><span>${state.ledgerEntries.length} 筆</span></div>
+            <div class="transaction-list">${[...state.ledgerEntries].reverse().map((t) => `<div class="transaction"><span>${icon("cart")}</span><p><strong>${escapeHtml(t.note || CATEGORY_LABEL[t.category] || t.category)}</strong><small>${CATEGORY_LABEL[t.category] || t.category} · ${t.date}</small></p><strong>−${money(t.amount)}</strong></div>`).join("") || `<p class="muted">尚無記帳紀錄</p>`}</div>
+          </section>
+        </div>
       </section>`;
     }
 
@@ -957,10 +1668,11 @@
       const values = presets[priority];
       const budget = 35000;
       const labels = ["住宿", "餐飲", "交通", "景點"];
+      const gf = getFinance();
       return `<section class="view">
         ${pageTitle("旅遊規劃", "在預算上限內，依你想住得更好、吃得更好或玩更多景點，自動重配下方比重。")}
         <div class="tab-row">${[["balanced","平均分配"],["stay","住得更好"],["food","吃得更好"],["sights","玩更多景點"]].map(([v,l]) => `<button type="button" data-priority="${v}" class="${priority === v ? "active" : ""}">${l}</button>`).join("")}</div>
-        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("plane")} 日本 · 5 天</p><h2>整趟預算上限 ${money(budget)}</h2><p>選擇上方偏好後，下方預算線條會自動跟著改。</p><div class="allocation-bars">${labels.map((l,i) => `<div class="allocation-line"><span>${l}</span><div class="bar"><i style="width:${values[i]}%"></i></div><strong>${money(budget * values[i] / 100)}</strong></div>`).join("")}</div></section><section class="result-panel"><p class="eyebrow">${icon("shield")} 出發前提醒</p><h2>把旅遊保險一起算進去</h2><p>目前規劃 5 天日本自由行，建議先確認海外醫療、班機延誤與行李損失保障。</p><button class="primary-btn" type="button" data-view="insurance">查看旅遊保險建議 →</button><div class="card-winner"><small>存錢進度</small><h3>每月存 ${money(getFinance().monthlySave)}</h3><p>依目前設定，預計在 ${futureMonth(getFinance().months)} 完成目標。</p></div></section></div>
+        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("plane")} 日本 · 5 天</p><h2>整趟預算上限 ${money(budget)}</h2><p>選擇上方偏好後，下方預算線條會自動跟著改。</p><div class="allocation-bars">${labels.map((l,i) => `<div class="allocation-line"><span>${l}</span><div class="bar"><i style="width:${values[i]}%"></i></div><strong>${money(budget * values[i] / 100)}</strong></div>`).join("")}</div></section><section class="result-panel"><p class="eyebrow">${icon("shield")} 出發前提醒</p><h2>把旅遊保險一起算進去</h2><p>目前規劃 5 天日本自由行，建議先確認海外醫療、班機延誤與行李損失保障。</p><button class="primary-btn" type="button" data-view="insurance">查看旅遊保險建議 →</button><div class="card-winner"><small>存錢進度</small><h3>每月存 ${money(gf.monthlySave)}</h3><p>${gf.goal ? `依目前設定，預計在 ${futureMonth(gf.goal.months)} 完成目標。` : "月光族沒有設定目標完成日期。"}</p></div></section></div>
       </section>`;
     }
 
@@ -998,28 +1710,40 @@
       $$('[data-view]', $("#viewRoot")).forEach((el) => el.addEventListener("click", (event) => { event.preventDefault(); renderView(el.dataset.view); }));
       $$('[data-ask-product]', $("#viewRoot")).forEach((el) => el.addEventListener("click", () => askProduct(el.dataset.askProduct)));
       $$('[data-budget-detail]', $("#viewRoot")).forEach((el) => el.addEventListener("click", () => updateBudgetDetail(el.dataset.budgetDetail)));
-      $$('[data-category]').forEach((el) => el.addEventListener("click", () => { state.searchCategory = el.dataset.category; renderView("search"); }));
       const searchForm = $("#searchForm");
-      if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); state.searchQuery = $("#searchInput").value.trim(); if (!state.searchQuery) { openAssistant("我想比價"); return; } renderView("search"); showToast("已用完整品名重新整理結果"); });
+      if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); const q = $("#searchInput").value.trim(); if (!q) { openAssistant("我想比價"); return; } state.searchQuery = q; renderView("search"); });
+      const filterToggle = $("#filterToggle");
+      if (filterToggle) filterToggle.addEventListener("click", () => { state.filterOpen = !state.filterOpen; renderView("search"); });
+      const platformFilter = $("#platformFilter");
+      if (platformFilter) platformFilter.addEventListener("change", () => { state.searchPlatformFilter = platformFilter.value; renderView("search"); });
+      const sortFilter = $("#sortFilter");
+      if (sortFilter) sortFilter.addEventListener("change", () => { state.searchSort = sortFilter.value; renderView("search"); });
       const ledgerForm = $("#ledgerForm");
-      if (ledgerForm) ledgerForm.addEventListener("submit", (event) => { event.preventDefault(); const merchant = $("#ledgerMerchant").value.trim(); const amount = Number($("#ledgerAmount").value); if (!merchant || !amount) return; state.transactions.unshift({ merchant, amount, category: $("#ledgerCategory").value, time: "剛剛" }); renderView("ledger"); showToast("已新增交易並更新可花餘額"); });
-      const simulate = $("#simulateMeal");
-      if (simulate) simulate.addEventListener("click", () => { state.transactions.unshift({ merchant: "朋友臨時聚餐", amount: 1200, category: "餐飲", time: "剛剛" }); $("#recoveryBox").hidden = false; showToast("已收到交易通知：NT$1,200"); });
-      $$('[data-recovery]').forEach((el) => el.addEventListener("click", () => { state.recovery = el.dataset.recovery === "extend" ? "extend" : "low"; renderView("ledger"); showToast(state.recovery === "extend" ? "已延長目標期限" : "已啟用 7 天低價優先"); }));
+      if (ledgerForm) ledgerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const amount = Number($("#ledgerAmount").value);
+        if (!amount) return;
+        await api("/api/ledger", { method: "POST", body: JSON.stringify({ amount, category: $("#ledgerCategory").value, note: $("#ledgerNote").value.trim() }) });
+        await loadLedger();
+        await refreshBudget();
+        renderView("ledger");
+        showToast("已新增記帳並更新可花餘額");
+      });
       $$('[data-priority]').forEach((el) => el.addEventListener("click", () => { state.travelPriority = el.dataset.priority; renderView("travel"); }));
       $$('[data-insurance]').forEach((el) => el.addEventListener("click", () => { state.insuranceTab = el.dataset.insurance; renderView("insurance"); }));
       const claimCheck = $("#claimCheck");
       if (claimCheck) claimCheck.addEventListener("click", () => { if (!$("#claimText").value.trim()) { showToast("請先描述發生的狀況"); return; } $("#claimResult").hidden = false; });
-      const cardQuestions = $("#cardQuestions");
-      if (cardQuestions) cardQuestions.addEventListener("click", () => openAssistant("我想再回答問題微調信用卡推薦"));
       const calculateForeign = $("#calculateForeign");
       if (calculateForeign) calculateForeign.addEventListener("click", calculateForeignCost);
       const settleDaily = $("#settleDaily");
       if (settleDaily) settleDaily.addEventListener("click", settleDailyBudget);
       const delayGoal = $("#delayGoal");
-      if (delayGoal) delayGoal.addEventListener("click", () => {
-        state.profile.months += 1;
-        localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      if (delayGoal) delayGoal.addEventListener("click", async () => {
+        const p = state.profile;
+        if (p.goal) p.goal.months += 1;
+        const { profile, budget } = await api("/api/profile", { method: "POST", body: JSON.stringify(p) });
+        state.profile = profile;
+        state.budget = budget;
         renderView("home");
         showToast("已將完成期限延後 1 個月");
       });
@@ -1039,20 +1763,20 @@
       requestAnimationFrame(() => content.classList.add("is-changing"));
     }
 
-    function settleDailyBudget() {
-      const tray = $("#settlementTray");
+    async function settleDailyBudget() {
       const button = $("#settleDaily");
       const source = $("#dailyPocket");
       const target = $("#balanceDonut");
-      if (!tray || !button || !source || !target || state.settlementDone) return;
+      if (!button || !source || !target || state.settlementDone) return;
       button.disabled = true;
-      tray.classList.add("is-moving");
+      const result = await api("/api/budget/settle", { method: "POST" });
+      source.classList.add("is-moving");
       target.classList.add("is-receiving");
       const sourceRect = source.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
       const flyingCard = document.createElement("div");
       flyingCard.className = "settlement-fly-card";
-      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(Math.min(240, getFinance().safe))}</strong>`;
+      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(result.unused)}</strong>`;
       Object.assign(flyingCard.style, { left: sourceRect.left + "px", top: sourceRect.top + "px", width: sourceRect.width + "px", height: sourceRect.height + "px" });
       document.body.appendChild(flyingCard);
       const dx = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
@@ -1083,17 +1807,21 @@
 
     function showMega(key) {
       const menu = $("#megaMenu");
-      menu.innerHTML = `<div class="shell mega-grid">${megaContent[key].map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
+      const columns = megaContent[key];
+      const gridClass = columns.length === 1 && columns[0][1].length === 4 ? " four" : columns.length === 1 ? " single" : columns.length === 2 ? " two" : "";
+      menu.innerHTML = `<div class="shell mega-grid${gridClass}">${columns.map((col, i) => `<div class="mega-col${i === 0 ? " primary" : ""}"><small>${col[0]}</small>${col[1].map((label) => `<button type="button" data-mega-action="${escapeAttr(label)}">${label}</button>`).join("")}${i === 2 ? `<p>功能保留完整，首頁只顯示最需要的入口。</p>` : ""}</div>`).join("")}</div>`;
       menu.hidden = false;
       $$('[data-mega-action]', menu).forEach((btn) => btn.addEventListener("click", () => handleMegaAction(btn.dataset.megaAction)));
     }
 
     function handleMegaAction(label) {
+      if (label === "一般商品") { state.searchCategory = "商品"; return renderView("search"); }
+      if (label === "日常採買") { state.searchCategory = "日常"; return renderView("search"); }
+      if (label === "3C 家電") { state.searchCategory = "3C 家電"; return renderView("search"); }
       if (/機票|飯店|旅遊預算/.test(label)) return renderView("travel");
       if (/保險|保障|理賠|保單/.test(label)) return renderView("insurance");
       if (/訂閱|音樂|影音/.test(label)) return renderView("subscriptions");
       if (/海外/.test(label)) return renderView("overseas");
-      if (/卡|年費|回饋/.test(label)) return renderView("cards");
       if (/記帳|支出|目標/.test(label)) return renderView("ledger");
       if (/附近|文化幣|免費活動|公尺|店家/.test(label)) return renderView("nearby");
       renderView("search");
@@ -1104,11 +1832,7 @@
     function askProduct(detail) {
       openAssistant();
       const parts = detail.split("｜");
-      state.assistantTopic = "product";
-      addMessage("user", `請幫我看這個商品：${parts[0]}`);
-      const price = Number(parts[2] || 0);
-      const f = getFinance();
-      addMessage("ai", `${parts[1] ? `這筆是 ${parts[1]} 的` : "這個"} ${parts[0]}，價格 ${price ? money(price) : "尚未提供"}。${price > f.safe ? `它比你目前安心可花的 ${money(f.safe)} 高，建議先加入目標，不要直接刷卡。` : `買下後約剩 ${money(f.safe - price)} 可花。`}\n你也可以貼商品連結，我會沿用這個商品繼續問。`);
+      sendToAssistant(`請幫我看這個商品：${parts[0]}${parts[1] ? `（${parts[1]}）` : ""}${parts[2] ? `，價格 ${parts[2]}` : ""}`);
     }
 
     function openAssistant(prefill) {
@@ -1123,32 +1847,31 @@
       renderMessages();
     }
 
+    // AI 回覆常帶簡單 markdown（**粗體**、`code`）。先跳脫 HTML 再轉換，避免 XSS。
+    function formatAssistantText(text) {
+      return escapeHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.+?)`/g, "<code>$1</code>");
+    }
+
     function renderMessages() {
       const log = $("#chatLog");
-      log.innerHTML = state.messages.map((m) => `<div class="bubble ${m.role}">${escapeHtml(m.text)}</div>`).join("");
+      log.innerHTML = state.messages.map((m) => `<div class="bubble ${m.role}${m.pending ? " pending" : ""}">${m.role === "ai" ? formatAssistantText(m.text) : escapeHtml(m.text)}</div>`).join("");
       log.scrollTop = log.scrollHeight;
     }
 
-    function assistantReply(text) {
-      const q = text.toLowerCase();
-      const f = getFinance();
-      if (/spotify|apple music|訂閱|學生/.test(q) || (state.assistantTopic === "subscription" && /個人|家庭|一個人|兩個人/.test(q))) {
-        state.assistantTopic = "subscription";
-        if (/學生/.test(q)) return "你有學生資格的話，目前示範資料中 Spotify 學生方案月費較低；不過要一起看裝置、音質與常用歌單。你是自己使用，還是多人共用？";
-        if (/個人|一個人/.test(q)) return "延續剛才的訂閱比較：以個人使用來看，我會先比較學生／個人月費，再看你是否在意 Apple 裝置整合。你有學生資格嗎？";
-        return "你想比較哪兩個訂閱？也請告訴我幾個人使用、是否有學生資格，我會接著比較，不會把回答當成商品。";
+    // KASO AI 真的接 Claude API（backend/src/services/assistant.js），key 只在後端，前端不會碰到。
+    async function sendToAssistant(text) {
+      addMessage("user", text);
+      state.messages.push({ role: "ai", text: "思考中…", pending: true });
+      renderMessages();
+      try {
+        const { reply } = await api("/api/assistant/chat", { method: "POST", body: JSON.stringify({ message: text, history: state.messages.slice(0, -1) }) });
+        state.messages[state.messages.length - 1] = { role: "ai", text: reply };
+      } catch (err) {
+        state.messages[state.messages.length - 1] = { role: "ai", text: "KASO AI 暫時連不上：後端可能還沒設定 ANTHROPIC_API_KEY（見 backend/.env.example）。" };
       }
-      if (/還能花|剩多少|預算|餘額/.test(q)) { state.assistantTopic = "budget"; return `目前餘額 ${money(f.currentBalance)}，已先保留固定支出與每月存款；今天安心可花約 ${money(f.safe)}。` }
-      if (/保險|延誤|行李|住院|理賠/.test(q)) { state.assistantTopic = "insurance"; return "我可以先找『可能申請』的項目。請補上事件日期、發生狀況、損失金額，以及你是否保留證明或單據；最終仍依保單條款與保險公司審核。"; }
-      if (/卡|回饋|信用卡/.test(q)) { state.assistantTopic = "card"; return `依你第一步的現金流與生活比重，目前先推薦 ${cardMatches[0].name}。重點是規則簡單，且不會用信用額度放大你的 ${money(f.safe)} 可花預算。`; }
-      if (/商品|買|比價|多少錢|連結|http/.test(q) || state.assistantTopic === "product") {
-        state.assistantTopic = "product";
-        const hasSpecific = /airpods|iphone|switch|macbook|http|https|型號|gb/i.test(q);
-        return hasSpecific ? `我會以你指定的商品繼續比較。請確認容量、顏色、新品／二手與公司貨版本；目前安心可花是 ${money(f.safe)}。` : "你想找哪一個商品？請貼商品名稱、完整型號或連結；資料不足時我會先追問，不會自己猜一個商品。";
-      }
-      if (/附近|餐廳|咖啡|超市/.test(q)) { state.assistantTopic = "nearby"; return `目前以台北車站 1,000 公尺為示範位置，共有 ${nearbyOffers.length} 個預算內選項；要我優先找餐飲、日常採買，還是免費活動？`; }
-      if (/旅遊|機票|飯店|日本/.test(q)) { state.assistantTopic = "travel"; return "可以。我會把住宿、餐飲、交通和景點放在同一個上限內。你想住得更好、吃得更好，還是玩更多景點？"; }
-      return state.assistantTopic ? "我會延續上一個主要問題。可以再補充你剛才回答的是哪個條件，或直接貼相關連結，我就接著整理。" : "我還不知道你要處理的是商品、預算、信用卡、旅遊或保險。請多給我一個關鍵資訊，我會先確認再回答。";
+      renderMessages();
     }
 
     function showToast(message) {
@@ -1159,34 +1882,70 @@
       showToast.timer = setTimeout(() => toast.classList.remove("show"), 2300);
     }
 
+    function syncAccountDialog() {
+      const raw = localStorage.getItem("kaso-html-account");
+      let account = null;
+      try { account = raw ? JSON.parse(raw) : null; } catch (_) { localStorage.removeItem("kaso-html-account"); }
+      $("#profileSignedOut").hidden = Boolean(account);
+      $("#profileSignedIn").hidden = !account;
+      if (account) {
+        $("#signedInName").textContent = account.name || "KASO 使用者";
+        $("#signedInEmail").textContent = account.email || "";
+      }
+    }
+
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
     }
     function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
-    $$(".mode-card").forEach((card) => card.addEventListener("click", () => {
-      state.mode = card.dataset.mode;
-      $$(".mode-card").forEach((item) => { item.classList.toggle("selected", item === card); $(".mode-check", item).textContent = item === card ? "✓" : "→"; });
-      if (state.mode !== "moonlight") showToast("HTML 第一版仍以月光族主流程示範，其他模式保留入口");
-    }));
     $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
     $("#resetProfile").addEventListener("click", resetProfile);
     $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
     $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
     $("#siteHeader").addEventListener("mouseleave", hideMega);
-    $("#locateHeader").addEventListener("click", () => { showToast("已使用台北車站示範位置"); renderView("nearby"); });
+    $("#profileOpen").addEventListener("click", () => { syncAccountDialog(); $("#profileDialog").showModal(); });
+    $("#profileClose").addEventListener("click", () => $("#profileDialog").close());
+    $$("[data-provider]", $("#profileDialog")).forEach((button) => button.addEventListener("click", () => showToast(`${button.dataset.provider} 登入介面已完成，正式啟用需設定 OAuth 金鑰`)));
+    $("#accountLoginForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const email = $("#accountEmail").value.trim();
+      const password = $("#accountPassword").value;
+      if (!email || password.length < 4) { showToast("請填入有效帳號與至少 4 碼密碼"); return; }
+      const name = $("#accountName").value.trim() || email.split("@")[0];
+      localStorage.setItem("kaso-html-account", JSON.stringify({ name, email }));
+      $("#accountPassword").value = "";
+      syncAccountDialog();
+      showToast("已登入 KASO 一般帳號");
+    });
+    $("#accountLogout").addEventListener("click", () => { localStorage.removeItem("kaso-html-account"); syncAccountDialog(); showToast("已登出"); });
+    $("#profileReset").addEventListener("click", () => { $("#profileDialog").close(); resetProfile(); });
     $("#assistantFab").addEventListener("click", () => openAssistant());
     $("#assistantClose").addEventListener("click", () => { $("#assistantPanel").hidden = true; $("#assistantFab").hidden = false; });
-    $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; addMessage("user", text); setTimeout(() => addMessage("ai", assistantReply(text)), 260); });
+    $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; sendToAssistant(text); });
     $("#feedbackOpen").addEventListener("click", () => $("#feedbackDialog").showModal());
     $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
 
-    const saved = localStorage.getItem("kaso-html-profile");
-    if (saved) {
-      try { state.profile = JSON.parse(saved); $("#onboarding").hidden = true; $("#mainApp").hidden = false; renderView("home"); } catch (_) { localStorage.removeItem("kaso-html-profile"); }
+    async function boot() {
+      await loadQuiz();
+      try {
+        const profile = await api("/api/profile");
+        if (profile) {
+          state.profile = profile;
+          state.resolvedType = profile.type;
+          state.budget = await api("/api/budget");
+          $("#onboarding").hidden = true;
+          $("#mainApp").hidden = false;
+          await loadLedger();
+          renderView("home");
+          return;
+        }
+      } catch (_) { /* 後端還沒有 profile，走 onboarding */ }
+      renderGoalFields();
+      updateOnboardingPreview();
     }
-    updateOnboardingPreview();
+    boot();
     renderMessages();
   </script>
 </body>
