@@ -511,6 +511,359 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+
+    /* Editorial UI concept — warm paper, disciplined whitespace and flat color. */
+    :root {
+      --ink: #0b0b0b;
+      --muted: #66645f;
+      --line: #171717;
+      --soft: #ebe8df;
+      --panel: #fffefa;
+      --violet: #2f5fd0;
+      --violet-soft: #e8edfb;
+      --blue: #2f5fd0;
+      --blue-deep: #2148a8;
+      --lime: #f4d400;
+      --lime-deep: #c9ae00;
+      --paper: #f3f0e7;
+      --sage: #94a79b;
+      --shadow: none;
+      --radius: 14px;
+      --radius-xl: 30px;
+      --radius-lg: 18px;
+      --radius-md: 9px;
+    }
+
+    body {
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, "Noto Sans TC", "PingFang TC", sans-serif;
+    }
+    .shell { width: min(1120px, calc(100% - 48px)); }
+    svg { stroke-width: 2.3; }
+    .eyebrow { color: var(--ink); letter-spacing: .07em; }
+
+    .primary-btn, .secondary-btn, .text-btn, .icon-btn {
+      border-radius: 3px;
+      box-shadow: none;
+    }
+    .primary-btn { background: var(--ink); }
+    .primary-btn:hover { background: var(--lime); color: var(--ink); transform: none; }
+    .secondary-btn, .icon-btn { border: 1.5px solid var(--ink); background: var(--panel); }
+    .text-btn { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+    /* Entry screen */
+    .onboarding {
+      padding-block: 38px 74px;
+      background: var(--paper);
+    }
+    .onboarding-card {
+      width: min(1040px, calc(100% - 36px));
+      padding: 34px;
+      border: 1.5px solid var(--ink);
+      border-radius: 36px;
+      background: var(--panel);
+      box-shadow: 10px 10px 0 var(--ink);
+      backdrop-filter: none;
+    }
+    .brand-mark {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: var(--lime);
+      color: var(--ink);
+    }
+    .brand-mark svg { display: none; }
+    .brand-mark::after { content: "K"; font: 900 1.35rem/1 Arial, sans-serif; }
+    .brand-copy strong { font-size: 1.05rem; letter-spacing: .025em; }
+    .onboarding-heading { max-width: 760px; margin-top: 76px; }
+    .onboarding-heading h1 {
+      font-family: Arial Black, Arial, "Noto Sans TC", sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4.7rem);
+      letter-spacing: -.05em;
+    }
+    .mode-grid { grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
+    .mode-card {
+      min-height: 138px;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .mode-card.featured { background: var(--panel); }
+    .mode-card:hover, .mode-card.selected {
+      border-color: var(--ink);
+      background: var(--lime);
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: translate(-2px, -2px);
+    }
+    .mode-icon { border: 1px solid var(--ink); border-radius: 2px; background: var(--panel); }
+    .mode-card.selected .mode-icon { background: var(--ink); color: #fff; }
+    .mode-card .mode-check { color: var(--ink); }
+    .setup-card { border: 1.5px solid var(--ink); border-radius: 16px; background: #f8f6ef; }
+    .setup-heading > span { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .field input, .field select, .field textarea { border: 1.5px solid var(--ink); border-radius: 3px; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(244,212,0,.45); }
+    .finance-preview { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--ink); }
+    .quality-card { border-radius: 16px; background: var(--ink); }
+    .quality-item { border-radius: 4px; background: #181818; }
+    .quality-total { border-radius: 2px; }
+
+    /* Navigation: no chevrons, just a line that draws in on hover. */
+    .site-header {
+      background: rgba(243,240,231,.96);
+      border-bottom: 1.5px solid var(--ink);
+      backdrop-filter: blur(10px);
+    }
+    .header-row { min-height: 74px; grid-template-columns: 230px 1fr auto; }
+    .main-nav { gap: 20px; }
+    .nav-btn {
+      position: relative;
+      min-height: 44px;
+      padding-inline: 3px;
+      border-radius: 0;
+      background: transparent;
+      font-weight: 900;
+      letter-spacing: .035em;
+    }
+    .nav-btn:hover, .nav-btn.active { background: transparent; }
+    .nav-btn::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 100%;
+      bottom: 5px;
+      height: 3px;
+      background: var(--ink);
+      transition: right .28s var(--apple-ease);
+    }
+    .nav-btn:hover::after, .nav-btn:focus-visible::after, .nav-btn.active::after { right: 0; }
+    .persona-chip, .finance-mini { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); }
+    .finance-mini span + span { border-color: var(--ink); }
+    .finance-mini .safe { background: var(--lime); }
+    .finance-mini .safe strong { color: var(--ink); }
+    .location-btn { border-radius: 3px; background: var(--ink); }
+    .mega-menu {
+      inset: 74px 0 auto;
+      background: var(--panel);
+      border-bottom: 1.5px solid var(--ink);
+      box-shadow: 0 9999px 0 9999px rgba(11,11,11,.38);
+    }
+    .mega-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 54px; padding-block: 38px 42px; }
+    .mega-col { gap: 0; }
+    .mega-col small { margin-bottom: 10px; color: var(--muted); }
+    .mega-col button {
+      width: 100%;
+      padding: 12px 0;
+      border-bottom: 1px solid #d6d2c8;
+      font-size: .96rem;
+      font-weight: 850;
+    }
+    .mega-col button::after { display: none !important; content: none !important; }
+    .mega-col.primary button { font-size: 1.12rem; letter-spacing: -.015em; }
+
+    /* Main dashboard */
+    .main-content { padding-top: 40px; }
+    .money-overview {
+      border: 1.5px solid var(--ink);
+      border-radius: 32px;
+      background: var(--panel);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+    .balance-stage-head { padding: 34px 36px 24px; }
+    .balance-stage-head h1 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; font-size: clamp(1.9rem, 4vw, 3.35rem); }
+    .money-actions button { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); }
+    .money-actions button:hover { background: var(--lime); }
+    .balance-stage-grid { grid-template-columns: 190px minmax(0, 1fr) 280px; gap: 22px; padding: 0 30px 26px; }
+    .spend-rail { padding: 0; border-radius: 0; background: transparent; }
+    .spend-rail > small { margin-bottom: 8px; }
+    .spend-pill {
+      min-height: 56px;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      background: var(--panel);
+      color: var(--ink);
+    }
+    .spend-pill:hover { transform: translateX(4px); background: #faf8f1; }
+    .spend-pill.active { border-color: var(--ink); background: var(--lime); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+    .spend-pill .plus { border-radius: 2px; }
+    .spend-detail { border-radius: 22px; background: var(--ink); }
+    .spend-detail::after { display: none; }
+    .detail-kicker, .detail-copy { color: #d4d4d4; }
+    .detail-line i { background: #333; }
+    .donut-side { border: 1.5px solid var(--ink); border-radius: 22px; background: #f8f6ef; }
+    .donut.large::after { background: #f8f6ef; }
+    .donut-side .legend-fixed { background: #0b0b0b; }
+    .donut-side .legend-saving { background: #2f5fd0; }
+    .donut-side .legend-spent { background: #94a79b; }
+    .donut-side .legend-available { background: #f4d400; border: 1px solid var(--ink); }
+    .status-pill { border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .settlement-tray {
+      margin: 0 30px 30px;
+      padding: 22px 0 0;
+      border-top: 1.5px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+    }
+    .settlement-guide small { color: var(--ink); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 6px; text-underline-offset: -2px; }
+    .settlement-pocket { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--panel); box-shadow: none; }
+    .daily-pocket { background: var(--lime); }
+    .settlement-pocket button { border-radius: 2px; }
+    .settlement-fly-card { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--lime); box-shadow: 6px 6px 0 var(--ink); }
+
+    /* Give the functions room to breathe instead of filling one dense row. */
+    .service-panel {
+      width: min(900px, 100%);
+      margin: 72px auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .section-head { margin-bottom: 24px; }
+    .section-head h2, .qa-title h2 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; letter-spacing: -.035em; }
+    .section-head h2 { position: relative; padding-bottom: 8px; font-size: 1.6rem; }
+    .section-head h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 6px; background: var(--lime); }
+    .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .service-card {
+      min-height: 0;
+      padding: 24px;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .service-card.primary { border-color: var(--ink); background: var(--panel); box-shadow: inset 8px 0 0 var(--lime); }
+    .service-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+    .service-title { min-height: 52px; }
+    .service-title > span { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .service-title small { color: var(--muted); }
+    .service-main { width: auto; min-width: 154px; margin-top: 22px; padding-inline: 18px; border-radius: 2px; background: var(--ink); }
+    .service-children { gap: 18px; margin-top: 18px; }
+    .service-children button {
+      min-height: 28px;
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      font-size: .76rem;
+    }
+    .service-children button:hover { border-bottom-width: 4px; border-bottom-color: var(--lime-deep); }
+    .qa-section { width: min(900px, 100%); margin: 78px auto 0; padding: 38px 0 8px; border-top: 1.5px solid var(--ink); border-radius: 0; background: transparent; }
+    .qa-title h2 { font-size: clamp(2.4rem, 6vw, 4.8rem); }
+    .qa-list details { border-color: var(--ink); }
+    .qa-list summary::after { border: 1px solid var(--ink); border-radius: 2px; background: var(--panel); color: var(--ink); }
+    .qa-list details[open] summary::after { background: var(--lime); color: var(--ink); }
+    .qa-answer a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 5px; text-underline-offset: -1px; }
+
+    /* Inner pages and price results */
+    .page-title h1 { font-family: Arial Black, Arial, "Noto Sans TC", sans-serif; }
+    .demo-pill { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .toolbar, .feature-card, .result-panel, .notice-card,
+    .merchant-card, .policy, .subscription { border: 1.5px solid var(--ink); border-radius: 8px; background: var(--panel); }
+    .toolbar input, .toolbar select, .ledger-form input, .ledger-form select { border: 1.5px solid var(--ink); border-radius: 3px; }
+    .chip, .tab-row button { border: 1px solid var(--ink); border-radius: 2px; }
+    .chip.active, .tab-row button.active { border-color: var(--ink); background: var(--lime); color: var(--ink); }
+    .summary-strip { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--ink); }
+    .result-grid { max-width: 980px; grid-template-columns: 1fr; gap: 18px; }
+    .product-card {
+      grid-template-columns: 170px minmax(0, 1fr);
+      grid-template-rows: none;
+      overflow: visible;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+      perspective: 1100px;
+    }
+    .product-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+    .product-image { border-right: 1.5px solid var(--ink); border-radius: 7px 0 0 7px; background: #ece9e0; color: var(--ink); }
+    .platform { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .match { color: var(--blue-deep); }
+    .product-actions button, .product-actions a { border-radius: 2px; }
+    .product-actions button { border: 1px solid var(--ink); }
+
+    .budget-flip {
+      position: relative;
+      width: min(100%, 440px);
+      height: 72px;
+      margin-top: 12px;
+      outline: none;
+      transform-origin: left center;
+      transition: transform .28s var(--apple-ease);
+      perspective: 900px;
+    }
+    .budget-flip:hover, .budget-flip:focus-visible { z-index: 8; transform: scale(1.075); }
+    .budget-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .55s var(--apple-ease);
+    }
+    .budget-flip:hover .budget-flip-inner, .budget-flip:focus .budget-flip-inner { transform: rotateX(180deg); }
+    .budget-flip-front, .budget-flip-back {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      backface-visibility: hidden;
+    }
+    .budget-flip-front { background: #fff4ef; color: #a22618; }
+    .budget-flip-front span { padding: 3px 6px; border: 1px solid currentColor; border-radius: 2px; font-size: .66rem; font-weight: 850; }
+    .budget-flip-front strong { font-size: .8rem; }
+    .budget-flip-back { flex-wrap: wrap; background: var(--lime); color: var(--ink); transform: rotateX(180deg); }
+    .budget-flip-back small { width: 100%; font-size: .64rem; font-weight: 900; letter-spacing: .08em; }
+    .budget-flip-back strong { font-size: .84rem; }
+    .budget-flip-back p { margin: 0; font-size: .7rem; }
+
+    .merchant-icon { border: 1px solid var(--ink); border-radius: 2px; background: var(--lime); color: var(--ink); }
+    .directions { border-radius: 2px; background: var(--ink); }
+    .profile-rule, .claim-result, .recovery, .warning { border: 1px solid var(--ink); border-radius: 3px; background: #fff7c7; color: var(--ink); }
+    .card-winner { border-color: var(--ink); border-radius: 5px; box-shadow: 5px 5px 0 var(--lime); }
+    .card-winner small, .rank b { color: var(--blue-deep); }
+    .bar { background: #dcd8cd; }
+    .bar i { background: var(--blue); }
+
+    .assistant-fab { border: 1.5px solid var(--ink); border-radius: 3px; background: var(--lime); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+    .assistant-panel { border: 1.5px solid var(--ink); border-radius: 9px; box-shadow: 6px 6px 0 var(--ink); }
+    .assistant-head { background: var(--ink); }
+    .bubble { border-radius: 4px; }
+    .bubble.ai { border-color: var(--ink); }
+    .bubble.user { background: var(--blue); }
+    .assistant-form input, .assistant-form button { border-radius: 2px; }
+    .assistant-form input { border-color: var(--ink); }
+    .feedback-btn { border-color: var(--ink); border-radius: 2px; color: var(--ink); }
+
+    @media (max-width: 980px) {
+      .header-row { grid-template-columns: 170px 1fr auto; }
+      .main-nav { gap: 10px; }
+      .balance-stage-grid { grid-template-columns: 170px minmax(0, 1fr); }
+      .service-panel, .qa-section { width: min(820px, 100%); }
+    }
+
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 28px, 1120px); }
+      .onboarding-card { padding: 20px; border-radius: 26px; box-shadow: 5px 5px 0 var(--ink); }
+      .onboarding-heading { margin-top: 46px; }
+      .header-row { min-height: 64px; grid-template-columns: auto 1fr auto; }
+      .mega-menu { inset: 64px 0 auto; }
+      .mega-grid { grid-template-columns: 1fr; gap: 24px; }
+      .nav-btn::after { bottom: 6px; }
+      .money-overview { border-radius: 24px; box-shadow: 5px 5px 0 var(--ink); }
+      .balance-stage-head { padding: 22px 18px 16px; }
+      .balance-stage-grid { padding: 0 14px 14px; }
+      .settlement-tray { margin: 0 14px 18px; }
+      .service-panel { margin-top: 52px; }
+      .service-grid { grid-template-columns: 1fr; }
+      .qa-section { margin-top: 58px; padding-top: 28px; }
+      .product-card { grid-template-columns: 1fr; grid-template-rows: 130px auto; }
+      .product-image { border-right: 0; border-bottom: 1.5px solid var(--ink); border-radius: 7px 7px 0 0; }
+      .budget-flip { width: 100%; transform-origin: center; }
+    }
   </style>
 </head>
 <body>
@@ -828,7 +1181,7 @@
       const reserveStop = (f.fixed / total) * 100;
       const saveStop = reserveStop + (f.monthlySave / total) * 100;
       const spentStop = Math.min(100, saveStop + (f.spent / total) * 100);
-      const bg = `conic-gradient(#111827 0 ${reserveStop}%, #6d4aff ${reserveStop}% ${saveStop}%, #0878df ${saveStop}% ${spentStop}%, #b8ff3d ${spentStop}% 100%)`;
+      const bg = `conic-gradient(#0b0b0b 0 ${reserveStop}%, #2f5fd0 ${reserveStop}% ${saveStop}%, #94a79b ${saveStop}% ${spentStop}%, #f4d400 ${spentStop}% 100%)`;
       const status = f.safe > 3000 ? ["今天有一點彈性", "可以安排小額享受，但先確認不會動到存款。"] : ["今天需要注意", "先以必要支出和低價選項為主，避免月底壓力。"];
       const carryover = Math.min(240, f.safe);
       const displayBalance = f.currentBalance + (state.settlementDone ? carryover : 0);
@@ -901,7 +1254,7 @@
 
     function budgetDetailMarkup(f, id) {
       const detail = budgetDetailData(f, id);
-      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${amount > 0 ? Math.max(3, width) : 0}%;--line-color:${id === "saving" ? "#a98bff" : id === "safe" ? "#b8ff3d" : "#70b7ff"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
+      return `<span class="detail-kicker">${icon(id === "saving" ? "target" : id === "spent" ? "bell" : "wallet")} ${detail.kicker}</span><div class="detail-amount">${money(detail.amount)}</div><h2 class="detail-title">${detail.title}</h2><p class="detail-copy">${detail.copy}</p><div class="detail-lines">${detail.lines.map(([label, width, amount]) => `<div class="detail-line"><span>${label}</span><i style="--line-width:${amount > 0 ? Math.max(3, width) : 0}%;--line-color:${id === "saving" ? "#2f5fd0" : id === "safe" ? "#f4d400" : "#94a79b"}"></i><strong>${money(amount)}</strong></div>`).join("")}</div>`;
     }
 
     function serviceCard(iconId, view, kicker, title, detail, children, metric, primary = false) {
@@ -915,7 +1268,7 @@
         <div class="chip-row">${["商品", "餐飲", "日常", "3C 家電"].map((c) => `<button class="chip${state.searchCategory === c ? " active" : ""}" type="button" data-category="${c}">${c}</button>`).join("")}</div>
         <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><select aria-label="排序"><option>價格由低到高</option><option>同品項信心</option><option>平台評價</option></select><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
         <div class="summary-strip"><div><small>搜尋來源</small><strong>8 個平台</strong></div><div><small>找到候選</small><strong>48 筆</strong></div><div><small>確認同品項</small><strong>6 筆</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
-        <div class="result-grid">${productResults.map((p) => `<article class="product-card"><div class="product-image">${icon("phone")}</div><div class="product-body"><div class="product-meta"><span class="platform">${p.platform}</span><span class="match">${p.match}</span></div><h3>${escapeHtml(state.searchQuery || p.title)}</h3><div class="product-price">${money(p.price)}</div><p class="after-buy${p.price > f.safe ? " insufficient" : ""}">${p.price > f.safe ? `目前不足 ${money(p.price - f.safe)}，建議延後購買或完成期限` : `買下後安心可花還剩 <strong>${money(f.safe - p.price)}</strong>`}</p><div class="product-actions"><button type="button" data-ask-product="${escapeAttr(p.title)}｜${p.platform}｜${p.price}">問 AI</button><a href="${p.link}" target="_blank" rel="noreferrer">查看來源</a></div></div></article>`).join("")}</div>
+        <div class="result-grid">${productResults.map((p) => `<article class="product-card"><div class="product-image">${icon("phone")}</div><div class="product-body"><div class="product-meta"><span class="platform">${p.platform}</span><span class="match">${p.match}</span></div><h3>${escapeHtml(state.searchQuery || p.title)}</h3><div class="product-price">${money(p.price)}</div>${p.price > f.safe ? `<div class="budget-flip" tabindex="0" aria-label="目前不足 ${money(p.price - f.safe)}，滑入查看建議"><div class="budget-flip-inner"><div class="budget-flip-front"><span>預算提醒</span><strong>不足 ${money(p.price - f.safe)}，滑入查看</strong></div><div class="budget-flip-back"><small>KASO 建議</small><strong>延後購買或延長目標期限</strong><p>避免動用已保留的生活費與存款。</p></div></div></div>` : `<p class="after-buy">買下後安心可花還剩 <strong>${money(f.safe - p.price)}</strong></p>`}<div class="product-actions"><button type="button" data-ask-product="${escapeAttr(p.title)}｜${p.platform}｜${p.price}">問 AI</button><a href="${p.link}" target="_blank" rel="noreferrer">查看來源</a></div></div></article>`).join("")}</div>
         <p class="onboarding-note">商品、價格及連結為 HTML 介面展示；正式站的即時搜尋仍需由後端來源供應。</p>
       </section>`;
     }
