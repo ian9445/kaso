@@ -928,32 +928,31 @@
     .purchase-back-actions button { background: var(--ink); color: #fff; cursor: pointer; }
     .purchase-back-actions a { background: var(--panel); }
 
-    .mobile-bottom-nav { display: none; }
-
     @media (max-width: 720px) {
       body { padding-bottom: 82px; }
-      .main-nav, .finance-mini, .persona-chip { display: none; }
+      .finance-mini, .persona-chip { display: none; }
       .header-row { grid-template-columns: 1fr auto; }
-      .header-actions { grid-column: 2; }
+      .header-actions { grid-column: 2; grid-row: 1; }
+      .main-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; justify-content: flex-start; overflow-x: auto; }
       .main-content { padding-top: 22px; }
       .money-actions { flex-wrap: wrap; }
       .daily-compact { width: 100%; justify-content: space-between; }
       .balance-stage-grid { grid-template-columns: 1fr; }
-      .spend-rail { order: 3; display: grid; grid-template-columns: 1fr 1fr; }
-      .spend-rail > small { grid-column: 1 / -1; }
+      .spend-rail {
+        position: fixed; right: 0; bottom: 0; left: 0; z-index: 90; display: grid; grid-template-columns: repeat(4,1fr);
+        gap: 4px; padding: 8px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+        border: 0; background: var(--blue); box-shadow: 0 -8px 24px rgba(11,11,11,.18);
+      }
+      .spend-rail > small { display: none; }
+      .spend-pill, .spend-pill:hover { min-height: 54px; grid-template-columns: 1fr; gap: 1px; border: 0; background: transparent; color: #fff; padding: 5px 3px; text-align: center; transform: none; box-shadow: none; }
+      .spend-pill.active { background: #fff; color: var(--blue); box-shadow: none; }
+      .spend-pill .plus { display: none; }
+      .spend-pill small, .spend-pill:not(.active) small { color: inherit; font-size: .66rem; }
       .spend-detail { order: 1; min-height: 330px; }
       .donut-side { order: 2; }
       .product-flip-front { grid-template-columns: 1fr; }
       .product-flip-front .product-image { min-height: 120px; border-right: 0; border-bottom: 1.5px solid var(--ink); }
       .product-flip-back { grid-template-columns: 1fr; min-height: 390px; padding: 20px; }
-      .mobile-bottom-nav {
-        position: fixed; right: 0; bottom: 0; left: 0; z-index: 90; display: grid; grid-template-columns: repeat(4,1fr);
-        padding: 8px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
-        background: var(--blue); box-shadow: 0 -8px 24px rgba(11,11,11,.18);
-      }
-      .mobile-bottom-nav button { display: grid; min-height: 54px; place-items: center; gap: 2px; border: 0; border-radius: 8px; background: transparent; color: #fff; font-size: .68rem; cursor: pointer; }
-      .mobile-bottom-nav button.active { background: #fff; color: var(--blue); }
-      .mobile-bottom-nav svg { width: 20px; height: 20px; }
       .assistant-fab, .assistant-panel { bottom: 88px; }
       .feedback-btn { bottom: 92px; }
     }
@@ -1080,13 +1079,6 @@
     <main class="shell main-content">
       <div id="viewRoot"></div>
     </main>
-
-    <nav id="mobileNav" class="mobile-bottom-nav" aria-label="手機版主要功能">
-      <button type="button" data-view="search"><svg><use href="#i-search"/></svg><span>比價</span></button>
-      <button type="button" data-view="nearby"><svg><use href="#i-pin"/></svg><span>附近</span></button>
-      <button type="button" data-view="cards"><svg><use href="#i-card"/></svg><span>辦卡</span></button>
-      <button type="button" data-view="ledger"><svg><use href="#i-grid"/></svg><span>生活</span></button>
-    </nav>
 
     <button id="assistantFab" class="assistant-fab" type="button"><svg><use href="#i-bot"/></svg> 問 KASO AI</button>
     <aside id="assistantPanel" class="assistant-panel" hidden aria-label="KASO AI 助手">
@@ -1280,10 +1272,6 @@
       $$(".nav-btn").forEach((btn) => {
         const group = btn.dataset.view;
         btn.classList.toggle("active", group === state.view || (group === "ledger" && ["travel", "insurance", "subscriptions"].includes(state.view)));
-      });
-      $$("#mobileNav [data-view]").forEach((btn) => {
-        const group = btn.dataset.view;
-        btn.classList.toggle("active", group === state.view || (group === "ledger" && ["travel", "insurance", "subscriptions", "overseas"].includes(state.view)));
       });
       $("#assistantContext").textContent = `${viewLabel(state.view)} · 延續目前問題 · HTML 互動稿`;
     }
@@ -1680,7 +1668,6 @@
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
     $("#resetProfile").addEventListener("click", resetProfile);
     $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
-    $$("[data-view]", $("#mobileNav")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
     $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
     $("#siteHeader").addEventListener("mouseleave", hideMega);
     $("#profileOpen").addEventListener("click", () => { syncAccountDialog(); $("#profileDialog").showModal(); });
