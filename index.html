@@ -97,6 +97,7 @@
     .onboarding-heading h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 4.25rem); line-height: .98; letter-spacing: -.065em; }
     .onboarding-heading > p:last-child { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
     .mode-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; }
+    #quizOptions.mode-grid { grid-template-columns: 1fr 1fr; }
     .mode-card {
       min-height: 155px; padding: 20px; border: 1px solid var(--line); border-radius: 22px; background: #fff;
       text-align: left; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 13px;
@@ -347,10 +348,14 @@
     .product-price { font-size: 1.45rem; font-weight: 900; letter-spacing: -.03em; }
     .after-buy { margin: 7px 0 0; color: var(--muted); font-size: .72rem; }
     .after-buy.insufficient { color: #b42318; font-weight: 750; }
-    .product-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 13px; }
-    .product-actions button, .product-actions a { min-height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: .72rem; font-weight: 800; }
+    .product-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .product-actions button, .product-actions a { flex: 1 1 auto; min-height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: .72rem; font-weight: 800; }
     .product-actions button { border: 1px solid var(--line); background: #fff; cursor: pointer; }
     .product-actions a { background: var(--ink); color: #fff; }
+    .price-list { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px solid var(--line); }
+    .price-list li { display: flex; justify-content: space-between; padding: 6px 0; font-size: .74rem; color: var(--muted); border-bottom: 1px dashed var(--line); }
+    .price-list li:last-child { border-bottom: 0; }
+    .price-list strong { color: var(--ink); }
 
     .summary-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 16px 0; border: 1px solid var(--line); background: var(--line); border-radius: 18px; overflow: hidden; }
     .summary-strip > div { padding: 14px; background: #fff; }
@@ -430,6 +435,7 @@
     .bubble { max-width: 88%; padding: 11px 12px; border-radius: 15px; font-size: .78rem; white-space: pre-line; }
     .bubble.ai { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 5px; }
     .bubble.user { align-self: flex-end; background: var(--violet); color: #fff; border-bottom-right-radius: 5px; }
+    .bubble.pending { color: var(--muted); font-style: italic; }
     .assistant-form { padding: 11px; display: grid; grid-template-columns: 1fr auto; gap: 8px; border-top: 1px solid var(--line); }
     .assistant-form input { min-height: 43px; border: 1px solid #d8dde6; border-radius: 12px; padding: 0 11px; outline: none; }
     .assistant-form button { width: 43px; border: 0; border-radius: 12px; background: var(--violet); color: #fff; cursor: pointer; }
@@ -546,61 +552,44 @@
       </div>
 
       <div class="onboarding-heading">
-        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 月光族設定</p>
-        <h1>先讓每一塊錢<br>有自己的位置。</h1>
-        <p>填入每月現金流，KASO 會先留住必要支出與存款，再告訴你今天能安心花多少。</p>
+        <p class="eyebrow"><svg><use href="#i-wallet"/></svg> 第一步 · 判斷身分</p>
+        <h1>先回答一題<br>再讓每一塊錢有位置。</h1>
+        <p>身分只有兩種：月光族、目標計畫族。身分只改「怎麼呈現」，不改「資料從哪來」。</p>
       </div>
 
-      <div class="mode-grid" aria-label="身分模式">
-        <button class="mode-card featured selected" type="button" data-mode="moonlight">
-          <span class="mode-icon"><svg><use href="#i-wallet"/></svg></span>
-          <span><strong>主要模式</strong><b>月光族</b><small>守住月底、建立第一個存錢目標</small></span>
-          <span class="mode-check">✓</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="goal">
-          <span class="mode-icon"><svg><use href="#i-target"/></svg></span>
-          <span><strong>目標模式</strong><b>有目標的省錢</b><small>旅行、大件商品或緊急預備金</small></span>
-          <span class="mode-check">→</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="rewards">
-          <span class="mode-icon"><svg><use href="#i-card"/></svg></span>
-          <span><strong>回饋模式</strong><b>紅利最佳化</b><small>依消費習慣選卡與放大回饋</small></span>
-          <span class="mode-check">→</span>
-        </button>
-      </div>
+      <section class="setup-card" id="quizCard" aria-labelledby="quizTitle">
+        <div class="setup-heading">
+          <span><svg><use href="#i-target"/></svg></span>
+          <div><h2 id="quizTitle">你比較符合哪一種？</h2><p id="quizSub">讀取問題中…</p></div>
+        </div>
+        <div id="quizOptions" class="mode-grid" aria-label="身分問答"></div>
+      </section>
 
-      <section class="setup-card" aria-labelledby="financeTitle">
+      <section class="setup-card" id="financeCard" hidden aria-labelledby="financeTitle">
         <div class="setup-heading">
           <span><svg><use href="#i-wallet"/></svg></span>
-          <div><h2 id="financeTitle">先填五個數字</h2><p>預設值可直接修改，所有計算會即時更新。</p></div>
+          <div><h2 id="financeTitle">先填幾個數字</h2><p>食衣住行育樂六類都要填，兩種身分一樣。</p></div>
         </div>
         <div class="finance-grid">
           <label class="field">目前餘額<input id="currentBalance" type="number" min="0" step="100" value="6800"></label>
-          <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="1" step="1000" value="30000"></label>
-          <label class="field">每月固定支出<input id="fixedExpense" type="number" min="0" step="1000" value="24000"></label>
-          <label class="field">想存到多少<input id="savingTarget" type="number" min="1" step="1000" value="12000"></label>
-          <label class="field">希望幾個月完成<input id="savingMonths" type="number" min="1" max="36" value="6"></label>
+          <label class="field">每月固定收入<input id="monthlyIncome" type="number" min="0" step="1000" value="30000"></label>
         </div>
+        <div class="finance-grid" style="margin-top:12px">
+          <label class="field">食<input id="expFood" type="number" min="0" step="100" value="400"></label>
+          <label class="field">衣<input id="expClothing" type="number" min="0" step="100" value="100"></label>
+          <label class="field">住<input id="expHousing" type="number" min="0" step="100" value="0"></label>
+          <label class="field">行<input id="expTransport" type="number" min="0" step="100" value="200"></label>
+          <label class="field">育<input id="expEducation" type="number" min="0" step="100" value="0"></label>
+          <label class="field">樂<input id="expEntertainment" type="number" min="0" step="100" value="100"></label>
+        </div>
+        <div class="finance-grid" id="goalFields" style="margin-top:12px"></div>
         <div class="finance-preview" aria-live="polite">
-          <span><small>每月先存</small><strong id="previewSave">NT$2,000</strong></span>
-          <span><small>每月可安排</small><strong id="previewFlexible">NT$4,000</strong></span>
-          <span><small>預計完成</small><strong id="previewDate">2027 年 3 月</strong></span>
+          <span><small>每月先存</small><strong id="previewSave">NT$0</strong></span>
+          <span><small>安心可花（估）</small><strong id="previewFlexible">NT$0</strong></span>
+          <span id="previewDateWrap"><small>預計完成</small><strong id="previewDate">—</strong></span>
         </div>
       </section>
-
-      <section class="quality-card" aria-labelledby="qualityTitle">
-        <div class="quality-head">
-          <div><h2 id="qualityTitle">生活品質比重</h2><p>月光族預設全部最低；提高某一項時，推薦會把有限預算優先留給它。</p></div>
-          <span class="quality-total">目前比重 <b id="qualityTotal">4</b></span>
-        </div>
-        <div class="quality-grid">
-          <div class="quality-item"><label>節省時間 <output id="qTimeOut">1</output></label><small>交通、外送與距離便利</small><input id="qTime" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>飲食品質 <output id="qFoodOut">1</output></label><small>餐食健康、品質與體驗</small><input id="qFood" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>舒適便利 <output id="qComfortOut">1</output></label><small>居家、服務與耐用度</small><input id="qComfort" type="range" min="1" max="5" value="1"></div>
-          <div class="quality-item"><label>娛樂體驗 <output id="qFunOut">1</output></label><small>影音、活動與休閒</small><input id="qFun" type="range" min="1" max="5" value="1"></div>
-        </div>
-      </section>
-      <p class="onboarding-note"><svg><use href="#i-shield"/></svg> HTML 互動稿僅在這台裝置保存設定，不會連接銀行或上傳個人資料。</p>
+      <p class="onboarding-note"><svg><use href="#i-shield"/></svg> 資料會存到本機啟動的 KASO 後端（backend/data/store.json），不會上傳到外部服務。</p>
     </div>
   </section>
 
@@ -614,11 +603,10 @@
         <nav class="main-nav" aria-label="主要功能">
           <button class="nav-btn" type="button" data-view="search" data-mega="search">商品比價</button>
           <button class="nav-btn" type="button" data-view="nearby" data-mega="nearby">附近優惠</button>
-          <button class="nav-btn" type="button" data-view="cards" data-mega="cards">辦卡推薦</button>
           <button class="nav-btn" type="button" data-view="ledger" data-mega="life">生活規劃</button>
         </nav>
         <div class="header-actions">
-          <button id="resetProfile" class="persona-chip" type="button" title="重新設定"><svg><use href="#i-wallet"/></svg><span>月光族</span></button>
+          <button id="resetProfile" class="persona-chip" type="button" title="重新設定"><svg><use href="#i-wallet"/></svg><span id="personaLabel">月光族</span></button>
           <div class="finance-mini"><span><small>保留</small><strong id="headReserve">NT$26,000</strong></span><span class="safe"><small>可花</small><strong id="headSafe">NT$4,000</strong></span></div>
           <button id="locateHeader" class="location-btn" type="button" title="定位找優惠" aria-label="定位找優惠"><svg><use href="#i-pin"/></svg></button>
         </div>
@@ -666,48 +654,37 @@
     const safeNumber = (id, fallback = 0) => Math.max(0, Number($(id).value) || fallback);
     const today = new Date();
 
+    const CATEGORY_LABEL = { food: "食", clothing: "衣", housing: "住", transport: "行", education: "育", entertainment: "樂" };
+
     const state = {
       view: "home",
-      mode: "moonlight",
-      profile: null,
-      searchQuery: "Apple AirPods Pro 2 USB-C",
+      profile: null,       // 後端回傳的完整 profile（type/income/expenses/goal/...）
+      budget: null,        // 後端 calcBudget() 的結果
+      quiz: [],
+      resolvedType: null,  // 'moonlight' | 'goal'，來自 resolveProfile()
+      searchQuery: "iPhone 15",
       searchCategory: "商品",
-      transactions: [
-        { merchant: "北車慢慢咖啡", amount: 130, category: "餐飲", time: "今天 15:35" },
-        { merchant: "全聯 台北站前店", amount: 428, category: "日常", time: "昨天 19:12" }
-      ],
+      searchResults: null,
+      searchResultsQuery: null,
+      evaluations: {},     // productId -> evaluatePurchase() 結果快取
+      ledgerEntries: [],
+      nearbyStores: null,
+      nearbyLoading: false,
       recovery: null,
       insuranceTab: "travel",
       travelPriority: "balanced",
       budgetDetail: "safe",
       settlementDone: false,
-      assistantTopic: null,
       messages: [
-        { role: "ai", text: "嗨，我會記住這段對話的主要問題。你可以問我：今天還能花多少、哪張卡適合，或貼商品連結讓我一起比較。" }
+        { role: "ai", text: "嗨，我是 KASO AI。你可以問我：今天還能花多少、這筆消費划不划算，或任何跟財務有關的問題。" }
       ]
     };
 
-    const productResults = [
-      { platform: "PChome", title: "Apple AirPods Pro 2 USB-C 台灣公司貨", price: 6590, match: "同品項 98%", link: "https://24h.pchome.com.tw/search/?q=AirPods%20Pro%202%20USB-C" },
-      { platform: "momo", title: "Apple AirPods Pro（第 2 代）MagSafe USB-C", price: 6790, match: "同品項 96%", link: "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=AirPods%20Pro%202%20USB-C" },
-      { platform: "蝦皮", title: "AirPods Pro 2 USB-C 公司貨｜全新未拆", price: 6290, match: "同品項 92%", link: "https://shopee.tw/search?keyword=AirPods%20Pro%202%20USB-C" },
-      { platform: "Yahoo購物", title: "Apple AirPods Pro 2 USB-C 版", price: 6990, match: "同品項 95%", link: "https://tw.buy.yahoo.com/search/product?p=AirPods%20Pro%202%20USB-C" },
-      { platform: "樂天市場", title: "AirPods Pro 第二代 USB-C 原廠保固", price: 6488, match: "同品項 91%", link: "https://www.rakuten.com.tw/search/airpods%20pro%202/" },
-      { platform: "露天", title: "Apple AirPods Pro 2 USB-C 台灣版", price: 6180, match: "同品項 88%", link: "https://www.ruten.com.tw/find/?q=AirPods%20Pro%202%20USB-C" }
-    ];
-
-    const nearbyOffers = [
-      { name: "站前台味便當", type: "餐廳", note: "午餐折價＋持有卡回饋", address: "台北市中正區館前路 12 號", price: 130, distance: "240 公尺", lat: 25.0465, lon: 121.5154, icon: "food" },
-      { name: "北車慢慢咖啡", type: "咖啡", note: "平日下午折價，不用湊單", address: "台北市中正區許昌街 20 號", price: 126, distance: "310 公尺", lat: 25.0459, lon: 121.5168, icon: "food" },
-      { name: "全聯 台北站前店", type: "超市", note: "支付券＋日常採買回饋", address: "台北市中正區館前路 8 號", price: 431, distance: "420 公尺", lat: 25.0457, lon: 121.5145, icon: "cart" },
-      { name: "台北地下街創意市集", type: "免費活動", note: "不消費也能參加", address: "台北市中正區市民大道一段 100 號", price: 0, distance: "650 公尺", lat: 25.0492, lon: 121.5146, icon: "pin" }
-    ];
-
-    const cardMatches = [
-      { name: "台新 Richart 卡", score: 92, color: "#f04438", reason: "現金回饋規則較直覺，適合目前需要控制每月支出的設定。" },
-      { name: "國泰 CUBE 卡", score: 86, color: "#6d4aff", reason: "餐飲與日常情境彈性高，但要記得切換權益。" },
-      { name: "永豐 DAWHO 卡", score: 78, color: "#12b76a", reason: "一般消費與日常採買使用簡單。" }
-    ];
+    async function api(path, options) {
+      const res = await fetch(path, options ? { headers: { "Content-Type": "application/json" }, ...options } : undefined);
+      if (!res.ok) throw new Error(`${path} → ${res.status}`);
+      return res.json();
+    }
 
     const megaContent = {
       search: [
@@ -718,12 +695,7 @@
       nearby: [
         ["探索附近", ["1,000 公尺內優惠", "餐廳與咖啡", "超市與藥妝"]],
         ["不用多花錢", ["文化幣去處", "免費活動", "安心預算內店家"]],
-        ["為你換算", ["只用我的持有卡", "折扣＋卡片回饋", "開啟大按鈕導航"]]
-      ],
-      cards: [
-        ["辦卡推薦", ["依客製答案推薦", "完整 6 題微調", "指定銀行比較"]],
-        ["使用情境", ["每月現金流配卡", "日常消費配卡", "海外刷卡試算"]],
-        ["我的卡片", ["持有卡與回饋缺口", "年費與回饋上限", "申辦前注意事項"]]
+        ["為你換算", ["折扣是否在預算內", "免費活動優先", "開啟大按鈕導航"]]
       ],
       life: [
         ["每月生活", ["自動記帳", "訂閱月費", "支出與目標進度"]],
@@ -732,16 +704,18 @@
       ]
     };
 
+    // getFinance(): 把後端 calcBudget() 的結果整理成畫面要用的形狀。
     function getFinance() {
-      const p = state.profile || {
-        currentBalance: 6800, income: 30000, fixed: 24000, target: 12000, months: 6,
-        quality: { time: 1, food: 1, comfort: 1, fun: 1 }
+      const p = state.profile;
+      const b = state.budget;
+      if (!p || !b) {
+        return { currentBalance: 0, fixed: 0, monthlySave: 0, spent: 0, safe: 0, reserve: 0, type: "moonlight", goal: null, expenses: {} };
+      }
+      return {
+        currentBalance: b.currentBalance, fixed: b.fixedExpense, monthlySave: b.savingsGoal,
+        spent: b.spentThisMonth, safe: b.safe, reserve: b.fixedExpense + b.savingsGoal,
+        type: p.type, goal: p.goal, income: p.income, expenses: p.expenses,
       };
-      const monthlySave = Math.ceil(p.target / Math.max(1, p.months));
-      const flexible = Math.max(0, p.income - p.fixed - monthlySave);
-      const spent = state.transactions.reduce((sum, item) => sum + item.amount, 0);
-      const safe = Math.max(0, Math.min(p.currentBalance - monthlySave, flexible) - Math.max(0, spent - 558));
-      return { ...p, monthlySave, flexible, spent, safe, reserve: p.fixed + monthlySave };
     }
 
     function futureMonth(months) {
@@ -750,52 +724,115 @@
       return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`;
     }
 
-    function updateOnboardingPreview() {
-      const income = safeNumber("#monthlyIncome");
-      const fixed = safeNumber("#fixedExpense");
-      const target = safeNumber("#savingTarget");
-      const months = Math.max(1, safeNumber("#savingMonths", 1));
-      const save = Math.ceil(target / months);
-      $("#previewSave").textContent = money(save);
-      $("#previewFlexible").textContent = money(Math.max(0, income - fixed - save));
-      $("#previewDate").textContent = futureMonth(months);
-      const ranges = ["qTime", "qFood", "qComfort", "qFun"];
-      ranges.forEach((id) => $("#" + id + "Out").value = $("#" + id).value);
-      $("#qualityTotal").textContent = ranges.reduce((sum, id) => sum + Number($("#" + id).value), 0);
-      $("#completeSetup").disabled = !income || fixed >= income || !target || !months;
+    // ---- 入口 · 二選一問答 ----
+    async function loadQuiz() {
+      state.quiz = await api("/api/onboarding/quiz");
+      renderQuiz();
     }
 
-    function saveProfileAndEnter() {
-      state.profile = {
-        mode: state.mode,
+    function renderQuiz() {
+      const q = state.quiz[0];
+      if (!q) return;
+      $("#quizSub").textContent = "身分只有兩種：月光族、目標計畫族。";
+      $("#quizOptions").innerHTML = q.options.map((opt, i) => `
+        <button class="mode-card${state.resolvedType === (opt.value === "yes" ? "goal" : "moonlight") ? " selected featured" : ""}" type="button" data-answer="${opt.value}">
+          <span class="mode-icon"><svg><use href="#i-${i === 0 ? "target" : "wallet"}"/></svg></span>
+          <span><strong>${q.question}</strong><b>${opt.label}</b><small>${opt.value === "yes" ? "目標計畫族" : "月光族"}</small></span>
+          <span class="mode-check">${state.resolvedType === (opt.value === "yes" ? "goal" : "moonlight") ? "✓" : "→"}</span>
+        </button>`).join("");
+      $$('#quizOptions [data-answer]').forEach((btn) => btn.addEventListener("click", () => handleQuizAnswer(btn.dataset.answer)));
+    }
+
+    async function handleQuizAnswer(answer) {
+      const { type } = await api("/api/onboarding/resolve", { method: "POST", body: JSON.stringify({ answers: { hasGoal: answer } }) });
+      state.resolvedType = type;
+      renderQuiz();
+      renderGoalFields();
+      $("#financeCard").hidden = false;
+      updateOnboardingPreview();
+    }
+
+    function renderGoalFields() {
+      const wrap = $("#goalFields");
+      if (state.resolvedType === "goal") {
+        wrap.innerHTML = `
+          <label class="field">目標名稱<input id="goalName" placeholder="例如：換筆電"></label>
+          <label class="field">目標金額<input id="goalAmount" type="number" min="1" step="500" value="30000"></label>
+          <label class="field">期望幾個月完成<input id="goalMonths" type="number" min="1" max="60" value="6"></label>`;
+      } else {
+        wrap.innerHTML = `<label class="field">每月存款目標（自己設）<input id="monthlySaveInput" type="number" min="0" step="100" value="2000"></label>`;
+      }
+      $$("#goalFields input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
+    }
+
+    function updateOnboardingPreview() {
+      if (!state.resolvedType) return;
+      const income = safeNumber("#monthlyIncome");
+      const expenseIds = ["expFood", "expClothing", "expHousing", "expTransport", "expEducation", "expEntertainment"];
+      const fixed = expenseIds.reduce((sum, id) => sum + safeNumber("#" + id), 0);
+      const save = state.resolvedType === "goal"
+        ? Math.ceil(safeNumber("#goalAmount", 1) / Math.max(1, safeNumber("#goalMonths", 1)))
+        : safeNumber("#monthlySaveInput");
+      $("#previewSave").textContent = money(save);
+      $("#previewFlexible").textContent = money(Math.max(0, income - fixed - save));
+      if (state.resolvedType === "goal") {
+        $("#previewDateWrap").hidden = false;
+        $("#previewDate").textContent = futureMonth(safeNumber("#goalMonths", 1));
+      } else {
+        $("#previewDateWrap").hidden = true;
+      }
+      $("#completeSetup").disabled = !income;
+    }
+
+    async function saveProfileAndEnter() {
+      if (!state.resolvedType) { showToast("請先回答第一步的問題"); return; }
+      const payload = {
+        type: state.resolvedType,
         currentBalance: safeNumber("#currentBalance"),
         income: safeNumber("#monthlyIncome"),
-        fixed: safeNumber("#fixedExpense"),
-        target: safeNumber("#savingTarget"),
-        months: Math.max(1, safeNumber("#savingMonths", 1)),
-        quality: {
-          time: Number($("#qTime").value), food: Number($("#qFood").value),
-          comfort: Number($("#qComfort").value), fun: Number($("#qFun").value)
-        }
+        expenses: {
+          food: safeNumber("#expFood"), clothing: safeNumber("#expClothing"), housing: safeNumber("#expHousing"),
+          transport: safeNumber("#expTransport"), education: safeNumber("#expEducation"), entertainment: safeNumber("#expEntertainment"),
+        },
       };
-      localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      if (state.resolvedType === "goal") {
+        payload.goal = { name: $("#goalName").value.trim() || "存錢目標", amount: safeNumber("#goalAmount", 1), months: Math.max(1, safeNumber("#goalMonths", 1)) };
+      } else {
+        payload.monthlySave = safeNumber("#monthlySaveInput");
+      }
+      const { profile, budget } = await api("/api/profile", { method: "POST", body: JSON.stringify(payload) });
+      state.profile = profile;
+      state.budget = budget;
+      state.settlementDone = false;
       $("#onboarding").hidden = true;
       $("#mainApp").hidden = false;
+      await loadLedger();
       renderView("home");
     }
 
     function resetProfile() {
-      localStorage.removeItem("kaso-html-profile");
-      state.profile = null;
+      state.resolvedType = null;
       $("#mainApp").hidden = true;
       $("#onboarding").hidden = false;
+      $("#financeCard").hidden = true;
+      renderQuiz();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function refreshBudget() {
+      state.budget = await api("/api/budget");
+    }
+
+    async function loadLedger() {
+      const month = new Date().toISOString().slice(0, 7);
+      state.ledgerEntries = await api(`/api/ledger?month=${month}`);
     }
 
     function syncHeader() {
       const f = getFinance();
       $("#headReserve").textContent = money(f.reserve);
       $("#headSafe").textContent = money(f.safe);
+      $("#personaLabel").textContent = f.type === "goal" ? "目標計畫族" : "月光族";
       $$(".nav-btn").forEach((btn) => {
         const group = btn.dataset.view;
         btn.classList.toggle("active", group === state.view || (group === "ledger" && ["travel", "insurance", "subscriptions"].includes(state.view)));
@@ -804,7 +841,7 @@
     }
 
     function viewLabel(view) {
-      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", cards: "辦卡推薦", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
+      return ({ home: "首頁", search: "商品比價", nearby: "附近優惠", ledger: "自動記帳", travel: "旅遊規劃", insurance: "保險保障", subscriptions: "訂閱比較", overseas: "海外刷卡" })[view] || "生活規劃";
     }
 
     function renderView(view) {
@@ -813,12 +850,14 @@
       syncHeader();
       const root = $("#viewRoot");
       const renderer = ({
-        home: renderHome, search: renderSearch, nearby: renderNearby, cards: renderCards,
+        home: renderHome, search: renderSearch, nearby: renderNearby,
         ledger: renderLedger, travel: renderTravel, insurance: renderInsurance,
         subscriptions: renderSubscriptions, overseas: renderOverseas
       })[view] || renderHome;
       root.innerHTML = renderer();
       bindViewEvents();
+      if (view === "search") loadSearch();
+      if (view === "nearby") loadNearby();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -832,11 +871,12 @@
       const status = f.safe > 3000 ? ["今天有一點彈性", "可以安排小額享受，但先確認不會動到存款。"] : ["今天需要注意", "先以必要支出和低價選項為主，避免月底壓力。"];
       const carryover = Math.min(240, f.safe);
       const displayBalance = f.currentBalance + (state.settlementDone ? carryover : 0);
-      const needsDelay = f.safe <= 0 || f.currentBalance < f.monthlySave;
+      const isGoal = f.type === "goal";
+      const needsDelay = f.safe <= 0 && isGoal;
       return `
         <section class="view money-overview dashboard-stage">
           <div class="balance-stage-head">
-            <div><p class="eyebrow">${icon("wallet")} 月光族首頁</p><h1>${status[0]}</h1></div>
+            <div><p class="eyebrow">${icon("wallet")} ${isGoal ? "目標計畫族首頁" : "月光族首頁"}</p><h1>${status[0]}</h1></div>
             <div class="money-actions"><button type="button" data-view="ledger">${icon("bell")} 查看記帳</button><button type="button" data-view="nearby">${icon("pin")} 找附近優惠</button></div>
           </div>
           <div class="balance-stage-grid">
@@ -859,7 +899,7 @@
           </div>
           <div id="settlementTray" class="settlement-tray${state.settlementDone ? " is-done" : ""}">
             <div class="settlement-guide"><small>每日結算</small><strong>把今天沒用完的預算移回目前餘額</strong><span>按下後，金額卡片會往上移入圓餅圖。</span></div>
-            <div class="settlement-pocket goal-pocket"><span><small>本月已保留 · 存款目標 ${money(f.target)}</small><strong id="goalSavedAmount">${money(f.monthlySave)}</strong></span><span class="status-pill">預計 ${futureMonth(f.months)}</span></div>
+            <div class="settlement-pocket goal-pocket"><span><small>${isGoal ? `本月已保留 · 目標 ${money(f.goal?.amount)}` : "本月已保留 · 每月存款目標"}</small><strong id="goalSavedAmount">${money(f.monthlySave)}</strong></span><span class="status-pill">${isGoal ? `預計 ${futureMonth(f.goal?.months)}` : "沒有設目標日期"}</span></div>
             <div id="dailyPocket" class="settlement-pocket daily-pocket"><span><small>今日未用預算</small><strong id="dailyCarryoverAmount">${money(state.settlementDone ? 0 : carryover)}</strong></span><button id="settleDaily" type="button" ${state.settlementDone || carryover <= 0 ? "disabled" : ""}>${state.settlementDone ? "已移回餘額" : "今日結算"}</button></div>
           </div>
           ${needsDelay ? `<div class="zero-balance-card"><p><strong>目前可花餘額不足，建議延後完成期限</strong><small>延長一個月能降低每月存款壓力，避免再用信用額度補生活費。</small></p><button id="delayGoal" class="primary-btn" type="button">延後 1 個月</button></div>` : ""}
@@ -868,8 +908,7 @@
           <div class="section-head"><div><h2>所有功能</h2></div></div>
           <div class="service-grid">
             ${serviceCard("search", "search", "同品項＋防詐", "商品比價", "跨平台比較價格。", [["餐飲", "search"], ["日常採買", "search"]], "商品、餐飲、日常", true)}
-            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], `${nearbyOffers.length} 個可用選項`)}
-            ${serviceCard("card", "cards", "現金流＋習慣", "辦卡推薦", "客製答案直接帶入。", [["快速問答", "cards"], ["海外刷卡", "overseas"]], "3 張配對卡")}
+            ${serviceCard("pin", "nearby", "位置＋持有卡", "附近優惠", "只看附近，直接換算實付。", [["文化幣", "nearby"], ["免費活動", "nearby"]], "1,000 公尺內")}
             ${serviceCard("grid", "ledger", "帳務＋旅遊＋保障", "生活規劃", "集中管理每月生活。", [["記帳", "ledger"], ["旅遊", "travel"], ["保險", "insurance"], ["訂閱", "subscriptions"]], "生活與旅遊集中")}
           </div>
         </section>
@@ -888,12 +927,20 @@
       return `<button class="spend-pill${state.budgetDetail === id ? " active" : ""}" type="button" data-budget-detail="${id}"><span class="plus">+</span><span><strong>${label}</strong><small>${value}</small></span></button>`;
     }
 
+    function spentByCategoryLines(totalSpent) {
+      const byCat = {};
+      state.ledgerEntries.forEach((e) => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+      const entries = Object.entries(byCat);
+      if (!entries.length) return [["尚無記帳", 0, 0]];
+      return entries.map(([cat, amt]) => [CATEGORY_LABEL[cat] || cat, totalSpent > 0 ? (amt / totalSpent) * 100 : 0, amt]);
+    }
+
     function budgetDetailData(f, id) {
       const settledSaving = f.monthlySave;
       const details = {
         fixed: { kicker: "每月必要保留", amount: f.fixed, title: "固定支出", copy: "房租、帳單與必要支出先保留，不會出現在可花預算裡。", glow: "rgba(0,113,227,.30)", lines: [["固定帳單", 72, f.fixed * .72], ["交通通訊", 18, f.fixed * .18], ["其他必要", 10, f.fixed * .1]] },
-        saving: { kicker: "存款目標進度", amount: settledSaving, title: "本月先存", copy: `目前目標是 ${money(f.target)}，預計 ${futureMonth(f.months)} 完成。`, glow: "rgba(109,74,255,.42)", lines: [["固定存入", 100, f.monthlySave]] },
-        spent: { kicker: "交易自動分類", amount: f.spent, title: "本月已記帳", copy: "點開交易紀錄，可查看餐飲、日常與其他分類的每一筆明細。", glow: "rgba(8,120,223,.42)", lines: [["日常採買", 77, 428], ["餐飲咖啡", 23, 130]] },
+        saving: { kicker: "存款目標進度", amount: settledSaving, title: "本月先存", copy: f.type === "goal" ? `目前目標是 ${money(f.goal?.amount)}，預計 ${futureMonth(f.goal?.months)} 完成。` : "月光族的存款目標是你自己設的每月金額，沒有設完成日期。", glow: "rgba(109,74,255,.42)", lines: [["固定存入", 100, f.monthlySave]] },
+        spent: { kicker: "交易自動分類", amount: f.spent, title: "本月已記帳", copy: "點開自動記帳，可查看食衣住行育樂各分類的每一筆明細。", glow: "rgba(8,120,223,.42)", lines: spentByCategoryLines(f.spent) },
         safe: { kicker: "扣除保留後", amount: f.safe, title: "安心可花", copy: "這才是目前能使用的金額；商品與附近優惠都會以它為上限。", glow: "rgba(184,255,61,.28)", lines: [["今日可用", 64, f.safe], ["今日未用", 24, Math.min(240, f.safe)], ["彈性緩衝", 12, Math.max(0, f.safe - Math.min(240, f.safe))]] }
       };
       return details[id] || details.safe;
@@ -908,46 +955,147 @@
       return `<article class="service-card${primary ? " primary" : ""}"><div class="service-title"><span>${icon(iconId)}</span><div><small>${kicker}</small><h3>${title}</h3></div></div><button class="service-main" type="button" data-view="${view}">開啟${title} →</button><div class="service-children">${children.map(([label, child]) => `<button type="button" data-view="${child}">${label}</button>`).join("")}</div></article>`;
     }
 
+    async function loadSearch() {
+      if (state.searchResultsQuery === state.searchQuery && state.searchResults) return;
+      const q = state.searchQuery;
+      state.searchResults = null;
+      renderSearchGridOnly();
+      const results = await api(`/api/products/search?q=${encodeURIComponent(q)}`);
+      if (state.searchQuery !== q) return; // 使用者已經改搜尋別的字了
+      state.searchResults = results;
+      state.searchResultsQuery = q;
+      state.evaluations = {};
+      if (state.view === "search") renderView("search");
+    }
+
+    function renderSearchGridOnly() {
+      const grid = $("#searchResultGrid");
+      if (grid) grid.innerHTML = `<p class="muted">搜尋中…</p>`;
+    }
+
     function renderSearch() {
       const f = getFinance();
+      const results = state.searchResults;
+      const items = results?.items || null;
       return `<section class="view">
-        ${pageTitle("商品比價", "先確認完整型號，再比較同一個商品；未指定商品時，AI 會先追問。")}
-        <div class="chip-row">${["商品", "餐飲", "日常", "3C 家電"].map((c) => `<button class="chip${state.searchCategory === c ? " active" : ""}" type="button" data-category="${c}">${c}</button>`).join("")}</div>
-        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入完整商品名稱，或貼上商品連結"><select aria-label="排序"><option>價格由低到高</option><option>同品項信心</option><option>平台評價</option></select><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
-        <div class="summary-strip"><div><small>搜尋來源</small><strong>8 個平台</strong></div><div><small>找到候選</small><strong>48 筆</strong></div><div><small>確認同品項</small><strong>6 筆</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
-        <div class="result-grid">${productResults.map((p) => `<article class="product-card"><div class="product-image">${icon("phone")}</div><div class="product-body"><div class="product-meta"><span class="platform">${p.platform}</span><span class="match">${p.match}</span></div><h3>${escapeHtml(state.searchQuery || p.title)}</h3><div class="product-price">${money(p.price)}</div><p class="after-buy${p.price > f.safe ? " insufficient" : ""}">${p.price > f.safe ? `目前不足 ${money(p.price - f.safe)}，建議延後購買或完成期限` : `買下後安心可花還剩 <strong>${money(f.safe - p.price)}</strong>`}</p><div class="product-actions"><button type="button" data-ask-product="${escapeAttr(p.title)}｜${p.platform}｜${p.price}">問 AI</button><a href="${p.link}" target="_blank" rel="noreferrer">查看來源</a></div></div></article>`).join("")}</div>
-        <p class="onboarding-note">商品、價格及連結為 HTML 介面展示；正式站的即時搜尋仍需由後端來源供應。</p>
+        ${pageTitle("商品比價", "資料來源：BigGo 搜尋 API，即時跨平台比價（不是假資料）。")}
+        <form id="searchForm" class="toolbar"><input id="searchInput" value="${escapeHtml(state.searchQuery)}" placeholder="輸入商品名稱，例如 iPhone 15 / MacBook Air M3"><button class="primary-btn" type="submit">${icon("search")} 搜尋</button></form>
+        <div class="summary-strip"><div><small>比對身分</small><strong>${f.type === "goal" ? "目標計畫族" : "月光族"}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div><div><small>找到候選</small><strong>${items ? items.length : "—"}</strong></div><div><small>資料來源</small><strong>BigGo</strong></div></div>
+        <div class="result-grid" id="searchResultGrid">${!items ? `<p class="muted">搜尋中…</p>` : results.error ? `<p class="muted">BigGo 暫時連不上（${escapeHtml(results.error)}），請稍後再試。</p>` : items.length === 0 ? `<p class="muted">找不到符合的商品，換個關鍵字試試。</p>` : items.map((item) => renderProductCard(item, items)).join("")}</div>
+        <p class="onboarding-note">已決議：比價用「總預算」判定，不區分食衣住行育樂分類。BigGo 回來的是跨平台候選刊登，不是同一商品的多平台比對。</p>
       </section>`;
+    }
+
+    function renderProductCard(item, allItems) {
+      const f = getFinance();
+      const over = !item.withinBudget;
+      const evalData = state.evaluations[item.id];
+      return `<article class="product-card">
+        <div class="product-image">${item.image ? `<img src="${escapeAttr(item.image)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">` : icon("phone")}</div>
+        <div class="product-body">
+          <div class="product-meta"><span class="platform">${escapeHtml(item.platform)}</span>${item.isAd ? `<span class="match">廣告</span>` : ""}</div>
+          <h3>${escapeHtml(item.title)}</h3>
+          <div class="product-price">${money(item.price)}</div>
+          <p class="after-buy${over ? " insufficient" : ""}">${over ? `目前不足 ${money(item.price - f.safe)}` : `買下後安心可花還剩 <strong>${money(f.safe - item.price)}</strong>`}</p>
+          <div class="product-actions">
+            <a href="${item.url}" target="_blank" rel="noreferrer">查看來源</a>
+            ${over ? `<button type="button" data-evaluate="${escapeAttr(item.id)}" data-price="${item.price}">超出預算，怎麼辦？</button>` : ""}
+          </div>
+          ${evalData ? renderEvaluation(evalData, item, allItems) : ""}
+        </div>
+      </article>`;
+    }
+
+    function renderEvaluation(data, item, allItems) {
+      const f = getFinance();
+      if (data.profileType === "moonlight") {
+        const affordable = allItems.filter((p) => p.id !== item.id && p.price <= f.safe).sort((a, b) => b.price - a.price).slice(0, 5);
+        return `<div class="recovery">
+          <h3>超出 ${money(data.overAmount)}</h3>
+          ${data.monthsToAfford != null ? `<p>照目前每月存款速度，約 <strong>${data.monthsToAfford} 個月</strong>後可入手。</p>` : ""}
+          ${affordable.length ? `<p>這批搜尋結果中，預算內還有：${affordable.map((a) => `${escapeHtml(a.title)}（${money(a.price)}）`).join("、")}</p>` : `<p>這批搜尋結果裡目前沒有預算內的選項。</p>`}
+        </div>`;
+      }
+      const delay = data.options?.keepSpending?.goalDelayMonths;
+      const cut = data.options?.stayOnSchedule?.cutRatio;
+      return `<div class="recovery">
+        <h3>超出 ${money(data.overAmount)}</h3>
+        <p>維持這筆開支：目標延後約 <strong>${delay != null ? delay + " 個月" : "無法估算"}</strong>。</p>
+        <p>想準時達成：六個分類各砍約 <strong>${cut != null ? Math.round(cut * 100) + "%" : "無法估算"}</strong>。</p>
+      </div>`;
+    }
+
+    function loadNearby() {
+      if (state.nearbyStores || state.nearbyLoading) return;
+      startNearbyLookup();
+    }
+
+    function startNearbyLookup() {
+      state.nearbyLoading = true;
+      state.nearbyStores = null;
+      const fallback = { lat: 25.0478, lng: 121.5170 };
+      const proceed = async (lat, lng) => {
+        try {
+          state.nearbyStores = await api("/api/offers/nearby", { method: "POST", body: JSON.stringify({ lat, lng }) });
+        } catch {
+          state.nearbyStores = [];
+        }
+        state.nearbyLoading = false;
+        if (state.view === "nearby") renderView("nearby");
+      };
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => proceed(pos.coords.latitude, pos.coords.longitude),
+          () => { showToast("無法取得定位，改用台北車站示範位置"); proceed(fallback.lat, fallback.lng); },
+          { timeout: 6000 }
+        );
+      } else {
+        proceed(fallback.lat, fallback.lng);
+      }
     }
 
     function renderNearby() {
       const f = getFinance();
+      const stores = state.nearbyStores;
       return `<section class="view">
         ${pageTitle("附近優惠", `帳戶有 ${money(f.currentBalance)}，今天只放心花 ${money(f.safe)}。`)}
-        <div class="summary-strip"><div><small>目前位置</small><strong>台北車站</strong></div><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>符合預算</small><strong>${nearbyOffers.length} 個</strong></div></div>
-        <div class="merchant-list">${nearbyOffers.map((o) => `<article class="merchant-card"><span class="merchant-icon">${icon(o.icon)}</span><div><span class="platform">${o.type} · ${o.distance}</span><h3>${o.name}</h3><p>${o.address}</p><p>${o.note}</p></div><div class="merchant-result"><small>預估最低支出</small><strong>${o.price ? money(o.price) : "免費"}</strong><small>花完還剩 ${money(f.safe - o.price)}</small><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${o.lat},${o.lon}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div></article>`).join("")}</div>
+        <div class="summary-strip"><div><small>搜尋半徑</small><strong>1,000 公尺</strong></div><div><small>先保留不動</small><strong>${money(f.reserve)}</strong></div><div><small>附近店家</small><strong>${stores ? stores.length : "—"}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
+        ${state.nearbyLoading ? `<p class="muted">定位並搜尋附近優惠中…</p>` : !stores ? `<p class="muted">尚未取得位置。</p>` : stores.length === 0 ? `<p class="muted">附近 1,000 公尺內沒有找到店家。</p>` : `<div class="merchant-list">${stores.map(renderStoreCard).join("")}</div>`}
       </section>`;
     }
 
-    function renderCards() {
-      const f = getFinance();
-      const topQuality = Object.entries(f.quality).sort((a, b) => b[1] - a[1])[0][0];
-      const labels = { time: "節省時間", food: "飲食品質", comfort: "舒適便利", fun: "娛樂體驗" };
-      return `<section class="view">
-        ${pageTitle("辦卡推薦", "第一步客製化答案已直接帶入；需要時再用快速問答微調。")}
-        <div class="two-col"><aside class="feature-card"><p class="eyebrow">${icon("bot")} 已帶入客製化</p><h2>用現金流，而不是信用額度選卡</h2><p>每月收入、固定支出、存款目標與生活品質比重會一起影響配對。</p><div class="profile-rule">每月先存 ${money(f.monthlySave)} · 安心可花 ${money(f.safe)} · ${labels[topQuality]}優先</div><div class="allocation-bars"><div class="allocation-line"><span>現金流安全</span><div class="bar"><i style="width:95%"></i></div><strong>95%</strong></div><div class="allocation-line"><span>日常回饋</span><div class="bar"><i style="width:88%"></i></div><strong>88%</strong></div><div class="allocation-line"><span>規則簡單</span><div class="bar"><i style="width:90%"></i></div><strong>90%</strong></div></div><button id="cardQuestions" class="secondary-btn" type="button" style="margin-top:18px">用 6 題再微調</button></aside>
-        <div class="result-panel"><p class="eyebrow">${icon("card")} 初始配對完成</p><h2>最符合目前設定</h2><div class="card-winner" style="border-color:${cardMatches[0].color}"><small>第一推薦 · ${cardMatches[0].score}%</small><h3>${cardMatches[0].name}</h3><p>${cardMatches[0].reason}</p></div><div class="rank-list">${cardMatches.map((c, i) => `<div class="rank"><span>${i + 1}</span><strong>${c.name}</strong><b>${c.score}%</b></div>`).join("")}</div><div class="warning">這是生活習慣配對，不是核卡保證。申辦前仍要確認年費、回饋上限與銀行最新條款。</div></div></div>
-      </section>`;
+    function renderStoreCard(store) {
+      const free = store.offers.filter((o) => o.type === "free");
+      const paid = store.offers.filter((o) => o.type === "paid");
+      return `<article class="merchant-card">
+        <span class="merchant-icon">${icon("pin")}</span>
+        <div><span class="platform">${CATEGORY_LABEL[store.category] || store.category} · ${store.distance} 公尺</span><h3>${escapeHtml(store.name)}</h3>
+          ${free.length ? `<p>免費活動：${free.map((o) => escapeHtml(o.title)).join("、")}</p>` : ""}
+          ${paid.length ? `<p>預算內優惠：${paid.map((o) => `${escapeHtml(o.title)}（${money(o.value)}）`).join("、")}</p>` : ""}
+          ${!free.length && !paid.length ? `<p class="muted">這個分類目前沒有符合預算的優惠</p>` : ""}
+        </div>
+        <div class="merchant-result"><a class="directions" href="https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lng}" target="_blank" rel="noreferrer">${icon("pin")} 開啟導航</a></div>
+      </article>`;
     }
 
     function renderLedger() {
       const f = getFinance();
-      const recovery = state.recovery ? `<div class="recovery"><h3>${state.recovery === "extend" ? "目標日期已延後" : "7 天低價優先已啟用"}</h3><p>${state.recovery === "extend" ? "系統會把本次超支平均攤回新的期限。" : "商品比價與附近優惠會先顯示低實付選項。"}</p></div>` : "";
       return `<section class="view">
-        ${pageTitle("自動記帳", "交易通知進來後，自動分類並更新今天還能花多少。")}
+        ${pageTitle("自動記帳", "記帳不是加分功能，是預算引擎的必要輸入：沒有它，本月已花永遠是 0。")}
         <div class="summary-strip"><div><small>目前餘額</small><strong>${money(f.currentBalance)}</strong></div><div><small>本月已記帳</small><strong>${money(f.spent)}</strong></div><div><small>每月先存</small><strong>${money(f.monthlySave)}</strong></div><div><small>安心可花</small><strong>${money(f.safe)}</strong></div></div>
-        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("bell")} 新增一筆</p><h2>手動輸入或模擬通知</h2><form id="ledgerForm" class="ledger-form"><input id="ledgerMerchant" placeholder="店家名稱" required><input id="ledgerAmount" type="number" min="1" placeholder="金額" required><select id="ledgerCategory"><option>餐飲</option><option>日常</option><option>交通</option><option>娛樂</option></select><button class="primary-btn" type="submit">新增</button></form><button id="simulateMeal" class="secondary-btn" type="button" style="margin-top:10px">模擬朋友臨時約吃飯 NT$1,200</button>${recovery}<div id="recoveryBox" class="recovery" hidden><h3>今天超過預算，要怎麼補回？</h3><p>由你選擇調整方式，系統不會偷偷挪動其他預算。</p><div class="recovery-actions"><button class="secondary-btn" type="button" data-recovery="extend">延長存錢期限</button><button class="primary-btn" type="button" data-recovery="low">之後優先推薦低價</button></div></div></section>
-        <section class="result-panel"><div class="section-head"><div><h2>交易紀錄</h2><p>最新交易會排在最上方。</p></div><span>${state.transactions.length} 筆</span></div><div class="transaction-list">${state.transactions.map((t) => `<div class="transaction"><span>${icon(t.category === "餐飲" ? "food" : "cart")}</span><p><strong>${escapeHtml(t.merchant)}</strong><small>${t.category} · ${t.time}</small></p><strong>−${money(t.amount)}</strong></div>`).join("")}</div></section></div>
+        <div class="two-col">
+          <section class="feature-card"><p class="eyebrow">${icon("bell")} 新增一筆</p><h2>手動記一筆支出</h2>
+            <form id="ledgerForm" class="ledger-form">
+              <input id="ledgerNote" placeholder="備註（選填）">
+              <input id="ledgerAmount" type="number" min="1" placeholder="金額" required>
+              <select id="ledgerCategory">${Object.entries(CATEGORY_LABEL).map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>
+              <button class="primary-btn" type="submit">新增</button>
+            </form>
+          </section>
+          <section class="result-panel"><div class="section-head"><div><h2>交易紀錄</h2><p>最新交易會排在最上方。</p></div><span>${state.ledgerEntries.length} 筆</span></div>
+            <div class="transaction-list">${[...state.ledgerEntries].reverse().map((t) => `<div class="transaction"><span>${icon("cart")}</span><p><strong>${escapeHtml(t.note || CATEGORY_LABEL[t.category] || t.category)}</strong><small>${CATEGORY_LABEL[t.category] || t.category} · ${t.date}</small></p><strong>−${money(t.amount)}</strong></div>`).join("") || `<p class="muted">尚無記帳紀錄</p>`}</div>
+          </section>
+        </div>
       </section>`;
     }
 
@@ -960,7 +1108,7 @@
       return `<section class="view">
         ${pageTitle("旅遊規劃", "在預算上限內，依你想住得更好、吃得更好或玩更多景點，自動重配下方比重。")}
         <div class="tab-row">${[["balanced","平均分配"],["stay","住得更好"],["food","吃得更好"],["sights","玩更多景點"]].map(([v,l]) => `<button type="button" data-priority="${v}" class="${priority === v ? "active" : ""}">${l}</button>`).join("")}</div>
-        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("plane")} 日本 · 5 天</p><h2>整趟預算上限 ${money(budget)}</h2><p>選擇上方偏好後，下方預算線條會自動跟著改。</p><div class="allocation-bars">${labels.map((l,i) => `<div class="allocation-line"><span>${l}</span><div class="bar"><i style="width:${values[i]}%"></i></div><strong>${money(budget * values[i] / 100)}</strong></div>`).join("")}</div></section><section class="result-panel"><p class="eyebrow">${icon("shield")} 出發前提醒</p><h2>把旅遊保險一起算進去</h2><p>目前規劃 5 天日本自由行，建議先確認海外醫療、班機延誤與行李損失保障。</p><button class="primary-btn" type="button" data-view="insurance">查看旅遊保險建議 →</button><div class="card-winner"><small>存錢進度</small><h3>每月存 ${money(getFinance().monthlySave)}</h3><p>依目前設定，預計在 ${futureMonth(getFinance().months)} 完成目標。</p></div></section></div>
+        <div class="two-col"><section class="feature-card"><p class="eyebrow">${icon("plane")} 日本 · 5 天</p><h2>整趟預算上限 ${money(budget)}</h2><p>選擇上方偏好後，下方預算線條會自動跟著改。</p><div class="allocation-bars">${labels.map((l,i) => `<div class="allocation-line"><span>${l}</span><div class="bar"><i style="width:${values[i]}%"></i></div><strong>${money(budget * values[i] / 100)}</strong></div>`).join("")}</div></section><section class="result-panel"><p class="eyebrow">${icon("shield")} 出發前提醒</p><h2>把旅遊保險一起算進去</h2><p>目前規劃 5 天日本自由行，建議先確認海外醫療、班機延誤與行李損失保障。</p><button class="primary-btn" type="button" data-view="insurance">查看旅遊保險建議 →</button><div class="card-winner"><small>存錢進度</small><h3>每月存 ${money(getFinance().monthlySave)}</h3><p>${getFinance().goal ? `依目前設定，預計在 ${futureMonth(getFinance().goal.months)} 完成目標。` : "月光族沒有設定目標完成日期。"}</p></div></section></div>
       </section>`;
     }
 
@@ -1000,26 +1148,39 @@
       $$('[data-budget-detail]', $("#viewRoot")).forEach((el) => el.addEventListener("click", () => updateBudgetDetail(el.dataset.budgetDetail)));
       $$('[data-category]').forEach((el) => el.addEventListener("click", () => { state.searchCategory = el.dataset.category; renderView("search"); }));
       const searchForm = $("#searchForm");
-      if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); state.searchQuery = $("#searchInput").value.trim(); if (!state.searchQuery) { openAssistant("我想比價"); return; } renderView("search"); showToast("已用完整品名重新整理結果"); });
+      if (searchForm) searchForm.addEventListener("submit", (event) => { event.preventDefault(); const q = $("#searchInput").value.trim(); if (!q) { openAssistant("我想比價"); return; } state.searchQuery = q; renderView("search"); });
+      $$('[data-evaluate]', $("#viewRoot")).forEach((el) => el.addEventListener("click", async () => {
+        const id = el.dataset.evaluate;
+        const result = await api("/api/products/evaluate", { method: "POST", body: JSON.stringify({ price: Number(el.dataset.price) }) });
+        state.evaluations[id] = result;
+        renderView("search");
+      }));
       const ledgerForm = $("#ledgerForm");
-      if (ledgerForm) ledgerForm.addEventListener("submit", (event) => { event.preventDefault(); const merchant = $("#ledgerMerchant").value.trim(); const amount = Number($("#ledgerAmount").value); if (!merchant || !amount) return; state.transactions.unshift({ merchant, amount, category: $("#ledgerCategory").value, time: "剛剛" }); renderView("ledger"); showToast("已新增交易並更新可花餘額"); });
-      const simulate = $("#simulateMeal");
-      if (simulate) simulate.addEventListener("click", () => { state.transactions.unshift({ merchant: "朋友臨時聚餐", amount: 1200, category: "餐飲", time: "剛剛" }); $("#recoveryBox").hidden = false; showToast("已收到交易通知：NT$1,200"); });
-      $$('[data-recovery]').forEach((el) => el.addEventListener("click", () => { state.recovery = el.dataset.recovery === "extend" ? "extend" : "low"; renderView("ledger"); showToast(state.recovery === "extend" ? "已延長目標期限" : "已啟用 7 天低價優先"); }));
+      if (ledgerForm) ledgerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const amount = Number($("#ledgerAmount").value);
+        if (!amount) return;
+        await api("/api/ledger", { method: "POST", body: JSON.stringify({ amount, category: $("#ledgerCategory").value, note: $("#ledgerNote").value.trim() }) });
+        await loadLedger();
+        await refreshBudget();
+        renderView("ledger");
+        showToast("已新增記帳並更新可花餘額");
+      });
       $$('[data-priority]').forEach((el) => el.addEventListener("click", () => { state.travelPriority = el.dataset.priority; renderView("travel"); }));
       $$('[data-insurance]').forEach((el) => el.addEventListener("click", () => { state.insuranceTab = el.dataset.insurance; renderView("insurance"); }));
       const claimCheck = $("#claimCheck");
       if (claimCheck) claimCheck.addEventListener("click", () => { if (!$("#claimText").value.trim()) { showToast("請先描述發生的狀況"); return; } $("#claimResult").hidden = false; });
-      const cardQuestions = $("#cardQuestions");
-      if (cardQuestions) cardQuestions.addEventListener("click", () => openAssistant("我想再回答問題微調信用卡推薦"));
       const calculateForeign = $("#calculateForeign");
       if (calculateForeign) calculateForeign.addEventListener("click", calculateForeignCost);
       const settleDaily = $("#settleDaily");
       if (settleDaily) settleDaily.addEventListener("click", settleDailyBudget);
       const delayGoal = $("#delayGoal");
-      if (delayGoal) delayGoal.addEventListener("click", () => {
-        state.profile.months += 1;
-        localStorage.setItem("kaso-html-profile", JSON.stringify(state.profile));
+      if (delayGoal) delayGoal.addEventListener("click", async () => {
+        const p = state.profile;
+        if (p.goal) p.goal.months += 1;
+        const { profile, budget } = await api("/api/profile", { method: "POST", body: JSON.stringify(p) });
+        state.profile = profile;
+        state.budget = budget;
         renderView("home");
         showToast("已將完成期限延後 1 個月");
       });
@@ -1039,20 +1200,21 @@
       requestAnimationFrame(() => content.classList.add("is-changing"));
     }
 
-    function settleDailyBudget() {
+    async function settleDailyBudget() {
       const tray = $("#settlementTray");
       const button = $("#settleDaily");
       const source = $("#dailyPocket");
       const target = $("#balanceDonut");
       if (!tray || !button || !source || !target || state.settlementDone) return;
       button.disabled = true;
+      const result = await api("/api/budget/settle", { method: "POST" });
       tray.classList.add("is-moving");
       target.classList.add("is-receiving");
       const sourceRect = source.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
       const flyingCard = document.createElement("div");
       flyingCard.className = "settlement-fly-card";
-      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(Math.min(240, getFinance().safe))}</strong>`;
+      flyingCard.innerHTML = `<small>今日未用預算</small><strong>${money(result.unused)}</strong>`;
       Object.assign(flyingCard.style, { left: sourceRect.left + "px", top: sourceRect.top + "px", width: sourceRect.width + "px", height: sourceRect.height + "px" });
       document.body.appendChild(flyingCard);
       const dx = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
@@ -1093,7 +1255,6 @@
       if (/保險|保障|理賠|保單/.test(label)) return renderView("insurance");
       if (/訂閱|音樂|影音/.test(label)) return renderView("subscriptions");
       if (/海外/.test(label)) return renderView("overseas");
-      if (/卡|年費|回饋/.test(label)) return renderView("cards");
       if (/記帳|支出|目標/.test(label)) return renderView("ledger");
       if (/附近|文化幣|免費活動|公尺|店家/.test(label)) return renderView("nearby");
       renderView("search");
@@ -1104,11 +1265,7 @@
     function askProduct(detail) {
       openAssistant();
       const parts = detail.split("｜");
-      state.assistantTopic = "product";
-      addMessage("user", `請幫我看這個商品：${parts[0]}`);
-      const price = Number(parts[2] || 0);
-      const f = getFinance();
-      addMessage("ai", `${parts[1] ? `這筆是 ${parts[1]} 的` : "這個"} ${parts[0]}，價格 ${price ? money(price) : "尚未提供"}。${price > f.safe ? `它比你目前安心可花的 ${money(f.safe)} 高，建議先加入目標，不要直接刷卡。` : `買下後約剩 ${money(f.safe - price)} 可花。`}\n你也可以貼商品連結，我會沿用這個商品繼續問。`);
+      sendToAssistant(`請幫我看這個商品：${parts[0]}${parts[1] ? `（${parts[1]}）` : ""}${parts[2] ? `，價格 ${parts[2]}` : ""}`);
     }
 
     function openAssistant(prefill) {
@@ -1125,30 +1282,22 @@
 
     function renderMessages() {
       const log = $("#chatLog");
-      log.innerHTML = state.messages.map((m) => `<div class="bubble ${m.role}">${escapeHtml(m.text)}</div>`).join("");
+      log.innerHTML = state.messages.map((m) => `<div class="bubble ${m.role}${m.pending ? " pending" : ""}">${escapeHtml(m.text)}</div>`).join("");
       log.scrollTop = log.scrollHeight;
     }
 
-    function assistantReply(text) {
-      const q = text.toLowerCase();
-      const f = getFinance();
-      if (/spotify|apple music|訂閱|學生/.test(q) || (state.assistantTopic === "subscription" && /個人|家庭|一個人|兩個人/.test(q))) {
-        state.assistantTopic = "subscription";
-        if (/學生/.test(q)) return "你有學生資格的話，目前示範資料中 Spotify 學生方案月費較低；不過要一起看裝置、音質與常用歌單。你是自己使用，還是多人共用？";
-        if (/個人|一個人/.test(q)) return "延續剛才的訂閱比較：以個人使用來看，我會先比較學生／個人月費，再看你是否在意 Apple 裝置整合。你有學生資格嗎？";
-        return "你想比較哪兩個訂閱？也請告訴我幾個人使用、是否有學生資格，我會接著比較，不會把回答當成商品。";
+    // KASO AI 真的接 Claude API（backend/src/services/assistant.js），key 只在後端，前端不會碰到。
+    async function sendToAssistant(text) {
+      addMessage("user", text);
+      state.messages.push({ role: "ai", text: "思考中…", pending: true });
+      renderMessages();
+      try {
+        const { reply } = await api("/api/assistant/chat", { method: "POST", body: JSON.stringify({ message: text, history: state.messages.slice(0, -1) }) });
+        state.messages[state.messages.length - 1] = { role: "ai", text: reply };
+      } catch (err) {
+        state.messages[state.messages.length - 1] = { role: "ai", text: "KASO AI 暫時連不上：後端可能還沒設定 ANTHROPIC_API_KEY（見 backend/.env.example）。" };
       }
-      if (/還能花|剩多少|預算|餘額/.test(q)) { state.assistantTopic = "budget"; return `目前餘額 ${money(f.currentBalance)}，已先保留固定支出與每月存款；今天安心可花約 ${money(f.safe)}。` }
-      if (/保險|延誤|行李|住院|理賠/.test(q)) { state.assistantTopic = "insurance"; return "我可以先找『可能申請』的項目。請補上事件日期、發生狀況、損失金額，以及你是否保留證明或單據；最終仍依保單條款與保險公司審核。"; }
-      if (/卡|回饋|信用卡/.test(q)) { state.assistantTopic = "card"; return `依你第一步的現金流與生活比重，目前先推薦 ${cardMatches[0].name}。重點是規則簡單，且不會用信用額度放大你的 ${money(f.safe)} 可花預算。`; }
-      if (/商品|買|比價|多少錢|連結|http/.test(q) || state.assistantTopic === "product") {
-        state.assistantTopic = "product";
-        const hasSpecific = /airpods|iphone|switch|macbook|http|https|型號|gb/i.test(q);
-        return hasSpecific ? `我會以你指定的商品繼續比較。請確認容量、顏色、新品／二手與公司貨版本；目前安心可花是 ${money(f.safe)}。` : "你想找哪一個商品？請貼商品名稱、完整型號或連結；資料不足時我會先追問，不會自己猜一個商品。";
-      }
-      if (/附近|餐廳|咖啡|超市/.test(q)) { state.assistantTopic = "nearby"; return `目前以台北車站 1,000 公尺為示範位置，共有 ${nearbyOffers.length} 個預算內選項；要我優先找餐飲、日常採買，還是免費活動？`; }
-      if (/旅遊|機票|飯店|日本/.test(q)) { state.assistantTopic = "travel"; return "可以。我會把住宿、餐飲、交通和景點放在同一個上限內。你想住得更好、吃得更好，還是玩更多景點？"; }
-      return state.assistantTopic ? "我會延續上一個主要問題。可以再補充你剛才回答的是哪個條件，或直接貼相關連結，我就接著整理。" : "我還不知道你要處理的是商品、預算、信用卡、旅遊或保險。請多給我一個關鍵資訊，我會先確認再回答。";
+      renderMessages();
     }
 
     function showToast(message) {
@@ -1164,29 +1313,38 @@
     }
     function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
-    $$(".mode-card").forEach((card) => card.addEventListener("click", () => {
-      state.mode = card.dataset.mode;
-      $$(".mode-card").forEach((item) => { item.classList.toggle("selected", item === card); $(".mode-check", item).textContent = item === card ? "✓" : "→"; });
-      if (state.mode !== "moonlight") showToast("HTML 第一版仍以月光族主流程示範，其他模式保留入口");
-    }));
     $$("#onboarding input").forEach((input) => input.addEventListener("input", updateOnboardingPreview));
     $("#completeSetup").addEventListener("click", saveProfileAndEnter);
     $("#resetProfile").addEventListener("click", resetProfile);
     $$("[data-view]", $("#siteHeader")).forEach((el) => el.addEventListener("click", () => renderView(el.dataset.view)));
     $$("[data-mega]").forEach((el) => { el.addEventListener("mouseenter", () => showMega(el.dataset.mega)); el.addEventListener("focus", () => showMega(el.dataset.mega)); });
     $("#siteHeader").addEventListener("mouseleave", hideMega);
-    $("#locateHeader").addEventListener("click", () => { showToast("已使用台北車站示範位置"); renderView("nearby"); });
+    $("#locateHeader").addEventListener("click", () => { state.nearbyStores = null; renderView("nearby"); });
     $("#assistantFab").addEventListener("click", () => openAssistant());
     $("#assistantClose").addEventListener("click", () => { $("#assistantPanel").hidden = true; $("#assistantFab").hidden = false; });
-    $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; addMessage("user", text); setTimeout(() => addMessage("ai", assistantReply(text)), 260); });
+    $("#assistantForm").addEventListener("submit", (event) => { event.preventDefault(); const input = $("#assistantInput"); const text = input.value.trim(); if (!text) return; input.value = ""; sendToAssistant(text); });
     $("#feedbackOpen").addEventListener("click", () => $("#feedbackDialog").showModal());
     $("#feedbackSend").addEventListener("click", (event) => { if (!$("#feedbackText").value.trim()) { event.preventDefault(); showToast("請先填寫回報內容"); return; } localStorage.setItem("kaso-html-feedback", JSON.stringify({ type: $("#feedbackType").value, text: $("#feedbackText").value, view: state.view, at: new Date().toISOString() })); showToast("回報已保存在此 HTML 裝置中"); });
 
-    const saved = localStorage.getItem("kaso-html-profile");
-    if (saved) {
-      try { state.profile = JSON.parse(saved); $("#onboarding").hidden = true; $("#mainApp").hidden = false; renderView("home"); } catch (_) { localStorage.removeItem("kaso-html-profile"); }
+    async function boot() {
+      await loadQuiz();
+      try {
+        const profile = await api("/api/profile");
+        if (profile) {
+          state.profile = profile;
+          state.resolvedType = profile.type;
+          state.budget = await api("/api/budget");
+          $("#onboarding").hidden = true;
+          $("#mainApp").hidden = false;
+          await loadLedger();
+          renderView("home");
+          return;
+        }
+      } catch (_) { /* 後端還沒有 profile，走 onboarding */ }
+      renderGoalFields();
+      updateOnboardingPreview();
     }
-    updateOnboardingPreview();
+    boot();
     renderMessages();
   </script>
 </body>
