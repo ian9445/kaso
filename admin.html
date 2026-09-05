@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>KASO 管理後台</title>
+  <style>
+    :root {
+      --ink:#0f1829; --navy:#101b2f; --navy-2:#11385a; --cream:#f5f1e8; --paper:#fffefa;
+      --line:#d7d2c8; --muted:#647087; --blue:#087fe5; --lime:#b8ff3d; --yellow:#f4d400;
+      --danger:#c93425; --radius:24px;
+      font-family:"SF Pro Display","Taipei Sans TC Beta","Noto Sans TC",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink)} button,input,select{font:inherit}
+    button{cursor:pointer}.hidden{display:none!important}.mono{font-variant-numeric:tabular-nums}
+    .login-screen{min-height:100dvh;display:grid;grid-template-columns:1.35fr 1fr;background:linear-gradient(150deg,var(--navy),#0d1728 60%,#143f61)}
+    .login-brand{padding:clamp(38px,6vw,92px);color:#fff;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+    .login-brand:after{content:"";position:absolute;width:430px;height:430px;border:1px solid rgba(184,255,61,.3);border-radius:50%;left:-210px;bottom:-220px}
+    .brand-icon{width:48px;height:48px;border:1.5px solid var(--lime);display:grid;place-items:center;color:var(--lime);font-weight:900}
+    .eyebrow{margin:40px 0 12px;color:var(--lime);font-size:.78rem;font-weight:900;letter-spacing:.16em}
+    .login-brand h1{max-width:690px;margin:0;font-size:clamp(3.8rem,7vw,7.5rem);line-height:.9;letter-spacing:-.075em}
+    .login-brand p:last-child{color:#9cc6e3;font-weight:700}
+    .login-panel{padding:38px;display:grid;place-items:center}.login-card{width:min(640px,100%);padding:clamp(28px,4vw,48px);border-radius:28px;background:#fff;box-shadow:0 30px 80px rgba(0,0,0,.24)}
+    .login-card h2{margin:13px 0 8px;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.045em}.login-card>p{margin:0;color:var(--muted)}
+    .shield{width:60px;height:60px;border-radius:18px;background:#eef7ff;color:var(--blue);display:grid;place-items:center;font-size:1.45rem}
+    .login-form{display:grid;gap:15px;margin-top:28px}.login-form label{display:grid;gap:7px;font-weight:800}.login-form input{height:58px;border:1px solid #cdd4df;border-radius:15px;padding:0 16px;background:#fff}
+    .primary{min-height:58px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-weight:900}.primary:disabled{opacity:.55;cursor:wait}.login-error{margin:3px 0 0;padding:12px 14px;border-radius:12px;background:#fff0ed;color:#a62619;font-weight:750}
+    .login-note{margin-top:18px!important;padding-top:18px;border-top:1px solid #e3e5e9;font-size:.8rem}
+    .admin-shell{min-height:100dvh}.topbar{position:sticky;top:0;z-index:10;background:rgba(245,241,232,.94);border-bottom:1.5px solid var(--ink);backdrop-filter:blur(18px)}
+    .topbar-inner{min-height:76px;width:min(1420px,calc(100% - 40px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}.admin-brand{display:flex;align-items:center;gap:12px}.admin-brand b{width:42px;height:42px;border:1.5px solid var(--ink);background:var(--yellow);display:grid;place-items:center;font-size:1.4rem}.admin-brand span{display:grid}.admin-brand small{font-size:.67rem;color:var(--muted);letter-spacing:.12em}.top-actions{display:flex;gap:9px}.top-actions button{min-height:42px;padding:0 14px;border:1.5px solid var(--ink);border-radius:5px;background:var(--paper);font-weight:800}.top-actions .logout{background:var(--ink);color:#fff}
+    .content{width:min(1420px,calc(100% - 40px));margin:0 auto;padding:46px 0 80px}.page-head{display:flex;align-items:end;justify-content:space-between;gap:22px}.page-head h1{margin:0;font-size:clamp(2.5rem,5vw,5.4rem);line-height:.94;letter-spacing:-.065em}.page-head p{margin:10px 0 0;color:var(--muted)}.live-stamp{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:800}.live-dot{width:10px;height:10px;border-radius:50%;background:#20b26b;box-shadow:0 0 0 6px rgba(32,178,107,.13);animation:pulse 1.8s infinite}@keyframes pulse{50%{box-shadow:0 0 0 11px rgba(32,178,107,0)}}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:34px}.metric-card{min-height:178px;padding:23px;border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);display:flex;flex-direction:column}.metric-card.primary-card{background:var(--ink);color:#fff;box-shadow:7px 7px 0 var(--lime)}.metric-card small{color:var(--muted);font-weight:800}.primary-card small{color:#b7c0cf}.metric-card strong{margin-top:auto;font-size:clamp(2.7rem,5vw,4.8rem);line-height:.9;letter-spacing:-.06em}.metric-card span{margin-top:10px;font-size:.75rem;color:var(--muted)}
+    .main-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:18px;margin-top:30px}.panel{border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);padding:25px}.panel-head{display:flex;align-items:start;justify-content:space-between;gap:16px}.panel-head h2{margin:0;font-size:1.35rem}.panel-head p{margin:5px 0 0;color:var(--muted);font-size:.8rem}.tag{padding:6px 9px;background:var(--yellow);border:1px solid var(--ink);font-size:.7rem;font-weight:900}
+    .chart{height:260px;display:flex;align-items:end;gap:9px;padding-top:34px}.bar-item{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:8px}.bar{width:min(34px,78%);min-height:3px;background:var(--blue);border-radius:3px 3px 0 0;transition:height .45s ease}.bar-item:nth-child(3n) .bar{background:var(--yellow)}.bar-item small{font-size:.62rem;color:var(--muted)}
+    .privacy-list{display:grid;gap:1px;margin-top:21px;border:1px solid var(--ink);background:var(--ink)}.privacy-list span{padding:13px;background:var(--paper);display:flex;gap:10px;font-size:.8rem}.privacy-list b{color:var(--blue)}
+    .feedback-panel{margin-top:18px}.feedback-list{display:grid;gap:10px;margin-top:20px}.feedback-item{display:grid;grid-template-columns:130px minmax(0,1fr) 170px;gap:18px;align-items:start;padding:17px;border:1px solid #d8d5ce;border-radius:6px;background:#fff}.feedback-meta{display:grid;gap:7px}.feedback-type{width:max-content;padding:4px 7px;background:#eef7ff;color:#075fae;font-size:.68rem;font-weight:900}.feedback-item p{margin:0;line-height:1.55;white-space:pre-wrap}.feedback-item time,.feedback-view{font-size:.7rem;color:var(--muted)}.status-select{width:100%;height:40px;border:1.5px solid var(--ink);background:#fff;padding:0 8px}.empty{padding:38px;border:1px dashed #aaa;text-align:center;color:var(--muted)}.load-error{margin-top:18px;padding:14px;border:1px solid #e4a197;background:#fff0ed;color:#9f251b}
+    @media(max-width:980px){.login-screen{grid-template-columns:1fr}.login-brand{min-height:36vh;padding:38px}.login-brand h1{font-size:clamp(3rem,10vw,5.6rem)}.login-panel{padding:22px}.metric-grid{grid-template-columns:repeat(2,1fr)}.main-grid{grid-template-columns:1fr}}
+    @media(max-width:680px){.topbar-inner,.content{width:min(100% - 24px,1420px)}.topbar-inner{min-height:68px}.admin-brand small{display:none}.top-actions button{padding:0 10px}.content{padding-top:30px}.page-head{align-items:start;flex-direction:column}.metric-grid{grid-template-columns:1fr 1fr}.metric-card{min-height:135px;padding:17px}.metric-card strong{font-size:2.6rem}.main-grid{margin-top:18px}.panel{padding:18px}.chart{gap:4px;height:210px}.feedback-item{grid-template-columns:1fr;gap:12px}.status-select{max-width:none}.login-brand{min-height:31vh}.login-panel{align-items:start}.login-card{padding:25px 20px}}
+  </style>
+</head>
+<body>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-brand"><span class="brand-icon">K</span><p class="eyebrow">KASO INTERNAL</p><h1>數據與回報<br>管理後台</h1><p>與主網站同步，不會顯示在使用者介面。</p></div>
+    <div class="login-panel"><div class="login-card"><span class="shield">♢</span><p class="eyebrow" style="color:#647087;margin-top:26px">管理員登入</p><h2>查看網站狀態</h2><p>登入後查看即時人數、瀏覽量與使用者回報。</p><form id="loginForm" class="login-form"><label>帳號<input id="username" autocomplete="username" required></label><label>密碼<input id="password" type="password" autocomplete="current-password" required></label><p id="loginError" class="login-error hidden" role="alert"></p><button id="loginButton" class="primary" type="submit">登入後台</button></form><p class="login-note">管理資料由主站即時同步；登入資料只在伺服器端驗證。</p></div></div>
+  </section>
+
+  <section id="adminShell" class="admin-shell hidden">
+    <header class="topbar"><div class="topbar-inner"><div class="admin-brand"><b>K</b><span><strong>卡搜 KASO</strong><small>ADMIN CONSOLE</small></span></div><div class="top-actions"><button id="refreshButton" type="button">重新整理</button><button id="logoutButton" class="logout" type="button">登出</button></div></div></header>
+    <main class="content"><div class="page-head"><div><p class="eyebrow" style="color:#087fe5;margin:0 0 12px">網站即時狀態</p><h1>使用狀況</h1><p>統計時間採台灣時間；每 30 秒自動更新在線人數。</p></div><span class="live-stamp"><i class="live-dot"></i><span id="updatedAt">正在連線</span></span></div>
+      <section class="metric-grid" aria-label="網站統計">
+        <article class="metric-card primary-card"><small>目前在線</small><strong id="onlineNow" class="mono">—</strong><span>最近 2 分鐘內開啟主網站的人數</span></article>
+        <article class="metric-card"><small>本月瀏覽量</small><strong id="monthlyViews" class="mono">—</strong><span>從本月 1 日起累計</span></article>
+      </section>
+      <section class="panel feedback-panel"><div class="panel-head"><div><h2>使用者回報</h2><p>主站新送出的問題會顯示在最上方。</p></div><span id="feedbackCount" class="tag">0 筆</span></div><p id="loadError" class="load-error hidden" role="alert"></p><div id="feedbackList" class="feedback-list"><div class="empty">目前沒有回報</div></div></section>
+    </main>
+  </section>
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const stateLabels = { new: "待處理", processing: "處理中", done: "已完成" };
+    let refreshTimer;
+
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, { credentials: "same-origin", ...options, headers: { "content-type": "application/json", ...(options.headers || {}) } });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) { const error = new Error(data.error || "request_failed"); error.status = response.status; throw error; }
+      return data;
+    }
+
+    function showLogin(message = "") {
+      clearInterval(refreshTimer); $("#loginScreen").classList.remove("hidden"); $("#adminShell").classList.add("hidden");
+      $("#loginError").textContent = message; $("#loginError").classList.toggle("hidden", !message);
+    }
+    function showAdmin() { $("#loginScreen").classList.add("hidden"); $("#adminShell").classList.remove("hidden"); loadDashboard(); refreshTimer = setInterval(loadMetrics, 30000); }
+
+    function formatNumber(value) { return new Intl.NumberFormat("zh-TW").format(Number(value || 0)); }
+    function formatTime(value) { return new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Taipei" }).format(new Date(value.replace(" ", "T") + "Z")); }
+
+    function renderMetrics(data) {
+      $("#onlineNow").textContent = formatNumber(data.onlineNow); $("#monthlyViews").textContent = formatNumber(data.monthlyViews);
+      $("#updatedAt").textContent = `更新於 ${new Intl.DateTimeFormat("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "Asia/Taipei" }).format(new Date(data.generatedAt))}`;
+    }
+
+    function renderFeedback(items) {
+      $("#feedbackCount").textContent = `${items.length} 筆`; if (!items.length) { $("#feedbackList").innerHTML = '<div class="empty">目前沒有回報</div>'; return; }
+      $("#feedbackList").innerHTML = items.map((item) => `<article class="feedback-item"><div class="feedback-meta"><span class="feedback-type">${escapeHtml(item.type)}</span><span class="feedback-view">${escapeHtml(item.view)}</span><time>${formatTime(item.created_at)}</time></div><p>${escapeHtml(item.message)}</p><label><span class="feedback-view">處理狀態</span><select class="status-select" data-feedback-id="${item.id}">${Object.entries(stateLabels).map(([value,label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}</select></label></article>`).join("");
+      document.querySelectorAll("[data-feedback-id]").forEach((select) => select.addEventListener("change", () => updateFeedback(select)));
+    }
+    function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" })[character]); }
+
+    async function loadMetrics() { try { renderMetrics(await requestJson("/api/admin/metrics")); } catch (error) { if (error.status === 401) showLogin("登入已逾時，請重新登入。"); else showLoadError("暫時無法讀取統計資料，請稍後再試。"); } }
+    async function loadFeedback() { try { renderFeedback((await requestJson("/api/admin/feedback")).items); } catch (error) { if (error.status === 401) showLogin("登入已逾時，請重新登入。"); else showLoadError("暫時無法讀取回報資料，請稍後再試。"); } }
+    async function loadDashboard() { $("#loadError").classList.add("hidden"); await Promise.all([loadMetrics(), loadFeedback()]); }
+    function showLoadError(message) { $("#loadError").textContent = message; $("#loadError").classList.remove("hidden"); }
+    async function updateFeedback(select) { select.disabled = true; try { await requestJson(`/api/admin/feedback/${select.dataset.feedbackId}`, { method:"PATCH", body:JSON.stringify({ status:select.value }) }); } catch (_) { showLoadError("狀態沒有更新成功，請再試一次。"); await loadFeedback(); } finally { select.disabled = false; } }
+
+    $("#loginForm").addEventListener("submit", async (event) => { event.preventDefault(); const button = $("#loginButton"); button.disabled = true; $("#loginError").classList.add("hidden"); try { await requestJson("/api/admin/login", { method:"POST", body:JSON.stringify({ username:$("#username").value.trim(), password:$("#password").value }) }); $("#password").value = ""; showAdmin(); } catch (error) { showLogin(error.message === "invalid_credentials" ? "帳號或密碼不正確。" : "管理服務目前無法連線，請稍後再試。"); } finally { button.disabled = false; } });
+    $("#refreshButton").addEventListener("click", loadDashboard);
+    $("#logoutButton").addEventListener("click", async () => { await requestJson("/api/admin/logout", { method:"POST", body:"{}" }).catch(() => {}); showLogin(); });
+    requestJson("/api/admin/session").then((data) => data.authenticated ? showAdmin() : showLogin()).catch(() => showLogin("管理服務目前無法連線，請稍後再試。"));
+  </script>
+</body>
+</html>
