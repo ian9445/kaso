@@ -11,7 +11,10 @@ import {
   saveProfile,
   state,
 } from "../store.js";
-import { calculateBudgetPlan } from "../services/budget.js";
+import {
+  calculateBudgetPlan,
+  DAILY_BUDGET_ADVICE_THRESHOLD,
+} from "../services/budget.js";
 import {
   $,
   $$,
@@ -125,7 +128,7 @@ function render() {
               </div>
               <div id="deadlineAdvice" class="deadline-advice" role="alert" aria-live="assertive" hidden>
                 <div>
-                  <strong>每日可安排低於 NT$1,000</strong>
+                  <strong>每日可安排低於 ${money(DAILY_BUDGET_ADVICE_THRESHOLD)}</strong>
                   <p id="deadlineAdviceText">你可以延長完成月份，或調低存錢目標後再確認。</p>
                 </div>
                 <div class="deadline-advice-actions" aria-label="調整預算方式">
@@ -239,7 +242,7 @@ function mount({ navigate, showToast }) {
 
     const shouldSuggestExtension = (
       hasFinanceInputs
-      && budget.dailyAvailable < 1000
+      && budget.dailyAvailable < DAILY_BUDGET_ADVICE_THRESHOLD
     );
     $("#deadlineAdvice").hidden = !shouldSuggestExtension;
     if (shouldSuggestExtension) {

@@ -4,6 +4,8 @@ import {
   monthsUntil,
 } from "../utils.js";
 
+export const DAILY_BUDGET_ADVICE_THRESHOLD = 200;
+
 function nonNegativeNumber(value) {
   return Math.max(0, Number(value) || 0);
 }

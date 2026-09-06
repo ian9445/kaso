@@ -1,3 +1,4 @@
+import { DAILY_BUDGET_ADVICE_THRESHOLD } from "../services/budget.js";
 import { getDailyBudget, getFinance } from "../services/finance.js";
 import { personaModeLabel } from "../services/persona.js";
 import { state } from "../store.js";
@@ -249,7 +250,7 @@ function render() {
           </details>
           <details>
             <summary>存錢目標和完成月份之後還能修改嗎？</summary>
-            <div class="qa-answer"><p>可以。進入「重新設定」後即可調整。若設定頁的每日可安排低於 NT$1,000，也會直接提供延長月份或調整存錢目標的選項。</p></div>
+            <div class="qa-answer"><p>可以。進入「重新設定」後即可調整。若設定頁的每日可安排低於 ${money(DAILY_BUDGET_ADVICE_THRESHOLD)}，也會直接提供延長月份或調整存錢目標的選項。</p></div>
           </details>
           <details>
             <summary>「今日結算」會做什麼？</summary>

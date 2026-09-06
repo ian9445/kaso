@@ -25,7 +25,10 @@ await Promise.all([
   assert.equal((await stat(path)).isFile(), true, `${path} must be a regular file`);
 }));
 
-const { calculateBudgetPlan } = await import(pathToFileURL(budgetModulePath));
+const {
+  calculateBudgetPlan,
+  DAILY_BUDGET_ADVICE_THRESHOLD,
+} = await import(pathToFileURL(budgetModulePath));
 const plan = calculateBudgetPlan({
   currentBalance: 6800,
   income: 32001,
@@ -35,6 +38,7 @@ const plan = calculateBudgetPlan({
 }, new Date(2026, 8, 5));
 assert.equal(plan.monthlySave, 0);
 assert.equal(plan.dailyAvailable, 933);
+assert.equal(DAILY_BUDGET_ADVICE_THRESHOLD, 200);
 
 // A data URL forces ESM parsing even though the generated output has no package.json.
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
