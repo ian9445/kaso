@@ -161,6 +161,7 @@ function render() {
           <div>
             <p class="eyebrow">${icon("wallet")} ${personaModeLabel(state.profile?.mode)}首頁</p>
             <h1>${status}</h1>
+            <a class="secondary-btn home-nearby-link" href="#/nearby" data-route="/nearby">${icon("pin")} 附近店家</a>
           </div>
           <div class="money-actions">
             <button type="button" data-route="/ledger">${icon("bell")} 查看記帳</button>

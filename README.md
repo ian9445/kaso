@@ -63,3 +63,23 @@ npm run validate
 ```
 
 建置結果位於 `dist/`；請修改根目錄的原始檔，不要直接編輯 `dist/`。
+
+## 附近店家定位
+
+首頁「附近店家」連至 `#/nearby`。使用者按「使用目前位置」後才向瀏覽器請求一次定位；需要 HTTPS、瀏覽器位置權限及裝置定位服務。KASO 不將座標寫入 localStorage、Cookie、D1 或分析紀錄，離開頁面會取消查詢並忽略尚未完成的定位回呼。
+
+店家來自 OpenStreetMap，由 `https://overpass.private.coffee/api/interpreter` 提供 Overpass 查詢。瀏覽器直接 POST 查詢，不需要 API key；位置會傳至該服務，取得位置後的嵌入地圖會將座標傳至 OpenStreetMap。清單包含餐飲、藥局與商店，以地圖上的店家座標計算直線距離，只保留 1,000 公尺內的結果並依距離排序。way/relation 使用資料的包圍盒中心，因此距離為估計值；Google Maps 連結可開啟步行導航。
+
+資料可能缺少店名、地址、營業時間或未涵蓋全部店家。此功能不推算價格，也不宣稱所有店家符合預算或提供優惠。定位精度超過 1,000 公尺時請使用者重新定位；拒絕授權、定位逾時、查詢逾時、空結果及服務錯誤有不同提示。HTTP 429/406 遵守 Retry-After，至少等待 30 秒後才再送出查詢。
+
+公開查詢服務的可用性、限流與 CORS 由服務端決定。若瀏覽器封鎖第三方請求，或服務暫時無法使用，頁面會保留錯誤提示與重試入口，不回退成示範店家。高流量部署前需依提供者最新政策評估服務容量。
+
+相關資料：[Overpass 公開實例](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)、[HTTP/CORS](https://dev.overpass-api.de/command_line.html)、[OpenStreetMap 授權](https://www.openstreetmap.org/copyright)。
+
+定位流程回歸檢查（已使用 Node.js 24 驗證）：
+
+```bash
+node --test scripts/check-nearby.mjs
+```
+
+這些檢查使用模擬位置與店家回應，涵蓋距離邊界、拒絕授權、逾時、取消、換頁、重試、限流與外部文字轉義，不會取得執行者的位置或呼叫外部查詢服務。
