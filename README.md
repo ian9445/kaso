@@ -66,13 +66,16 @@ npm run validate
 
 ## 附近店家定位
 
-首頁「附近店家」連至 `#/nearby`。使用者按「使用目前位置」後才向瀏覽器請求一次定位；需要 HTTPS、瀏覽器位置權限及裝置定位服務。KASO 不將座標寫入 localStorage、Cookie、D1 或分析紀錄，離開頁面會取消查詢並忽略尚未完成的定位回呼。
+首頁「附近店家」連至 `#/nearby`。進入頁面後會立即向瀏覽器請求一次定位；需要 HTTPS、瀏覽器位置權限及裝置定位服務。若使用者拒絕或瀏覽器已封鎖定位，頁面會保留重新開啟位置的按鈕。KASO 不將座標寫入 localStorage、Cookie、D1 或分析紀錄，離開頁面會取消查詢並忽略尚未完成的定位回呼。
 
-店家來自 OpenStreetMap，由 `https://overpass.private.coffee/api/interpreter` 提供 Overpass 查詢。瀏覽器直接 POST 查詢，不需要 API key；位置會傳至該服務，取得位置後的嵌入地圖會將座標傳至 OpenStreetMap。清單包含餐飲、藥局與商店，以地圖上的店家座標計算直線距離，只保留 1,000 公尺內的結果並依距離排序。way/relation 使用資料的包圍盒中心，因此距離為估計值；Google Maps 連結可開啟步行導航。
+店家來自 OpenStreetMap。瀏覽器以同源 `POST /api/nearby` 呼叫網站後端，再由後端使用可識別的 User-Agent 查詢公開 Overpass 節點；目前優先使用 VK Maps 節點，Private.coffee 為備援，不需要 API key。後端送往查詢節點的座標會限制到小數點後五位。Google 地圖在取得定位後才載入，並接收座標以顯示目前位置；每張店家卡片也可開啟 Google Maps 步行導航。
 
-資料可能缺少店名、地址、營業時間或未涵蓋全部店家。此功能不推算價格，也不宣稱所有店家符合預算或提供優惠。定位精度超過 1,000 公尺時請使用者重新定位；拒絕授權、定位逾時、查詢逾時、空結果及服務錯誤有不同提示。HTTP 429/406 遵守 Retry-After，至少等待 30 秒後才再送出查詢。
+清單包含餐飲、藥局與商店，以地圖上的店家座標計算直線距離，只保留 1,000 公尺內的結果；可依近到遠、遠到近、店名、類型或營業時間資料排序，也可篩選餐飲、購物與生活服務。way/relation 使用資料的包圍盒中心，因此距離為估計值。
 
-公開查詢服務的可用性、限流與 CORS 由服務端決定。若瀏覽器封鎖第三方請求，或服務暫時無法使用，頁面會保留錯誤提示與重試入口，不回退成示範店家。高流量部署前需依提供者最新政策評估服務容量。
+資料可能缺少店名、地址、營業時間或未涵蓋全部店家。此功能不推算價格，也不宣稱所有店家符合預算或提供優惠。定位精度超過 1,000 公尺時請使用者重新定位；拒絕授權、定位逾時、查詢逾時、空結果及服務錯誤有不同提示。HTTP 429 會遵守 Retry-After，至少等待 30 秒後才再送出查詢。
+
+公開查詢服務的可用性與限流由服務端決定。若兩個查詢節點都暫時無法使用，頁面會保留錯誤提示與重試入口，不回退成示範店家。高流量部署前需依提供者最新政策評估服務容量。
+
 
 相關資料：[Overpass 公開實例](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)、[HTTP/CORS](https://dev.overpass-api.de/command_line.html)、[OpenStreetMap 授權](https://www.openstreetmap.org/copyright)。
 
