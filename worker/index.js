@@ -7,6 +7,13 @@ const JSON_HEADERS = {
   "x-content-type-options": "nosniff",
 };
 
+const NEARBY_RADIUS_METERS = 1000;
+const NEARBY_AMENITIES = "restaurant|cafe|fast_food|food_court|bar|pub|ice_cream|pharmacy";
+const OVERPASS_ENDPOINTS = [
+  { name: "VK Maps Overpass", url: "https://maps.mail.ru/osm/tools/overpass/api/interpreter" },
+  { name: "Private.coffee Overpass", url: "https://overpass.private.coffee/api/interpreter" },
+];
+
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -50,6 +57,83 @@ function validSessionId(value) {
 function sameOrigin(request) {
   const origin = request.headers.get("origin");
   return !origin || origin === new URL(request.url).origin;
+}
+
+function validCoordinates(lat, lon) {
+  return Number.isFinite(lat) && Math.abs(lat) <= 90
+    && Number.isFinite(lon) && Math.abs(lon) <= 180;
+}
+
+function upstreamError(code, status = 503) {
+  return Object.assign(new Error(code), { code, status });
+}
+
+async function queryOverpass(endpoint, query, requestSignal) {
+  const controller = new AbortController();
+  let timedOut = false;
+  const onAbort = () => controller.abort();
+  requestSignal?.addEventListener("abort", onAbort, { once: true });
+  if (requestSignal?.aborted) controller.abort();
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, 28000);
+  try {
+    const response = await fetch(endpoint.url, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "user-agent": "KASO-Nearby/1.0 (+https://github.com/ian9445/kaso)",
+        referer: "https://card-scout-tw.cec13.chatgpt.site/",
+      },
+      body: new URLSearchParams({ data: query }),
+      signal: controller.signal,
+    });
+    if (response.status === 429 || response.status === 406) throw upstreamError("rate_limited", 429);
+    if (!response.ok) throw upstreamError("upstream_failed");
+    const contentLength = Number(response.headers.get("content-length") || 0);
+    if (contentLength > 3_000_000) throw upstreamError("response_too_large");
+    const text = await response.text();
+    if (text.length > 3_000_000) throw upstreamError("response_too_large");
+    const payload = JSON.parse(text);
+    if (!Array.isArray(payload?.elements) || payload.remark) throw upstreamError("invalid_upstream_response");
+    return { elements: payload.elements, source: endpoint.name };
+  } catch (error) {
+    if (timedOut) throw upstreamError("nearby_timeout", 504);
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    requestSignal?.removeEventListener("abort", onAbort);
+  }
+}
+
+async function nearbyShops(request) {
+  if (!sameOrigin(request)) return json({ error: "origin_not_allowed" }, 403);
+  const body = await readJson(request, 500);
+  const lat = Number(body.lat);
+  const lon = Number(body.lon);
+  if (!validCoordinates(lat, lon)) return json({ error: "invalid_coordinates" }, 400);
+
+  // A few decimal places are enough for a one-kilometre search and avoid sending unnecessary precision upstream.
+  const queryLat = Math.round(lat * 100000) / 100000;
+  const queryLon = Math.round(lon * 100000) / 100000;
+  const query = `[out:json][timeout:25];(nwr(around:${NEARBY_RADIUS_METERS},${queryLat},${queryLon})["shop"];nwr(around:${NEARBY_RADIUS_METERS},${queryLat},${queryLon})["amenity"~"^(${NEARBY_AMENITIES})$"];);out center 300;`;
+  let lastError = upstreamError("nearby_unavailable");
+
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    if (request.signal?.aborted) throw upstreamError("request_cancelled", 499);
+    try {
+      return json(await queryOverpass(endpoint, query, request.signal));
+    } catch (error) {
+      lastError = error;
+      console.error("KASO nearby provider error", endpoint.name, error?.code || error?.message);
+    }
+  }
+
+  const status = lastError?.status === 429 ? 429 : lastError?.status === 504 ? 504 : 503;
+  const code = status === 429 ? "nearby_rate_limited" : status === 504 ? "nearby_timeout" : "nearby_unavailable";
+  return json({ error: code }, status, status === 429 ? { "retry-after": "30" } : {});
 }
 
 function parseCookies(request) {
@@ -219,6 +303,7 @@ async function updateFeedback(request, env, id) {
 async function handleApi(request, env, ctx, pathname) {
   try {
     if (pathname === "/api/health" && request.method === "GET") return json({ ok: true, database: Boolean(env.DB) });
+    if (pathname === "/api/nearby" && request.method === "POST") return nearbyShops(request);
     if (pathname === "/api/feedback" && request.method === "POST") return submitFeedback(request, env);
     if (pathname === "/api/admin/login" && request.method === "POST") return adminLogin(request, env);
     if (pathname === "/api/admin/session" && request.method === "GET") return json({ authenticated: await isAdmin(request, env) });

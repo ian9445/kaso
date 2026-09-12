@@ -1,5 +1,4 @@
 export const NEARBY_RADIUS_METERS = 1000;
-const OVERPASS_ENDPOINT = "https://overpass.private.coffee/api/interpreter";
 let nextQueryAt = 0;
 
 function failure(code) { return Object.assign(new Error(code), { code }); }
@@ -44,13 +43,18 @@ export function distanceMeters(from, to) {
 }
 
 const AMENITIES = {
-  restaurant: "餐廳", cafe: "咖啡店", fast_food: "速食店", food_court: "美食廣場",
-  bar: "酒吧", pub: "餐酒館", ice_cream: "冰品店", pharmacy: "藥局",
+  restaurant: ["餐廳", "food", "food"], cafe: ["咖啡店", "food", "food"],
+  fast_food: ["速食店", "food", "food"], food_court: ["美食廣場", "food", "food"],
+  bar: ["酒吧", "food", "food"], pub: ["餐酒館", "food", "food"],
+  ice_cream: ["冰品店", "food", "food"], pharmacy: ["藥局", "services", "cart"],
 };
 const SHOP_TYPES = {
-  convenience: "便利商店", supermarket: "超市", bakery: "烘焙店", clothes: "服飾店",
-  department_store: "百貨公司", mall: "商場", books: "書店", electronics: "電器店",
-  hairdresser: "髮廊", beauty: "美容店", cosmetics: "美妝店", beverages: "飲品店",
+  convenience: ["便利商店", "shopping", "cart"], supermarket: ["超市", "shopping", "cart"],
+  bakery: ["烘焙店", "food", "food"], beverages: ["飲品店", "food", "food"],
+  clothes: ["服飾店", "shopping", "cart"], department_store: ["百貨公司", "shopping", "cart"],
+  mall: ["商場", "shopping", "cart"], books: ["書店", "shopping", "cart"],
+  electronics: ["電器店", "shopping", "cart"], hairdresser: ["髮廊", "services", "cart"],
+  beauty: ["美容店", "services", "cart"], cosmetics: ["美妝店", "shopping", "cart"],
 };
 
 export function normalizeShops(payload, position) {
@@ -70,38 +74,57 @@ export function normalizeShops(payload, position) {
     if (distance > NEARBY_RADIUS_METERS || seen.has(id)) return [];
     seen.add(id);
     const address = tags["addr:full"] || [tags["addr:city"], tags["addr:district"], tags["addr:suburb"], tags["addr:street"], tags["addr:housenumber"]].filter(Boolean).join(" ");
+    const details = AMENITIES[tags.amenity] || SHOP_TYPES[tags.shop] || ["店家", "shopping", "cart"];
     return [{ id, name: name.trim(), lat, lon, distance,
-      type: AMENITIES[tags.amenity] || SHOP_TYPES[tags.shop] || "店家",
-      icon: tags.amenity && tags.amenity !== "pharmacy" ? "food" : "cart",
+      type: details[0], category: details[1], icon: details[2],
       address: String(address || ""), hours: typeof tags.opening_hours === "string" ? tags.opening_hours : "",
     }];
   }).sort((a, b) => a.distance - b.distance || a.name.localeCompare(b.name, "zh-Hant"));
+}
+
+export function sortShops(shops, sort = "distance-asc", category = "all") {
+  const filtered = shops.filter((shop) => category === "all" || shop.category === category);
+  const byDistance = (a, b) => a.distance - b.distance || a.name.localeCompare(b.name, "zh-Hant");
+  const sorters = {
+    "distance-asc": byDistance,
+    "distance-desc": (a, b) => b.distance - a.distance || a.name.localeCompare(b.name, "zh-Hant"),
+    "name-asc": (a, b) => a.name.localeCompare(b.name, "zh-Hant") || byDistance(a, b),
+    "type-asc": (a, b) => a.type.localeCompare(b.type, "zh-Hant") || byDistance(a, b),
+    "hours-first": (a, b) => Number(Boolean(b.hours)) - Number(Boolean(a.hours)) || byDistance(a, b),
+  };
+  return [...filtered].sort(sorters[sort] || byDistance);
 }
 
 export async function findNearbyShops(position, { signal, fetcher = globalThis.fetch } = {}) {
   if (!validCoordinates(position?.lat, position?.lon)) throw failure("invalid_coordinates");
   if (Date.now() < nextQueryAt) throw rateLimitError();
   const { lat, lon } = position;
-  const query = `[out:json][timeout:20];(nwr(around:${NEARBY_RADIUS_METERS},${lat},${lon})["shop"];nwr(around:${NEARBY_RADIUS_METERS},${lat},${lon})["amenity"~"^(${Object.keys(AMENITIES).join("|")})$"];);out center;`;
   const controller = new AbortController();
   const onAbort = () => controller.abort();
   let timedOut = false;
   signal?.addEventListener("abort", onAbort, { once: true });
   if (signal?.aborted) controller.abort();
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 25000);
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 58000);
   try {
     if (controller.signal.aborted) throw failure("cancelled");
-    const response = await fetcher(OVERPASS_ENDPOINT, {
-      method: "POST", body: new URLSearchParams({ data: query }), credentials: "omit", signal: controller.signal,
+    const response = await fetcher("/api/nearby", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ lat, lon }),
+      credentials: "omit",
+      signal: controller.signal,
     });
-    if (response.status === 429 || response.status === 406) {
+    if (response.status === 429) {
       const retryAfter = response.headers.get("retry-after");
       const seconds = Number(retryAfter);
       const wait = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter) - Date.now();
       nextQueryAt = Date.now() + Math.max(30000, Number.isFinite(wait) ? wait : 30000);
       throw rateLimitError();
     }
-    if (!response.ok) throw failure("query_failed");
+    if (!response.ok) {
+      const code = await response.json().then((data) => data?.error).catch(() => "");
+      throw failure(code === "nearby_timeout" ? "query_timeout" : "query_failed");
+    }
     return normalizeShops(await response.json(), position);
   } catch (error) {
     if (timedOut) throw failure("query_timeout");

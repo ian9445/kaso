@@ -60,4 +60,38 @@ assert.match(indexBody, /type="module" src="\.\/assets\/js\/main\.js"/);
 assert.match(await adminResponse.text(), /管理後台/);
 assert.doesNotMatch(source, /__KASO_(?:INDEX|ADMIN)_HTML__/);
 
-console.log("Artifact is valid ESM and serves the modular KASO site and admin page");
+const originalFetch = globalThis.fetch;
+let upstreamCalls = 0;
+try {
+  globalThis.fetch = async (url, options) => {
+    upstreamCalls += 1;
+    assert.equal(url, "https://maps.mail.ru/osm/tools/overpass/api/interpreter");
+    assert.equal(options.method, "POST");
+    assert.match(options.headers["user-agent"], /KASO-Nearby/);
+    assert.match(String(options.body), /around%3A1000%2C25\.0478%2C121\.517/);
+    return new Response(JSON.stringify({ elements: [] }), {
+      headers: { "content-type": "application/json" },
+    });
+  };
+  const nearbyRequest = new Request("https://kaso.test/api/nearby", {
+    method: "POST",
+    headers: { origin: "https://kaso.test", "content-type": "application/json" },
+    body: JSON.stringify({ lat: 25.0478, lon: 121.517 }),
+  });
+  const nearbyResponse = await app.fetch(nearbyRequest, {}, { waitUntil() {} });
+  assert.equal(nearbyResponse.status, 200);
+  assert.deepEqual((await nearbyResponse.json()).elements, []);
+  assert.equal(upstreamCalls, 1);
+
+  const invalidNearby = await app.fetch(new Request("https://kaso.test/api/nearby", {
+    method: "POST",
+    headers: { origin: "https://kaso.test", "content-type": "application/json" },
+    body: JSON.stringify({ lat: "not-a-coordinate", lon: 121.517 }),
+  }), {}, { waitUntil() {} });
+  assert.equal(invalidNearby.status, 400);
+  assert.equal(upstreamCalls, 1);
+} finally {
+  globalThis.fetch = originalFetch;
+}
+
+console.log("Artifact is valid ESM and serves KASO, admin, and the nearby-shop proxy");

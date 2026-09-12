@@ -1203,27 +1203,56 @@
     .nearby-page .summary-strip small { font-size: .875rem; }
     .nearby-page .summary-strip strong { overflow-wrap: anywhere; }
     .nearby-page .nearby-map { border-radius: 3px; }
-    .nearby-page .nearby-map-head { flex-wrap: wrap; }
+    .nearby-page .nearby-map-head { flex-wrap: wrap; padding: 16px 18px; }
+    .nearby-page .nearby-map-head > div { display: grid; gap: 3px; }
     .nearby-page .nearby-map-head small { font-size: .875rem; }
-    .nearby-map iframe { display: block; width: 100%; height: 300px; border: 0; background: var(--soft); }
-    .nearby-results-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; font-size: 1.4rem; }
-    .nearby-results-title span { font-size: 1rem; font-weight: 400; color: var(--muted); }
-    .nearby-page .merchant-card { grid-template-columns: 48px minmax(0, 1fr) 210px; }
-    .nearby-page .merchant-info { min-width: 0; overflow-wrap: anywhere; }
-    .nearby-page .merchant-card h3 { font-size: 1.125rem; }
-    .nearby-page .merchant-card p { font-size: 1rem; }
-    .nearby-page .merchant-card .platform, .nearby-page .merchant-result small { font-size: .875rem; }
-    .nearby-page .directions { min-height: 44px; font-size: 1rem; }
+    .nearby-map-link { min-height: 40px; display: inline-flex; align-items: center; gap: 7px; border-bottom: 4px solid var(--lime); font-weight: 800; }
+    .nearby-map-link svg { width: 18px; height: 18px; }
+    .nearby-map iframe { display: block; width: 100%; height: 360px; border: 0; background: var(--soft); }
+    .nearby-results-panel { margin-top: 32px; }
+    .nearby-results-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+    .nearby-results-head h2 { margin: 0; font-size: clamp(1.7rem,3vw,2.6rem); }
+    .nearby-results-head p { margin: 5px 0 0; color: var(--muted); }
+    .nearby-controls { display: grid; grid-template-columns: minmax(150px,1fr) minmax(210px,1.25fr); gap: 10px; }
+    .nearby-controls label { display: grid; gap: 6px; color: var(--muted); font-size: .8rem; }
+    .nearby-controls select { min-height: 46px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); padding: 0 34px 0 11px; color: var(--ink); }
+    .nearby-price-note { margin: 0 0 18px; padding: 11px 13px; border-left: 5px solid var(--lime); background: var(--panel); color: var(--muted); font-size: .875rem; line-height: 1.6; }
+    .nearby-page .merchant-list { gap: 20px; }
+    .nearby-page .merchant-card { grid-template-columns: 170px minmax(0, 1fr) 235px; gap: 0; min-height: 205px; padding: 0; overflow: hidden; align-items: stretch; }
+    .nearby-page .merchant-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px,-2px); }
+    .merchant-visual { position: relative; min-height: 205px; display: grid; place-items: center; border-right: 1.5px solid var(--ink); background: #ece9e0; }
+    .merchant-rank { position: absolute; top: 14px; left: 14px; font-family: Arial Black,Arial,sans-serif; font-size: .75rem; letter-spacing: .08em; }
+    .nearby-page .merchant-icon { width: 76px; height: 76px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--lime); color: var(--ink); }
+    .nearby-page .merchant-icon svg { width: 38px; height: 38px; }
+    .nearby-page .merchant-info { min-width: 0; align-self: center; padding: 26px 28px; overflow-wrap: anywhere; }
+    .nearby-page .merchant-card h3 { margin: 16px 0 12px; font-size: clamp(1.2rem,2vw,1.55rem); }
+    .nearby-page .merchant-card p { margin: 5px 0; font-size: .95rem; line-height: 1.55; }
+    .nearby-page .merchant-card .platform, .nearby-page .merchant-result small { font-size: .82rem; }
+    .nearby-page .merchant-result { align-self: center; padding: 26px 24px; border-left: 1px solid var(--line); }
+    .nearby-page .merchant-result strong { font-size: 1.45rem; }
+    .nearby-page .directions { min-height: 46px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--ink); font-size: .9rem; }
+    .nearby-page .directions:hover { background: var(--lime); color: var(--ink); }
     .nearby-empty { padding: 24px; border: 1.5px solid var(--ink); background: var(--panel); }
-    .nearby-empty h2 { margin-top: 0; font-size: 1.25rem; }
+    .nearby-empty :is(h2,h3) { margin-top: 0; font-size: 1.25rem; }
     .nearby-source { font-size: .875rem; color: var(--muted); line-height: 1.8; margin-top: 22px; }
     .nearby-source a { text-decoration: underline; text-underline-offset: 3px; }
-    .nearby-page :is(button, a):focus-visible, .home-nearby-link:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+    .nearby-page :is(button, a, select):focus-visible, .home-nearby-link:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+    @media (max-width: 940px) {
+      .nearby-results-head { align-items: stretch; flex-direction: column; }
+      .nearby-controls { width: 100%; }
+      .nearby-page .merchant-card { grid-template-columns: 130px minmax(0,1fr) 210px; }
+    }
     @media (max-width: 720px) {
       .nearby-location { padding: 18px 16px; }
-      .nearby-page .merchant-card { grid-template-columns: 42px minmax(0, 1fr); }
-      .nearby-page .merchant-result { grid-column: 1 / -1; text-align: left; padding-left: 0; }
       .nearby-location-actions button { flex: 1 1 160px; }
+      .nearby-map iframe { height: 300px; }
+      .nearby-controls { grid-template-columns: 1fr; }
+      .nearby-page .merchant-card { grid-template-columns: 1fr; }
+      .merchant-visual { min-height: 116px; border-right: 0; border-bottom: 1.5px solid var(--ink); }
+      .nearby-page .merchant-icon { width: 60px; height: 60px; }
+      .nearby-page .merchant-icon svg { width: 30px; height: 30px; }
+      .nearby-page .merchant-info { width: 100%; padding: 22px 18px; }
+      .nearby-page .merchant-result { width: 100%; border-top: 1px solid var(--line); border-left: 0; padding: 20px 18px; text-align: left; }
     }
 
     @media (max-width: 720px) {
