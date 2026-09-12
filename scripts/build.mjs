@@ -24,6 +24,14 @@ await mkdir(resolve(distRoot, "client"), { recursive: true });
 await mkdir(resolve(distRoot, ".openai"), { recursive: true });
 await writeFile(resolve(distRoot, "server/index.js"), output);
 await cp(resolve(projectRoot, "assets"), resolve(distRoot, "client/assets"), { recursive: true });
+const leafletRoot = resolve(projectRoot, "node_modules/leaflet/dist");
+const leafletOutput = resolve(distRoot, "client/assets/vendor/leaflet");
+await mkdir(leafletOutput, { recursive: true });
+await Promise.all([
+  cp(resolve(leafletRoot, "leaflet-src.esm.js"), resolve(leafletOutput, "leaflet-src.esm.js")),
+  cp(resolve(leafletRoot, "leaflet.css"), resolve(leafletOutput, "leaflet.css")),
+  cp(resolve(leafletRoot, "images"), resolve(leafletOutput, "images"), { recursive: true }),
+]);
 await cp(resolve(projectRoot, ".openai/hosting.json"), resolve(distRoot, ".openai/hosting.json"));
 
 try {

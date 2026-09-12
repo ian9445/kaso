@@ -64,6 +64,20 @@ function validCoordinates(lat, lon) {
     && Number.isFinite(lon) && Math.abs(lon) <= 180;
 }
 
+function locationHint(request) {
+  const lat = Number(request.cf?.latitude);
+  const lon = Number(request.cf?.longitude);
+  if (!validCoordinates(lat, lon)) return json({ available: false });
+  return json({
+    available: true,
+    // A coarse city-level hint is enough to make the manual map useful and avoids exposing needless precision.
+    lat: Math.round(lat * 100) / 100,
+    lon: Math.round(lon * 100) / 100,
+    city: String(request.cf?.city || "").trim().slice(0, 80),
+    region: String(request.cf?.region || "").trim().slice(0, 80),
+  });
+}
+
 function upstreamError(code, status = 503) {
   return Object.assign(new Error(code), { code, status });
 }
@@ -303,6 +317,7 @@ async function updateFeedback(request, env, id) {
 async function handleApi(request, env, ctx, pathname) {
   try {
     if (pathname === "/api/health" && request.method === "GET") return json({ ok: true, database: Boolean(env.DB) });
+    if (pathname === "/api/location-hint" && request.method === "GET") return locationHint(request);
     if (pathname === "/api/nearby" && request.method === "POST") return nearbyShops(request);
     if (pathname === "/api/feedback" && request.method === "POST") return submitFeedback(request, env);
     if (pathname === "/api/admin/login" && request.method === "POST") return adminLogin(request, env);

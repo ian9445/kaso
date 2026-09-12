@@ -1,4 +1,6 @@
 export const NEARBY_RADIUS_METERS = 1000;
+export const DEFAULT_NEARBY_CATEGORY = "food";
+export const MAP_MARKER_LIMIT = 40;
 let nextQueryAt = 0;
 
 function failure(code) { return Object.assign(new Error(code), { code }); }
@@ -26,13 +28,13 @@ export function getCurrentLocation({ geolocation = globalThis.navigator?.geoloca
 
 export function locationErrorMessage(error) {
   return ({
-    permission_denied: "位置權限未開啟。請在網址列的網站設定中允許位置存取，並確認裝置的定位服務已開啟，再按一次「使用目前位置」。",
-    location_timeout: "定位逾時。請確認裝置的定位服務與網路已開啟，移到訊號較好的地方後再試。",
-    unavailable: "目前無法取得位置。請確認裝置已開啟定位服務，或移到訊號較好的地方再試。",
-    imprecise: "目前定位誤差超過 1,000 公尺，無法可靠查詢附近店家。請開啟精確位置，或移到訊號較好的地方後重新定位。",
-    insecure_context: "定位需要安全連線。請使用 HTTPS 網址開啟網站後再試。",
-    unsupported: "這個瀏覽器不支援定位，請使用支援定位的瀏覽器開啟網站。",
-  })[error?.code] || "定位失敗，請確認瀏覽器的位置權限與裝置定位服務後再試。";
+    permission_denied: "沒有開啟位置也沒關係，直接點下方地圖選擇搜尋中心。若之後想用精準位置，再到瀏覽器網站設定允許位置。",
+    location_timeout: "定位逾時。可以直接點下方地圖搜尋，或確認裝置定位服務與網路後再試。",
+    unavailable: "目前無法取得精準位置，可以直接點下方地圖選擇搜尋中心。",
+    imprecise: "目前定位誤差超過 1,000 公尺，可以直接在下方地圖選擇較準確的搜尋中心。",
+    insecure_context: "定位需要安全連線，但仍可直接點下方地圖搜尋。",
+    unsupported: "這個瀏覽器不支援精準定位，請直接點下方地圖選擇搜尋中心。",
+  })[error?.code] || "定位失敗，但不會卡住；請直接點下方地圖選擇搜尋中心。";
 }
 
 export function distanceMeters(from, to) {
@@ -49,7 +51,7 @@ const AMENITIES = {
   ice_cream: ["冰品店", "food", "food"], pharmacy: ["藥局", "services", "cart"],
 };
 const SHOP_TYPES = {
-  convenience: ["便利商店", "shopping", "cart"], supermarket: ["超市", "shopping", "cart"],
+  convenience: ["便利商店", "essentials", "cart"], supermarket: ["超市", "essentials", "cart"],
   bakery: ["烘焙店", "food", "food"], beverages: ["飲品店", "food", "food"],
   clothes: ["服飾店", "shopping", "cart"], department_store: ["百貨公司", "shopping", "cart"],
   mall: ["商場", "shopping", "cart"], books: ["書店", "shopping", "cart"],
@@ -93,6 +95,31 @@ export function sortShops(shops, sort = "distance-asc", category = "all") {
     "hours-first": (a, b) => Number(Boolean(b.hours)) - Number(Boolean(a.hours)) || byDistance(a, b),
   };
   return [...filtered].sort(sorters[sort] || byDistance);
+}
+
+export function mapShops(shops, category = DEFAULT_NEARBY_CATEGORY, limit = MAP_MARKER_LIMIT) {
+  return sortShops(shops, "distance-asc", category).slice(0, Math.max(0, limit));
+}
+
+export async function getLocationHint({ fetcher = globalThis.fetch, signal } = {}) {
+  try {
+    const response = await fetcher("/api/location-hint", {
+      method: "GET",
+      credentials: "omit",
+      signal,
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data?.available || !validCoordinates(data.lat, data.lon)) return null;
+    return {
+      lat: data.lat,
+      lon: data.lon,
+      city: typeof data.city === "string" ? data.city.slice(0, 80) : "",
+      region: typeof data.region === "string" ? data.region.slice(0, 80) : "",
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function findNearbyShops(position, { signal, fetcher = globalThis.fetch } = {}) {

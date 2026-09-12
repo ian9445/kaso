@@ -1,12 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  DEFAULT_NEARBY_CATEGORY,
+  MAP_MARKER_LIMIT,
   distanceMeters,
   normalizeShops,
   getCurrentLocation,
+  getLocationHint,
   findNearbyShops,
+  locationErrorMessage,
+  mapShops,
   sortShops,
 } from "../assets/js/services/nearby.js";
+import { loadLeaflet } from "../assets/js/services/nearby-map.js";
 import page from "../assets/js/pages/nearby.js";
 
 const origin = { lat: 0, lon: 0 };
@@ -16,38 +22,30 @@ const response = (elements) => new Response(JSON.stringify({ elements }), { head
 const fix = { coords: { latitude: 0, longitude: 0, accuracy: 20 } };
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
-function mockGlobal(t, name, value) {
-  const descriptor = Object.getOwnPropertyDescriptor(globalThis, name);
-  Object.defineProperty(globalThis, name, { value, configurable: true, writable: true });
-  t.after(() => {
-    if (descriptor) Object.defineProperty(globalThis, name, descriptor);
-    else delete globalThis[name];
-  });
-}
-
 test("distance boundary: includes 999/1000 m, excludes 1001 m, sorts and deduplicates", () => {
   const payload = { elements: [shop(2, 1000), shop(3, 1001), shop(1, 999), shop(1, 999)] };
   assert.deepEqual(normalizeShops(payload, origin).map((x) => x.id), ["node/1", "node/2"]);
   assert.ok(Math.abs(distanceMeters(origin, point(1000)) - 1000) < 0.000001);
 });
 
-test("normalization handles centers, names, unknown address, and invalid/closed records", () => {
+test("normalization handles centers, names, categories, and invalid or closed records", () => {
   const elements = [
     { type: "way", id: 7, center: point(10), tags: { amenity: "cafe", name: "Cafe", "name:zh": "咖啡", opening_hours: "Mo-Fr 09:00-18:00" } },
+    shop(8, 12, { shop: "supermarket", name: "超市" }),
     shop(1, 2, { shop: "vacant" }), shop(2, 2, { disused: "yes" }),
-    shop(3, 2, { name: "" }), { ...shop(4, 3), lat: NaN }, null,
+    shop(3, 2, { name: "" }), { ...shop(4, 3), lat: Number.NaN }, null,
   ];
   const shops = normalizeShops({ elements }, origin);
-  assert.equal(shops.length, 1);
+  assert.equal(shops.length, 2);
   assert.equal(shops[0].name, "咖啡");
-  assert.equal(shops[0].address, "");
   assert.equal(shops[0].type, "咖啡店");
   assert.equal(shops[0].category, "food");
+  assert.equal(shops[1].category, "essentials");
 });
 
-test("sorting supports distance, name, type, hours, and category filters without mutation", () => {
+test("sorting and map limiting support every user-facing filter without mutation", () => {
   const shops = [
-    { name: "乙店", type: "超市", category: "shopping", distance: 20, hours: "" },
+    { name: "乙店", type: "超市", category: "essentials", distance: 20, hours: "" },
     { name: "甲店", type: "咖啡店", category: "food", distance: 80, hours: "09:00-18:00" },
     { name: "丙店", type: "餐廳", category: "food", distance: 10, hours: "" },
   ];
@@ -56,6 +54,10 @@ test("sorting supports distance, name, type, hours, and category filters without
   assert.deepEqual(sortShops(shops, "name-asc").map((x) => x.name), ["乙店", "丙店", "甲店"]);
   assert.equal(sortShops(shops, "hours-first")[0].name, "甲店");
   assert.deepEqual(sortShops(shops, "type-asc", "food").map((x) => x.category), ["food", "food"]);
+  assert.equal(DEFAULT_NEARBY_CATEGORY, "food");
+  const many = Array.from({ length: 45 }, (_, index) => ({ ...shops[1], name: `餐飲 ${index}`, distance: index }));
+  assert.equal(mapShops(many).length, MAP_MARKER_LIMIT);
+  assert.equal(mapShops(shops, "essentials")[0].name, "乙店");
   assert.equal(shops[0].name, "乙店");
 });
 
@@ -66,7 +68,7 @@ test("empty response differs from malformed or partial response", () => {
   }
 });
 
-test("geolocation handles permission, timeout, unavailable, unsupported and HTTPS", async () => {
+test("geolocation errors always offer the map fallback", async () => {
   for (const [code, expected] of [[1, "permission_denied"], [2, "unavailable"], [3, "location_timeout"]]) {
     await assert.rejects(getCurrentLocation({ secureContext: true, geolocation: { getCurrentPosition: (_, reject) => reject({ code }) } }), { code: expected });
   }
@@ -74,6 +76,38 @@ test("geolocation handles permission, timeout, unavailable, unsupported and HTTP
   await assert.rejects(getCurrentLocation({ secureContext: true, geolocation: null }), { code: "unsupported" });
   await assert.rejects(getCurrentLocation({ secureContext: true, geolocation: { getCurrentPosition: (ok) => ok({ coords: { ...fix.coords, accuracy: 1500 } }) } }), { code: "imprecise" });
   assert.deepEqual(await getCurrentLocation({ secureContext: true, geolocation: { getCurrentPosition: (ok) => ok(fix) } }), { ...origin, accuracy: 20 });
+  assert.match(locationErrorMessage({ code: "permission_denied" }), /直接點下方地圖/);
+});
+
+test("coarse location hint is accepted only with valid coordinates and sends no cookies", async () => {
+  const hint = await getLocationHint({ fetcher: async (url, options) => {
+    assert.equal(url, "/api/location-hint");
+    assert.equal(options.credentials, "omit");
+    return new Response(JSON.stringify({ available: true, lat: 25.03, lon: 121.56, city: "Taipei", region: "Taipei" }));
+  } });
+  assert.deepEqual(hint, { lat: 25.03, lon: 121.56, city: "Taipei", region: "Taipei" });
+  assert.equal(await getLocationHint({ fetcher: async () => new Response(JSON.stringify({ available: false })) }), null);
+  assert.equal(await getLocationHint({ fetcher: async () => { throw new TypeError("offline"); } }), null);
+});
+
+test("Leaflet loader injects local CSS and imports the bundled module", async () => {
+  const appended = [];
+  const documentRef = {
+    querySelector: () => null,
+    createElement: () => ({ dataset: {} }),
+    head: { append: (node) => appended.push(node) },
+  };
+  const module = { map: () => null };
+  const loaded = await loadLeaflet({
+    documentRef,
+    importer: async (url) => {
+      assert.match(url, /vendor\/leaflet\/leaflet-src\.esm\.js$/);
+      return module;
+    },
+  });
+  assert.equal(loaded, module);
+  assert.equal(appended.length, 1);
+  assert.match(appended[0].href, /vendor\/leaflet\/leaflet\.css$/);
 });
 
 test("query uses validated coordinates and does not send cookies", async () => {
@@ -110,78 +144,132 @@ test("query timeout returns a distinct error", async (t) => {
   await assert.rejects(pending, { code: "query_timeout" });
 });
 
-function mountHarness(t) {
-  const ids = ["nearbyLocate", "nearbyRetry", "nearbyCancel", "nearbyStatus", "nearbyResults", "nearbyCount", "nearbyPosition", "nearbyMap"];
+function mountHarness(t, overrides = {}) {
+  const ids = [
+    "nearbyLocate", "nearbyUseMap", "nearbyRetry", "nearbyCancel", "nearbyStatus",
+    "nearbyResults", "nearbyCount", "nearbyPosition", "nearbyMapCanvas", "nearbyMapLoading",
+    "nearbyMapHelp", "nearbyMapCount", "nearbyMapCategory", "nearbySearchMapCenter",
+    "nearbyGoogleMapLink",
+  ];
   const nodes = Object.fromEntries(ids.map((id) => [id, {
-    innerHTML: "", textContent: "", disabled: false, hidden: false, listeners: {}, attrs: {},
-    classList: { toggle() {} },
+    id, innerHTML: "", textContent: "", disabled: false, hidden: false, listeners: {}, attrs: {}, href: "",
+    classList: { toggle() {}, add() {} },
     addEventListener(name, handler) { this.listeners[name] = handler; },
     removeEventListener(name) { delete this.listeners[name]; },
     setAttribute(name, value) { this.attrs[name] = value; },
+    scrollIntoView() {}, focus() {},
   }]));
   const root = { querySelector: (selector) => nodes[selector.slice(1)] };
-  mockGlobal(t, "document", { querySelector: () => root });
-  mockGlobal(t, "isSecureContext", true);
-  const cleanup = page.mount();
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, "document");
+  Object.defineProperty(globalThis, "document", { value: { querySelector: () => root }, configurable: true });
+  t.after(() => {
+    if (descriptor) Object.defineProperty(globalThis, "document", descriptor);
+    else delete globalThis.document;
+  });
+
+  let onSelect;
+  const mapState = { center: { lat: 23.7, lon: 121 }, markers: [], destroyed: false };
+  const mapController = {
+    setCenter(value) { mapState.center = { lat: value.lat, lon: value.lon }; },
+    setShops(value) { mapState.markers = value; },
+    getCenter() { return mapState.center; },
+    invalidate() {},
+    destroy() { mapState.destroyed = true; },
+  };
+  const dependencies = {
+    mapLoader: async () => ({}),
+    hintLoader: async () => null,
+    mapFactory: (_, __, options) => { onSelect = options.onSelect; return mapController; },
+    locateProvider: async () => ({ ...origin, accuracy: 20 }),
+    shopFinder: async () => [],
+    ...overrides,
+  };
+  const cleanup = page.mount(dependencies);
   t.after(cleanup);
   return {
     nodes,
+    mapState,
     cleanup,
+    selectMap: (value) => onSelect(value),
     click: (id) => nodes[id].listeners.click(),
-    change: (id, value) => nodes.nearbyResults.listeners.change({ target: { id, value } }),
+    changeMap: (value) => nodes.nearbyMapCategory.listeners.change({ target: { value } }),
+    changeSort: (value) => nodes.nearbyResults.listeners.change({ target: { id: "nearbySort", value } }),
   };
 }
 
-test("page requests location on entry and ignores a callback after route cleanup", async (t) => {
-  let success, locations = 0, queries = 0;
-  mockGlobal(t, "navigator", { geolocation: { getCurrentPosition(ok) { locations++; success = ok; } } });
-  t.mock.method(globalThis, "fetch", async () => { queries++; return response([]); });
-  const harness = mountHarness(t);
+test("page never requests location on entry and ignores a location callback after cleanup", async (t) => {
+  let resolveLocation, locations = 0, queries = 0;
+  const harness = mountHarness(t, {
+    locateProvider: () => { locations++; return new Promise((resolve) => { resolveLocation = resolve; }); },
+    shopFinder: async () => { queries++; return []; },
+  });
+  await flush();
+  assert.equal(locations, 0);
+  assert.equal(queries, 0);
+  const pending = harness.click("nearbyLocate");
   assert.equal(locations, 1);
   harness.cleanup();
-  success(fix);
-  await flush();
+  resolveLocation({ ...origin, accuracy: 20 });
+  await pending;
   assert.equal(queries, 0);
 });
 
-test("page cancels old location callbacks, shows escaped real results and no invented prices", async (t) => {
-  const callbacks = [];
-  mockGlobal(t, "navigator", { geolocation: { getCurrentPosition(ok) { callbacks.push(ok); } } });
-  t.mock.method(globalThis, "fetch", async () => response([shop(1, 10, { name: '<img src=x onerror="alert(1)">' })]));
-  const { nodes, click } = mountHarness(t);
-  click("nearbyCancel");
-  const current = click("nearbyLocate");
-  callbacks[0](fix);
+test("manual map selection works without geolocation, escapes shops, and syncs category markers", async (t) => {
+  let locations = 0, selectedPosition;
+  const found = [
+    { id: "node/1", name: '<img src=x onerror="alert(1)">', type: "咖啡店", category: "food", icon: "food", lat: 0.001, lon: 0, distance: 10, address: "", hours: "" },
+    { id: "node/2", name: "日用超市", type: "超市", category: "essentials", icon: "cart", lat: 0.002, lon: 0, distance: 20, address: "", hours: "" },
+  ];
+  const harness = mountHarness(t, {
+    locateProvider: async () => { locations++; return { ...origin, accuracy: 20 }; },
+    shopFinder: async (position) => { selectedPosition = position; return found; },
+  });
   await flush();
-  assert.equal(nodes.nearbyResults.innerHTML, "");
-  callbacks[1](fix);
-  await current;
-  assert.match(nodes.nearbyResults.innerHTML, /&lt;img/);
-  assert.doesNotMatch(nodes.nearbyResults.innerHTML, /<img|免費|預估最低支出|符合預算/);
-  assert.match(nodes.nearbyResults.innerHTML, /maps\/dir/);
-  assert.match(nodes.nearbyMap.innerHTML, /google\.com\/maps/);
-  assert.match(nodes.nearbyResults.innerHTML, /距離：近到遠/);
-  assert.equal(nodes.nearbyCount.textContent, "1 間");
-  assert.equal(nodes.nearbyLocate.disabled, false);
+  harness.selectMap({ lat: 0, lon: 0 });
+  await flush();
+  assert.equal(locations, 0);
+  assert.equal(selectedPosition.source, "map");
+  assert.match(harness.nodes.nearbyResults.innerHTML, /&lt;img/);
+  assert.doesNotMatch(harness.nodes.nearbyResults.innerHTML, /<img|免費|預估最低支出|符合預算/);
+  assert.match(harness.nodes.nearbyResults.innerHTML, /maps\/dir/);
+  assert.doesNotMatch(harness.nodes.nearbyResults.innerHTML, /日用超市/);
+  assert.equal(harness.mapState.markers.length, 1);
+  assert.equal(harness.nodes.nearbyCount.textContent, "2 間");
+  assert.equal(harness.nodes.nearbyPosition.textContent, "已選地圖位置");
+  harness.changeMap("essentials");
+  assert.match(harness.nodes.nearbyResults.innerHTML, /日用超市/);
+  assert.equal(harness.mapState.markers[0].category, "essentials");
+  assert.match(harness.nodes.nearbyStatus.textContent, /地圖與下方清單已同步/);
 });
 
-test("failed query offers retry using the already permitted location", async (t) => {
+test("precise location is requested only after clicking and failed queries can retry", async (t) => {
   let locations = 0, queries = 0;
-  mockGlobal(t, "navigator", { geolocation: { getCurrentPosition(ok) { locations++; ok(fix); } } });
-  t.mock.method(globalThis, "fetch", async () => {
-    queries++;
-    if (queries === 1) throw new TypeError("Network error");
-    return response([]);
+  const harness = mountHarness(t, {
+    locateProvider: async () => { locations++; return { ...origin, accuracy: 20 }; },
+    shopFinder: async () => {
+      queries++;
+      if (queries === 1) throw new TypeError("Network error");
+      return [];
+    },
   });
-  const { nodes, click } = mountHarness(t);
   await flush();
-  assert.equal(nodes.nearbyRetry.hidden, false);
-  assert.match(nodes.nearbyStatus.textContent, /無法取得/);
-  assert.equal(nodes.nearbyResults.innerHTML, "");
-  await click("nearbyRetry");
+  assert.equal(locations, 0);
+  await harness.click("nearbyLocate");
+  assert.equal(locations, 1);
+  assert.equal(harness.nodes.nearbyRetry.hidden, false);
+  assert.match(harness.nodes.nearbyStatus.textContent, /無法取得/);
+  await harness.click("nearbyRetry");
   assert.equal(locations, 1);
   assert.equal(queries, 2);
-  assert.match(nodes.nearbyResults.innerHTML, /暫時找不到/);
+  assert.match(harness.nodes.nearbyResults.innerHTML, /暫時找不到/);
+});
+
+test("render exposes a permission-free map route and food as the default category", () => {
+  const html = page.render();
+  assert.match(html, /不開權限，直接點地圖/);
+  assert.match(html, /value="food" selected>餐飲（最常用）/);
+  assert.match(html, /搜尋地圖中央/);
+  assert.doesNotMatch(html, /<iframe/);
 });
 
 test("rate limiting observes Retry-After without sending an immediate second request", async () => {

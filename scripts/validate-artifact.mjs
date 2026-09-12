@@ -10,6 +10,9 @@ const stylesheetPath = resolve(projectRoot, "dist/client/assets/css/styles.css")
 const appModulePath = resolve(projectRoot, "dist/client/assets/js/main.js");
 const financeModulePath = resolve(projectRoot, "dist/client/assets/js/services/finance.js");
 const budgetModulePath = resolve(projectRoot, "dist/client/assets/js/services/budget.js");
+const nearbyMapModulePath = resolve(projectRoot, "dist/client/assets/js/services/nearby-map.js");
+const leafletModulePath = resolve(projectRoot, "dist/client/assets/vendor/leaflet/leaflet-src.esm.js");
+const leafletStylesheetPath = resolve(projectRoot, "dist/client/assets/vendor/leaflet/leaflet.css");
 
 const [source, manifest] = await Promise.all([
   readFile(workerPath, "utf8"),
@@ -21,6 +24,9 @@ await Promise.all([
   appModulePath,
   financeModulePath,
   budgetModulePath,
+  nearbyMapModulePath,
+  leafletModulePath,
+  leafletStylesheetPath,
 ].map(async (path) => {
   assert.equal((await stat(path)).isFile(), true, `${path} must be a regular file`);
 }));
@@ -60,6 +66,24 @@ assert.match(indexBody, /type="module" src="\.\/assets\/js\/main\.js"/);
 assert.match(await adminResponse.text(), /管理後台/);
 assert.doesNotMatch(source, /__KASO_(?:INDEX|ADMIN)_HTML__/);
 
+const unavailableHint = await app.fetch(new Request("https://kaso.test/api/location-hint"), {}, { waitUntil() {} });
+assert.deepEqual(await unavailableHint.json(), { available: false });
+const hintRequest = new Request("https://kaso.test/api/location-hint");
+Object.defineProperty(hintRequest, "cf", { value: {
+  latitude: "25.0331",
+  longitude: "121.5654",
+  city: "Taipei",
+  region: "Taipei City",
+} });
+const availableHint = await app.fetch(hintRequest, {}, { waitUntil() {} });
+assert.deepEqual(await availableHint.json(), {
+  available: true,
+  lat: 25.03,
+  lon: 121.57,
+  city: "Taipei",
+  region: "Taipei City",
+});
+
 const originalFetch = globalThis.fetch;
 let upstreamCalls = 0;
 try {
@@ -94,4 +118,4 @@ try {
   globalThis.fetch = originalFetch;
 }
 
-console.log("Artifact is valid ESM and serves KASO, admin, and the nearby-shop proxy");
+console.log("Artifact is valid ESM and serves KASO, admin, coarse map hints, and the nearby-shop proxy");
