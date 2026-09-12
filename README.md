@@ -68,18 +68,29 @@ npm run validate
 
 首頁「附近店家」連至 `#/nearby`。頁面不會在進入時自動要求精準定位，使用者可以選擇「使用精準目前位置」，或完全不開位置權限，直接點地圖、拖曳後搜尋地圖中央。瀏覽器仍會在使用精準定位時顯示必要的同意提示；拒絕後不會卡住，會引導改用地圖選點。
 
-互動地圖使用專案內建的 Leaflet 與 OpenStreetMap 圖磚，不需要 Google Maps API key。後端的 `GET /api/location-hint` 只把 Cloudflare 提供的位置四捨五入到小數點後兩位，用來把未定位的地圖粗略移到城市附近；若沒有資料則顯示台灣全圖。KASO 不將精準座標或粗略提示寫入 localStorage、Cookie、D1 或分析紀錄，離開頁面會取消查詢並忽略尚未完成的定位回呼。
+正式模式使用 Google Maps JavaScript API 與 Places API (New)。地圖標點、下方清單與可複選分類同步；預設勾選常用的「餐廳／小吃」及「咖啡／飲料／甜點」，也可選擇日常採買、購物及生活服務，或一次勾選多類。Google Nearby Search 每次最多回傳 20 間，預設依熱門程度排序，也可改依距離、店名或類型排列。
 
-店家來自 OpenStreetMap。瀏覽器以同源 `POST /api/nearby` 呼叫網站後端，再由後端使用可識別的 User-Agent 查詢公開 Overpass 節點；目前優先使用 VK Maps 節點，Private.coffee 為備援，不需要 API key。後端送往查詢節點的座標會限制到小數點後五位。每個地圖標點及清單卡片都可開啟 Google Maps 步行導航。
+店家卡片會使用 Places 回傳的第一張公開照片，內容可能是店面、餐點、商品或使用者上傳的其他店家照片，取決於 Google 現有資料，不能保證每間都有。畫面會顯示照片作者標示；照片網址不寫入 localStorage、Cookie 或 D1，也不快取。沒有照片時明確顯示分類圖示與「尚無公開照片」，不使用可能不相關的示意圖冒充店家照片。
 
-清單包含餐飲、便利商店／超市、藥局與一般商店，以搜尋中心計算直線距離，只保留 1,000 公尺內的結果。地圖與清單使用同一個分類選單，預設顯示最常用的「餐飲」；為避免標點過密，地圖最多放所選分類最近 40 間，完整結果仍列在下方。清單可依近到遠、遠到近、店名、類型或營業時間資料排序。way/relation 使用資料的包圍盒中心，因此距離為估計值。
+Google Maps 未設定、腳本載入失敗或 Places 搜尋暫時不可用時，網站會保留原本的 Leaflet、OpenStreetMap 與 Overpass 查詢作為備援，不會讓附近店家頁整頁失效。備援模式不會有 Google 店家照片。瀏覽器以同源 `POST /api/nearby` 呼叫後端，再由後端查詢公開 Overpass 節點；目前優先使用 VK Maps 節點，Private.coffee 為第二節點。
 
-資料可能缺少店名、地址、營業時間或未涵蓋全部店家。此功能不推算價格，也不宣稱所有店家符合預算或提供優惠。定位精度超過 1,000 公尺時會建議改用地圖選點；拒絕授權、定位逾時、查詢逾時、空結果及服務錯誤有不同提示。HTTP 429 會遵守 Retry-After，至少等待 30 秒後才再送出查詢。
+### Google Maps 設定
+
+1. 在有啟用帳單的 Google Cloud 專案啟用 **Maps JavaScript API** 與 **Places API (New)**。
+2. 建立「網站」用 API key，網站限制加入 `https://card-scout-tw.cec13.chatgpt.site/*`，API 限制只允許上述兩個 API。不要使用未限制的 key。
+3. 在 Site 的環境變數新增 `GOOGLE_MAPS_BROWSER_KEY`。這是瀏覽器用 key，執行時本來就會傳到使用者瀏覽器，因此安全邊界是 Google Cloud 的網站與 API 限制。
+4. 可選：在 Google Cloud 建立 Map ID，並於 Site 新增 `GOOGLE_MAPS_MAP_ID`；未設定時使用 Google 的示範 Map ID 顯示進階標點。
+
+同源 `GET /api/maps-config` 只在執行時回傳瀏覽器地圖設定並使用 `no-store`，原始碼不含 key。部署前應在 Google Cloud 設定配額與預算警示。設定文件：[Google Maps Platform 開始使用](https://developers.google.com/maps/get-started)、[API key 安全最佳實務](https://developers.google.com/maps/api-security-best-practices)、[Nearby Search](https://developers.google.com/maps/documentation/javascript/nearby-search)、[Place Photos](https://developers.google.com/maps/documentation/javascript/place-photos)。
+
+後端的 `GET /api/location-hint` 只把 Cloudflare 提供的位置四捨五入到小數點後兩位，用來把未定位的地圖粗略移到城市附近；若沒有資料則顯示台灣全圖。KASO 不將精準座標或粗略提示寫入 localStorage、Cookie、D1 或分析紀錄，離開頁面會取消查詢並忽略尚未完成的定位回呼。
+
+資料可能缺少店名、地址、照片或未涵蓋全部店家。此功能不推算價格，也不宣稱所有店家符合預算或提供優惠。定位精度超過 1,000 公尺時會建議改用地圖選點；拒絕授權、定位逾時、查詢逾時、空結果及服務錯誤有不同提示。Overpass 的 HTTP 429 會遵守 Retry-After，至少等待 30 秒後才再送出查詢。
 
 公開查詢服務的可用性與限流由服務端決定。若兩個查詢節點都暫時無法使用，頁面會保留錯誤提示與重試入口，不回退成示範店家。高流量部署前需依提供者最新政策評估服務容量。
 
 
-相關資料：[Overpass 公開實例](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)、[HTTP/CORS](https://dev.overpass-api.de/command_line.html)、[OpenStreetMap 授權](https://www.openstreetmap.org/copyright)。
+備援資料：[Overpass 公開實例](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)、[HTTP/CORS](https://dev.overpass-api.de/command_line.html)、[OpenStreetMap 授權](https://www.openstreetmap.org/copyright)。
 
 定位流程回歸檢查（已使用 Node.js 24 驗證）：
 
@@ -87,4 +98,4 @@ npm run validate
 node --test scripts/check-nearby.mjs
 ```
 
-這些檢查使用模擬位置與店家回應，涵蓋距離邊界、拒絕授權、逾時、取消、換頁、重試、限流與外部文字轉義，不會取得執行者的位置或呼叫外部查詢服務。
+這些檢查使用模擬位置與店家回應，涵蓋 Google 類別與照片欄位、照片作者標示、距離邊界、複選分類、拒絕授權、逾時、取消、換頁、重試、限流與外部文字轉義，不會取得執行者的位置或呼叫外部查詢服務。

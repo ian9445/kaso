@@ -1,7 +1,7 @@
 import { escapeAttr, escapeHtml } from "../utils.js";
 
 const TAIWAN_CENTER = { lat: 23.6978, lon: 120.9605, zoom: 7 };
-const CATEGORY_CLASSES = new Set(["food", "essentials", "shopping", "services"]);
+const CATEGORY_CLASSES = new Set(["food", "cafe", "essentials", "shopping", "services"]);
 let libraryPromise;
 
 export { TAIWAN_CENTER };

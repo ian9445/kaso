@@ -78,6 +78,19 @@ function locationHint(request) {
   });
 }
 
+function mapsConfig(env) {
+  const apiKey = typeof env.GOOGLE_MAPS_BROWSER_KEY === "string"
+    ? env.GOOGLE_MAPS_BROWSER_KEY.trim()
+    : "";
+  if (!apiKey) return json({ available: false });
+  return json({
+    available: true,
+    // Browser keys are public by design. Restrict this key to the Site hostname and only the Maps JavaScript + Places APIs.
+    apiKey,
+    mapId: typeof env.GOOGLE_MAPS_MAP_ID === "string" ? env.GOOGLE_MAPS_MAP_ID.trim().slice(0, 120) : "",
+  });
+}
+
 function upstreamError(code, status = 503) {
   return Object.assign(new Error(code), { code, status });
 }
@@ -318,6 +331,7 @@ async function handleApi(request, env, ctx, pathname) {
   try {
     if (pathname === "/api/health" && request.method === "GET") return json({ ok: true, database: Boolean(env.DB) });
     if (pathname === "/api/location-hint" && request.method === "GET") return locationHint(request);
+    if (pathname === "/api/maps-config" && request.method === "GET") return mapsConfig(env);
     if (pathname === "/api/nearby" && request.method === "POST") return nearbyShops(request);
     if (pathname === "/api/feedback" && request.method === "POST") return submitFeedback(request, env);
     if (pathname === "/api/admin/login" && request.method === "POST") return adminLogin(request, env);

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   DEFAULT_NEARBY_CATEGORY,
+  DEFAULT_NEARBY_CATEGORIES,
   MAP_MARKER_LIMIT,
   distanceMeters,
   normalizeShops,
@@ -13,6 +14,11 @@ import {
   sortShops,
 } from "../assets/js/services/nearby.js";
 import { loadLeaflet } from "../assets/js/services/nearby-map.js";
+import {
+  MAX_GOOGLE_RESULTS,
+  findGoogleNearbyShops,
+  getGoogleMapsConfig,
+} from "../assets/js/services/google-places.js";
 import page from "../assets/js/pages/nearby.js";
 
 const origin = { lat: 0, lon: 0 };
@@ -39,7 +45,7 @@ test("normalization handles centers, names, categories, and invalid or closed re
   assert.equal(shops.length, 2);
   assert.equal(shops[0].name, "咖啡");
   assert.equal(shops[0].type, "咖啡店");
-  assert.equal(shops[0].category, "food");
+  assert.equal(shops[0].category, "cafe");
   assert.equal(shops[1].category, "essentials");
 });
 
@@ -54,7 +60,13 @@ test("sorting and map limiting support every user-facing filter without mutation
   assert.deepEqual(sortShops(shops, "name-asc").map((x) => x.name), ["乙店", "丙店", "甲店"]);
   assert.equal(sortShops(shops, "hours-first")[0].name, "甲店");
   assert.deepEqual(sortShops(shops, "type-asc", "food").map((x) => x.category), ["food", "food"]);
+  assert.deepEqual(sortShops(shops, "distance-asc", ["food", "essentials"]).map((x) => x.name), ["丙店", "乙店", "甲店"]);
+  assert.deepEqual(sortShops([
+    { ...shops[0], sourceRank: 1 },
+    { ...shops[1], sourceRank: 0 },
+  ], "popular").map((x) => x.name), ["甲店", "乙店"]);
   assert.equal(DEFAULT_NEARBY_CATEGORY, "food");
+  assert.deepEqual(DEFAULT_NEARBY_CATEGORIES, ["food", "cafe"]);
   const many = Array.from({ length: 45 }, (_, index) => ({ ...shops[1], name: `餐飲 ${index}`, distance: index }));
   assert.equal(mapShops(many).length, MAP_MARKER_LIMIT);
   assert.equal(mapShops(shops, "essentials")[0].name, "乙店");
@@ -110,6 +122,61 @@ test("Leaflet loader injects local CSS and imports the bundled module", async ()
   assert.match(appended[0].href, /vendor\/leaflet\/leaflet\.css$/);
 });
 
+test("Google config is optional and never sends cookies", async () => {
+  const configured = await getGoogleMapsConfig({ fetcher: async (url, options) => {
+    assert.equal(url, "/api/maps-config");
+    assert.equal(options.credentials, "omit");
+    assert.equal(options.cache, "no-store");
+    return new Response(JSON.stringify({ available: true, apiKey: "A".repeat(32), mapId: "kaso-map" }));
+  } });
+  assert.deepEqual(configured, { apiKey: "A".repeat(32), mapId: "kaso-map" });
+  assert.equal(await getGoogleMapsConfig({ fetcher: async () => new Response(JSON.stringify({ available: false })) }), null);
+});
+
+test("Google Places requests selected types and normalizes photos with attribution", async () => {
+  let request;
+  const photo = {
+    getURI: (options) => {
+      assert.deepEqual(options, { maxWidth: 640, maxHeight: 420 });
+      return "https://lh3.googleusercontent.com/example";
+    },
+    authorAttributions: [{ displayName: "攝影者 <王>", uri: "https://maps.google.com/user/1" }],
+  };
+  const maps = { importLibrary: async (library) => {
+    assert.equal(library, "places");
+    return {
+      SearchNearbyRankPreference: { POPULARITY: "POPULARITY" },
+      Place: { searchNearby: async (value) => {
+        request = value;
+        return { places: [{
+          id: "place-1",
+          displayName: "測試咖啡",
+          location: { lat: () => 0.0001, lng: () => 0 },
+          formattedAddress: "台北市測試路 1 號",
+          primaryType: "cafe",
+          primaryTypeDisplayName: "咖啡店",
+          types: ["cafe", "food"],
+          googleMapsURI: "https://maps.google.com/?cid=1",
+          photos: [photo],
+        }] };
+      } },
+    };
+  } };
+  const shops = await findGoogleNearbyShops(origin, { maps, categories: ["food", "cafe"] });
+  assert.equal(request.maxResultCount, MAX_GOOGLE_RESULTS);
+  assert.equal(request.rankPreference, "POPULARITY");
+  assert.equal(request.locationRestriction.radius, 1000);
+  assert.ok(request.includedPrimaryTypes.includes("restaurant"));
+  assert.ok(request.includedPrimaryTypes.includes("cafe"));
+  assert.ok(request.fields.includes("photos"));
+  assert.ok(!request.fields.includes("rating"));
+  assert.ok(!request.fields.includes("priceLevel"));
+  assert.equal(shops[0].category, "cafe");
+  assert.equal(shops[0].photoUrl, "https://lh3.googleusercontent.com/example");
+  assert.deepEqual(shops[0].photoAttributions, [{ displayName: "攝影者 <王>", uri: "https://maps.google.com/user/1" }]);
+  assert.equal(shops[0].provider, "google");
+});
+
 test("query uses validated coordinates and does not send cookies", async () => {
   let calls = 0;
   const fetcher = async (url, options) => {
@@ -148,18 +215,26 @@ function mountHarness(t, overrides = {}) {
   const ids = [
     "nearbyLocate", "nearbyUseMap", "nearbyRetry", "nearbyCancel", "nearbyStatus",
     "nearbyResults", "nearbyCount", "nearbyPosition", "nearbyMapCanvas", "nearbyMapLoading",
-    "nearbyMapHelp", "nearbyMapCount", "nearbyMapCategory", "nearbySearchMapCenter",
-    "nearbyGoogleMapLink",
+    "nearbyMapHelp", "nearbyMapCount", "nearbySearchMapCenter", "nearbyGoogleMapLink",
+    "nearbyProvider", "nearbyCategoryPicker", "nearbyCategorySummary", "nearbyCategoryError",
+    "nearbyApplyCategories", "nearbySource",
   ];
   const nodes = Object.fromEntries(ids.map((id) => [id, {
-    id, innerHTML: "", textContent: "", disabled: false, hidden: false, listeners: {}, attrs: {}, href: "",
-    classList: { toggle() {}, add() {} },
+    id, innerHTML: "", textContent: "", disabled: false, hidden: false, listeners: {}, attrs: {}, href: "", open: false,
+    classList: { toggle() {}, add() {}, remove() {}, contains: () => false },
     addEventListener(name, handler) { this.listeners[name] = handler; },
     removeEventListener(name) { delete this.listeners[name]; },
     setAttribute(name, value) { this.attrs[name] = value; },
     scrollIntoView() {}, focus() {},
   }]));
-  const root = { querySelector: (selector) => nodes[selector.slice(1)] };
+  const checkboxes = ["food", "cafe", "essentials", "shopping", "services"].map((value) => ({
+    value,
+    checked: ["food", "cafe"].includes(value),
+  }));
+  const root = {
+    querySelector: (selector) => nodes[selector.slice(1)],
+    querySelectorAll: (selector) => selector === 'input[name="nearbyCategory"]' ? checkboxes : [],
+  };
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, "document");
   Object.defineProperty(globalThis, "document", { value: { querySelector: () => root }, configurable: true });
   t.after(() => {
@@ -178,8 +253,11 @@ function mountHarness(t, overrides = {}) {
   };
   const dependencies = {
     mapLoader: async () => ({}),
+    configLoader: async () => null,
     hintLoader: async () => null,
     mapFactory: (_, __, options) => { onSelect = options.onSelect; return mapController; },
+    googleLoader: async () => ({}),
+    googleMapFactory: (_, __, options) => { onSelect = options.onSelect; return mapController; },
     locateProvider: async () => ({ ...origin, accuracy: 20 }),
     shopFinder: async () => [],
     ...overrides,
@@ -192,7 +270,10 @@ function mountHarness(t, overrides = {}) {
     cleanup,
     selectMap: (value) => onSelect(value),
     click: (id) => nodes[id].listeners.click(),
-    changeMap: (value) => nodes.nearbyMapCategory.listeners.change({ target: { value } }),
+    applyCategories: (values) => {
+      checkboxes.forEach((checkbox) => { checkbox.checked = values.includes(checkbox.value); });
+      nodes.nearbyApplyCategories.listeners.click();
+    },
     changeSort: (value) => nodes.nearbyResults.listeners.change({ target: { id: "nearbySort", value } }),
   };
 }
@@ -234,12 +315,12 @@ test("manual map selection works without geolocation, escapes shops, and syncs c
   assert.match(harness.nodes.nearbyResults.innerHTML, /maps\/dir/);
   assert.doesNotMatch(harness.nodes.nearbyResults.innerHTML, /日用超市/);
   assert.equal(harness.mapState.markers.length, 1);
-  assert.equal(harness.nodes.nearbyCount.textContent, "2 間");
+  assert.equal(harness.nodes.nearbyCount.textContent, "1 間");
   assert.equal(harness.nodes.nearbyPosition.textContent, "已選地圖位置");
-  harness.changeMap("essentials");
+  harness.applyCategories(["essentials"]);
   assert.match(harness.nodes.nearbyResults.innerHTML, /日用超市/);
   assert.equal(harness.mapState.markers[0].category, "essentials");
-  assert.match(harness.nodes.nearbyStatus.textContent, /地圖與下方清單已同步/);
+  assert.match(harness.nodes.nearbyStatus.textContent, /地圖與清單已同步/);
 });
 
 test("precise location is requested only after clicking and failed queries can retry", async (t) => {
@@ -264,12 +345,39 @@ test("precise location is requested only after clicking and failed queries can r
   assert.match(harness.nodes.nearbyResults.innerHTML, /暫時找不到/);
 });
 
-test("render exposes a permission-free map route and food as the default category", () => {
+test("render exposes permission-free map use and multi-select common categories", () => {
   const html = page.render();
   assert.match(html, /不開權限，直接點地圖/);
-  assert.match(html, /value="food" selected>餐飲（最常用）/);
+  assert.match(html, /name="nearbyCategory" value="food" checked/);
+  assert.match(html, /name="nearbyCategory" value="cafe" checked/);
+  assert.match(html, /可選一類或多類/);
   assert.match(html, /搜尋地圖中央/);
   assert.doesNotMatch(html, /<iframe/);
+});
+
+test("Google provider renders a real photo, attribution, and popular sorting", async (t) => {
+  const found = [{
+    id: "google/1", name: "好吃店", type: "餐廳", category: "food", icon: "food",
+    lat: 0.001, lon: 0, distance: 10, address: "台北市", provider: "google", sourceRank: 0,
+    googleMapsUrl: "https://maps.google.com/?cid=1",
+    photoUrl: "https://lh3.googleusercontent.com/photo",
+    photoAttributions: [{ displayName: "作者 <一>", uri: "https://maps.google.com/user/1" }],
+  }];
+  const harness = mountHarness(t, {
+    configLoader: async () => ({ apiKey: "A".repeat(32), mapId: "map" }),
+    googleShopFinder: async (_, options) => {
+      assert.deepEqual(options.categories, ["food", "cafe"]);
+      return found;
+    },
+  });
+  await flush();
+  harness.selectMap(origin);
+  await flush();
+  assert.equal(harness.nodes.nearbyProvider.textContent, "Google 地圖與店家照片");
+  assert.match(harness.nodes.nearbyResults.innerHTML, /class="merchant-photo"/);
+  assert.match(harness.nodes.nearbyResults.innerHTML, /作者 &lt;一&gt;/);
+  assert.match(harness.nodes.nearbyResults.innerHTML, /value="popular" selected/);
+  assert.equal(harness.mapState.markers.length, 1);
 });
 
 test("rate limiting observes Retry-After without sending an immediate second request", async () => {

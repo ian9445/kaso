@@ -1,5 +1,6 @@
 export const NEARBY_RADIUS_METERS = 1000;
 export const DEFAULT_NEARBY_CATEGORY = "food";
+export const DEFAULT_NEARBY_CATEGORIES = ["food", "cafe"];
 export const MAP_MARKER_LIMIT = 40;
 let nextQueryAt = 0;
 
@@ -45,14 +46,14 @@ export function distanceMeters(from, to) {
 }
 
 const AMENITIES = {
-  restaurant: ["餐廳", "food", "food"], cafe: ["咖啡店", "food", "food"],
+  restaurant: ["餐廳", "food", "food"], cafe: ["咖啡店", "cafe", "food"],
   fast_food: ["速食店", "food", "food"], food_court: ["美食廣場", "food", "food"],
   bar: ["酒吧", "food", "food"], pub: ["餐酒館", "food", "food"],
-  ice_cream: ["冰品店", "food", "food"], pharmacy: ["藥局", "services", "cart"],
+  ice_cream: ["冰品店", "cafe", "food"], pharmacy: ["藥局", "essentials", "cart"],
 };
 const SHOP_TYPES = {
   convenience: ["便利商店", "essentials", "cart"], supermarket: ["超市", "essentials", "cart"],
-  bakery: ["烘焙店", "food", "food"], beverages: ["飲品店", "food", "food"],
+  bakery: ["烘焙店", "cafe", "food"], beverages: ["飲品店", "cafe", "food"],
   clothes: ["服飾店", "shopping", "cart"], department_store: ["百貨公司", "shopping", "cart"],
   mall: ["商場", "shopping", "cart"], books: ["書店", "shopping", "cart"],
   electronics: ["電器店", "shopping", "cart"], hairdresser: ["髮廊", "services", "cart"],
@@ -85,9 +86,13 @@ export function normalizeShops(payload, position) {
 }
 
 export function sortShops(shops, sort = "distance-asc", category = "all") {
-  const filtered = shops.filter((shop) => category === "all" || shop.category === category);
+  const selected = category === "all" || category == null
+    ? null
+    : new Set(Array.isArray(category) || category instanceof Set ? category : [category]);
+  const filtered = shops.filter((shop) => !selected || selected.has(shop.category));
   const byDistance = (a, b) => a.distance - b.distance || a.name.localeCompare(b.name, "zh-Hant");
   const sorters = {
+    popular: (a, b) => (a.sourceRank ?? Number.MAX_SAFE_INTEGER) - (b.sourceRank ?? Number.MAX_SAFE_INTEGER) || byDistance(a, b),
     "distance-asc": byDistance,
     "distance-desc": (a, b) => b.distance - a.distance || a.name.localeCompare(b.name, "zh-Hant"),
     "name-asc": (a, b) => a.name.localeCompare(b.name, "zh-Hant") || byDistance(a, b),

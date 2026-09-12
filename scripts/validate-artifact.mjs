@@ -11,6 +11,8 @@ const appModulePath = resolve(projectRoot, "dist/client/assets/js/main.js");
 const financeModulePath = resolve(projectRoot, "dist/client/assets/js/services/finance.js");
 const budgetModulePath = resolve(projectRoot, "dist/client/assets/js/services/budget.js");
 const nearbyMapModulePath = resolve(projectRoot, "dist/client/assets/js/services/nearby-map.js");
+const googlePlacesModulePath = resolve(projectRoot, "dist/client/assets/js/services/google-places.js");
+const googleNearbyMapModulePath = resolve(projectRoot, "dist/client/assets/js/services/google-nearby-map.js");
 const leafletModulePath = resolve(projectRoot, "dist/client/assets/vendor/leaflet/leaflet-src.esm.js");
 const leafletStylesheetPath = resolve(projectRoot, "dist/client/assets/vendor/leaflet/leaflet.css");
 
@@ -25,6 +27,8 @@ await Promise.all([
   financeModulePath,
   budgetModulePath,
   nearbyMapModulePath,
+  googlePlacesModulePath,
+  googleNearbyMapModulePath,
   leafletModulePath,
   leafletStylesheetPath,
 ].map(async (path) => {
@@ -84,6 +88,18 @@ assert.deepEqual(await availableHint.json(), {
   region: "Taipei City",
 });
 
+const unavailableMaps = await app.fetch(new Request("https://kaso.test/api/maps-config"), {}, { waitUntil() {} });
+assert.deepEqual(await unavailableMaps.json(), { available: false });
+const availableMaps = await app.fetch(new Request("https://kaso.test/api/maps-config"), {
+  GOOGLE_MAPS_BROWSER_KEY: "browser-key-for-test",
+  GOOGLE_MAPS_MAP_ID: "kaso-map",
+}, { waitUntil() {} });
+assert.deepEqual(await availableMaps.json(), {
+  available: true,
+  apiKey: "browser-key-for-test",
+  mapId: "kaso-map",
+});
+
 const originalFetch = globalThis.fetch;
 let upstreamCalls = 0;
 try {
@@ -118,4 +134,4 @@ try {
   globalThis.fetch = originalFetch;
 }
 
-console.log("Artifact is valid ESM and serves KASO, admin, coarse map hints, and the nearby-shop proxy");
+console.log("Artifact is valid ESM and serves KASO, admin, Google Maps config, coarse hints, and the nearby-shop proxy");
